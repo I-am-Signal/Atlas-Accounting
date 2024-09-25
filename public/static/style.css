@@ -1,6 +1,7 @@
 html,
 body {
-  background: #B4A069;
+  background: rgb(180,160,105);
+background: linear-gradient(180deg, rgba(180,160,105,1) 19%, rgba(198,198,198,1) 82%);
   color: black;
   font-family: 'Poppins', sans-serif;
   margin: 0;
@@ -16,23 +17,29 @@ body {
 
 
 .header {
-  background-color: #C6C6C6;
-  height: 15vh;
+  background-color: #B4A069;
+  height: 5vh;
   max-height: 150px;
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1;
+  padding-left: 20px; /* Adds space on the left to align the text better */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 }
 
-.header img {
-  width: 95px;
-  max-width: 100%;
-  display: block;
-  margin: 0 auto;
+.logo a {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem; /* Adjust font size */
+  font-weight: 600;  /* Use a semi-bold font weight for emphasis */
+  color: white;
+  text-decoration: none; /* Removes underline */
 }
+
+.logo a:hover {
+  color: #ffffff; /* Optional: you can adjust the hover effect */
+}
+
 
 .page {
   display: flex;
