@@ -78,7 +78,7 @@ def sign_up():
             elif char in specialChars:
                 hasSpecial = True
         if not hasLetter:
-            return 'Password must container at least one letter.'
+            return 'Password must contain at least one letter.'
         elif not hasNumber:
             return 'Password must contain at least one number.'
         elif not hasSpecial:

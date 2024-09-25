@@ -2,7 +2,7 @@ html,
 body {
   background: #B4A069;
   color: black;
-  font-family: 'Times New Roman', Times, serif;
+  font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
   height: 100%;
@@ -30,15 +30,17 @@ body {
 .header img {
   width: 95px;
   max-width: 100%;
+  display: block;
+  margin: 0 auto;
 }
 
 .page {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  z-index: 1;
+  height: 100vh;  /* Full height of the viewport */
   width: 100vw;
+  position: relative;
   object-fit: cover;
 }
 
@@ -68,20 +70,21 @@ body {
 }
 
 .login {
-  background-color: rgba(99,99,99,0.9); /* required for transparent opacity */
+  background-color: rgba(99, 99, 99, 0.9); 
   color: white;
-  width: 256px;
-  height: 284px;
-  max-width: 300px;
-  max-height: 333px;
-  position: relative;
-  z-index: 2;
+  width: 300px;
   padding: 20px;
   border-radius: 10px;
+  z-index: 2;
+  text-align: center; /* Center the text inside */
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  overflow: hidden;
+  flex-direction: column; /* Stack elements vertically */
+  justify-content: center; /* Center the form elements inside the box */
+  align-items: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);  
+}
+.login form {
+  width: 100%;
 }
 
 .login label {
@@ -108,6 +111,10 @@ body {
 
 .login button:hover {
   background-color: #7c6c40;
+}
+
+.login input, .login button {
+  width: 100%; /* Make the inputs and buttons full width */
 }
 
 .login a {
