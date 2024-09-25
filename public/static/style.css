@@ -76,13 +76,18 @@ body {
   padding: 20px;
   border-radius: 10px;
   z-index: 2;
-  text-align: center; /* Center the text inside */
   display: flex;
   flex-direction: column; /* Stack elements vertically */
   justify-content: center; /* Center the form elements inside the box */
   align-items: center;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);  
 }
+
+.login h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
 .login form {
   width: 100%;
 }
@@ -106,14 +111,32 @@ body {
 .login button {
   background-color: #B4A069;
   color: #FFFFFF;
-  border-radius: 5px;
+  border-radius: 8px;  /* Make button more rounded */
+  padding: 12px 20px;  /* Increase the padding to make the button bigger */
+  font-size: 20px;  /* Increase button font size */
+  cursor: pointer;  
+  width: auto;
+  max-width: 200px;
+  margin-top: 10px;
+}
+
+.button-container {
+  text-align: center;  /* Center the content inside the container */
+  width: 100%;         /* Make sure the container takes up the full width */
+  margin-top: 15px;
+  margin-bottom: 15px; /* Add some margin for spacing */
+}
+
+.button-container button {
+  width: auto;         /* Keep the button size as auto (based on content) */
+  max-width: 200px;    /* Optional, you can limit the button width */
 }
 
 .login button:hover {
   background-color: #7c6c40;
 }
 
-.login input, .login button {
+.login input {
   width: 100%; /* Make the inputs and buttons full width */
 }
 
@@ -121,10 +144,22 @@ body {
   color: white;
   text-decoration: underline;
   font-style: italic;
+  margin-top: 10px;
 }
 
 .login a:hover {
   color: #dddddd;
+}
+
+#forgotPasswordContainer {
+  text-align: right;
+  margin-bottom: 20px;
+  font-size: 0.75rem;
+}
+
+#createAccountContainer {
+  text-align: center;
+  font-size: .75rem;
 }
 
 .register{
