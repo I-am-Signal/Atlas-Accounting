@@ -1,0 +1,191 @@
+html,
+body {
+  background: #B4A069;
+  color: black;
+  font-family: 'Times New Roman', Times, serif;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.pageContainer {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+
+.header {
+  background-color: #C6C6C6;
+  height: 15vh;
+  max-height: 150px;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+.header img {
+  width: 95px;
+  max-width: 100%;
+}
+
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  object-fit: cover;
+}
+
+.page img {
+  position: absolute;
+  z-index: 1;
+  width: 1000px;
+  height: auto;
+  max-height: 1080px;
+  max-width: auto;
+  border-radius: 20px;
+}
+
+.footer {
+  background-color: #C6C6C6;
+  height: 10vh;
+  max-height: 100px;
+  z-index: 1;
+  text-align: center;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 10px;
+}
+
+.footer a {
+  color: black;
+}
+
+.login {
+  background-color: rgba(99,99,99,0.9); /* required for transparent opacity */
+  color: white;
+  width: 256px;
+  height: 284px;
+  max-width: 300px;
+  max-height: 333px;
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+.login label {
+  width: 100%; /* Make labels full width */
+  text-align: left; /* Align text to the left */
+  margin: 5px 0; /* Add some vertical spacing */
+}
+
+.login input {
+  border-radius: 5px;
+  border-width: 0px;
+  opacity: revert;
+}
+
+.login input:hover {
+  border: 10px;
+}
+
+.login button {
+  background-color: #B4A069;
+  color: #FFFFFF;
+  border-radius: 5px;
+}
+
+.login button:hover {
+  background-color: #7c6c40;
+}
+
+.login a {
+  color: white;
+  text-decoration: underline;
+  font-style: italic;
+}
+
+.login a:hover {
+  color: #dddddd;
+}
+
+.register{
+  background-color: rgb(99, 99, 99, 0.9);  
+  width: 512px;
+  max-width: 600px;
+  max-height: 1000px;
+  color: white;
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.register label {
+  width: 100%; /* Make labels full width */
+  text-align: left; /* Align text to the left */
+  margin: 5px 0; /* Add some vertical spacing */
+}
+
+.register input {
+  width: 100%;
+  border-radius: 5px;
+  border-width: 0px;
+}
+
+.register input:hover {
+  border: 10px;
+}
+
+.register button {
+  background-color: #B4A069;
+  color: #FFFFFF;
+  border-radius: 5px;
+ 
+}
+
+.register button:hover {
+  background-color: #7c6c40;
+}
+
+.register a {
+  color: white;
+  text-decoration: underline;
+  font-style: italic;
+}
+
+.register a:hover {
+  color: #dddddd;
+}
+
+.messagePopUp {
+  background-color: rgb(99, 99, 99, 0.9); 
+  border-radius: 10px;
+  width: 500px;
+  height: 50px;
+  background-color: grey;
+  z-index: 2;
+  text-align: center;
+  align-content: center;
+}
+
+.messagesContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}

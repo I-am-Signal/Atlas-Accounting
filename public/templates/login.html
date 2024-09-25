@@ -1,0 +1,29 @@
+{% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
+%}
+<div class="page">
+  <img src="..\static\resources\Atlas Accounting.png">
+  <div class="login">
+    <form method="POST">
+      <h1>Login</h1>
+      <label for="username">Username:</label> <br />
+      <input 
+        type="username"
+        id="username"
+        name="username"
+        placeholder="Enter username"
+      > <br /> <br />
+      <label for="password">Password:</label> <br />
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Enter password"
+      > <br />
+      <a href="/forgot" id="forgotPassword">Forgot password?</a> <br />
+      <button type="submit" id="submit">Submit</button> <br />
+      <label for="notWithUs">Not with us?</label> <br />
+      <a href="/sign-up" id="createAccount">Create new account</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,8 @@
+.vscode
+website/__pycache__
+website/database.db
+__pycache__
+config.py
+
+# Dylan used this to plan the DB schema, disregard it
+datastorage.md
