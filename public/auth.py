@@ -187,4 +187,25 @@ def forgot():
     #         db.session.commit()
     #         flash('Note added!', category='success')
 
-    return render_template("forgot.html")
+    if request.method == 'POST':
+        email = request.form.get('email')
+        username = request.form.get('username')
+
+        if len(email) < 1:
+             flash('Please enter Email!', category='error') 
+             
+        if len(username) < 1:
+             flash('Please enter User Name!', category='error') 
+        
+        user = User.query.filter_by(email=email, username=username).first()
+        
+        if user:
+            # Send email logic (implement this function to send email)
+            #send_reset_email(user)
+            flash('A reset email has been sent!', category='success')
+        else:
+            flash('No account found with that email and username combination.', category='error')
+
+        db.session.commit()
+
+    return render_template("forgot.html", user=current_user)
