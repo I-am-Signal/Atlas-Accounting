@@ -231,3 +231,60 @@ body {
   align-items: center;
   text-align: center;
 }
+.forgot {
+  background-color: rgba(99, 99, 99, 0.9); 
+  color: white;
+  width: 20%;
+  padding: 20px;
+  height: 30vh;
+  border-radius: 10px;
+  z-index: 2;
+  display: flex;
+  position: absolute;  
+  top: 10%;
+  flex-direction:column; /* Stack elements vertically */
+  justify-content:baseline; /* Center the form elements inside the box */
+  align-items: center;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);  
+}
+.forgot label {
+  width: 100%; /* Make labels full width */
+  text-align: left; /* Align text to the left */
+  margin: 5px 0; /* Add some vertical spacing */
+}
+
+.forgot input {
+  width: 100%;
+  border-radius: 5px;
+  border-width: 0px;
+}
+
+.forgot input:hover {
+  border: 10px;
+}
+
+.forgot button {
+  background-color: #B4A069;
+  color: #FFFFFF;
+  border-radius: 5px;
+  position:absolute;
+  right: 10%;
+  bottom: 5%;
+  padding: 2% 3%;
+  
+ 
+}
+
+.forgot button:hover {
+  background-color: #7c6c40;
+}
+
+.forgot a {
+  color: white;
+  text-decoration: underline;
+  font-style: italic;
+}
+
+.forgot a:hover {
+  color: #dddddd;
+}
