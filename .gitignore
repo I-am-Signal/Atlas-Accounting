@@ -4,5 +4,8 @@ website/database.db
 __pycache__
 config.py
 
+# Database file, not important to store data just yet
+instance/AA.db
+
 # Dylan used this to plan the DB schema, disregard it
 datastorage.md

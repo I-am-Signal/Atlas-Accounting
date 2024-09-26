@@ -203,9 +203,9 @@ def forgot():
             # Send email logic (implement this function to send email)
             #send_reset_email(user)
             flash('A reset email has been sent!', category='success')
+            return redirect(url_for('auth.login'))
         else:
             flash('No account found with that email and username combination.', category='error')
-
         db.session.commit()
 
     return render_template("forgot.html", user=current_user)

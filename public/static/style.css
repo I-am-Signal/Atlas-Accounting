@@ -232,20 +232,22 @@ body {
   text-align: center;
 }
 .forgot {
-  background-color: rgba(99, 99, 99, 0.9); 
+  background-color: rgb(99, 99, 99, 0.9);  
   color: white;
-  width: 20%;
+  width: 512px;
   padding: 20px;
-  height: 30vh;
+  padding-bottom: 40px;
+  max-width: 600px;
+  max-height: 1000px;
   border-radius: 10px;
   z-index: 2;
   display: flex;
-  position: absolute;  
-  top: 10%;
-  flex-direction:column; /* Stack elements vertically */
-  justify-content:baseline; /* Center the form elements inside the box */
-  align-items: center;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);  
+  position: relative; /*absolute*/
+  top: 10%; /*new addition*/
+  flex-direction: column;
+  justify-content: baseline; /*center*/
+  align-items: center;/*flex-start;*/
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 .forgot label {
   width: 100%; /* Make labels full width */
@@ -268,11 +270,9 @@ body {
   color: #FFFFFF;
   border-radius: 5px;
   position:absolute;
-  right: 10%;
+  right: 43%;
   bottom: 5%;
   padding: 2% 3%;
-  
- 
 }
 
 .forgot button:hover {
