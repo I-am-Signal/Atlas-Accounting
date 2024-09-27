@@ -1,7 +1,7 @@
 html,
 body {
-  background: #B4A069;
-  color: black;
+  background: #0D1B2A;
+  color: #E0E1DD;
   font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
@@ -16,7 +16,7 @@ body {
 
 
 .header {
-  background-color: #C6C6C6;
+  background-color: #1B263B;
   height: 5vh;
   max-height: 150px;
   border-bottom-left-radius: 15px;
@@ -31,12 +31,12 @@ body {
   font-family: 'Poppins', sans-serif;
   font-size: 1.5rem; /* Adjust font size */
   font-weight: 600;  /* Use a semi-bold font weight for emphasis */
-  color: white;
+  color: #E0E1DD;
   text-decoration: none; /* Removes underline */
 }
 
 .logo a:hover {
-  color: #ffffff; /* Optional: you can adjust the hover effect */
+  color: #778DA9; /* Optional: you can adjust the hover effect */
 }
 
 .page {
@@ -58,7 +58,7 @@ body {
 }
 
 .footer {
-  background-color: #C6C6C6;
+  background-color: #415A77;
   height: 10vh;
   max-height: 100px;
   z-index: 1;
@@ -70,12 +70,12 @@ body {
 }
 
 .footer a {
-  color: black;
+  color: #E0E1DD;
 }
 
 .login {
-  background-color: rgba(99, 99, 99, 0.9); 
-  color: white;
+  background-color: #1B263B; 
+  color: #E0E1DD;
   width: 300px;
   padding: 20px;
   border-radius: 10px;
@@ -113,8 +113,8 @@ body {
 }
 
 .login button {
-  background-color: #B4A069;
-  color: #FFFFFF;
+  background-color: #415A77;
+  color: #E0E1DD;
   border-radius: 8px;  /* Make button more rounded */
   padding: 12px 20px;  /* Increase the padding to make the button bigger */
   font-size: 20px;  /* Increase button font size */
@@ -137,7 +137,7 @@ body {
 }
 
 .login button:hover {
-  background-color: #7c6c40;
+  background-color: #778DA9;
 }
 
 .login input {
@@ -167,10 +167,10 @@ body {
 }
 
 .register{
-  background-color: rgb(99, 99, 99, 0.9);  
+  background-color: #1B263B;  
   width: 512px;
   max-width: 600px;
-  color: white;
+  color: #E0E1DD;
   position: relative;
   z-index: 2;
   padding: 20px;
@@ -197,14 +197,14 @@ body {
 }
 
 .register button {
-  background-color: #B4A069;
-  color: #FFFFFF;
+  background-color: #415A77;
+  color: #E0E1DD;
   border-radius: 5px;
  
 }
 
 .register button:hover {
-  background-color: #7c6c40;
+  background-color: #778DA9;
 }
 
 .register a {
@@ -292,47 +292,67 @@ body {
   color: #dddddd;
 }
 
-.userpic{
-  position:absolute;
-  top: 2%;
-  right: 5%; 
-  z-index: 1; 
-  display: flex;
-  align-items:baseline;
-}
-
-.userpic img {
-  width: 20%;
-  border-radius: 100%;
-  vertical-align:text-bottom;
-  margin-left: 10px;
-  transition: filter 0.3s ease;
- 
-}
-
-.userpic img:hover{
-    filter:brightness(.7);
-}
-
-.logout{
-  background-color: #B4A069;
-  color: #FFFFFF;
-  border-radius: 10px;
+/* User profile container */
+.userProfileContainer {
+  background-color: #E0E1DD;  /* Light background for contrast */
+  color: #1B263B;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  /* Subtle shadow */
+  width: fit-content;
   position: absolute;
-  bottom: -30%;
-  right: 35%;
-  width: 30%;
-  padding: 2% 3%;
+  right: 20px;  /* Position 20px from the right side of the window */
+  top: 20px;    /* Position 20px from the top of the window */
+  display: flex;
+  align-items: center;
+  margin-top: 50px;
 }
 
-.logout a{
+/* Flexbox layout for profile content */
+.userProfile {
+  display: flex;
+  align-items: center;
+}
+
+/* Style for avatar */
+.userProfile img {
+  width: 60px;  /* Adjust to make the image a good size */
+  height: 60px;
+  border-radius: 50%;  /* Circle shape */
+  margin-right: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);  /* Adds a small shadow to the avatar */
+}
+
+/* Style for username and logout button */
+.userInfo p {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #333;  /* Darker text color */
+}
+
+.logout {
+  background-color: #778DA9;
+  color: #FFFFFF;
+  border: 1px solid #000;
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.logout a {
   text-decoration: none;
   color: #FFFFFF;
 }
 
-.logout:hover{
-  background-color: #494740;
+.logout:hover {
+  background-color: #7c6c40;
 }
+
+
 
 .dashboard{
   text-align: center; 
@@ -346,7 +366,7 @@ body {
 
 .dashboxes{  
   border-radius: 10%;
-  background-color: #636363;
+  background-color: #415A77;
   padding: 10px;
   height: 75%;   
   margin: 10px;
@@ -360,7 +380,7 @@ body {
   height: 10%;
   width: 30%;
   margin: 20px;
-  background-color: #EEEEEE;  
+  background-color: #E0E1DD;  
   border-radius: 10px;
   position: relative;
   top: 20%;  
@@ -377,7 +397,7 @@ body {
 }
 
 .pending-ratio{
-background-color: #C6C6C6;
+background-color: #1B263B;
 border-radius: 10px;
 width: 80%;
 height: 40%;
@@ -386,3 +406,52 @@ left: 10%;
 top: 4%;
 }
 
+
+.userDisplay {
+  background-color: #1B263B;  /* Dark grey background */
+  color: #E0E1DD;  /* White text for contrast */
+  padding: 20px;  /* Add padding around the table */
+  border-radius: 10px;  /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Subtle shadow */
+  width: fit-content;  /* Only as wide as the content */
+  margin: 20px auto;  /* Center the table */
+}
+
+.userDisplay table {
+  width: 100%;  /* Make sure the table takes up full width of container */
+  border-collapse: collapse;  /* Remove gaps between table cells */
+}
+
+.userDisplay th, .userDisplay td {
+  padding: 10px 15px;  /* Add padding inside table cells */
+  text-align: left;  /* Align text to the left */
+}
+
+.userDisplay th {
+  background-color: #415A77;  /* Slightly lighter grey for the table headers */
+  color: #ffffff;
+  font-weight: bold;
+  text-transform: uppercase;  /* Make header text uppercase */
+}
+
+.userDisplay tr:nth-child(even) {
+  background-color: #0D1B2A;  /* Alternate row background for better readability */
+}
+
+.userDisplay tr:nth-child(odd) {
+  background-color: #0D1B2B;  /* Alternate row color */
+}
+
+.userDisplay a {
+  color: #87CEFA;  /* Light blue color for links */
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.userDisplay a:hover {
+  text-decoration: underline;  /* Underline links on hover */
+}
+
+.userDisplay tr:hover {
+  background-color: #444;  /* Highlight row on hover */
+}
