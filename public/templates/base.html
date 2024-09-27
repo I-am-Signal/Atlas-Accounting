@@ -18,8 +18,8 @@
     /> -->
   <link rel="stylesheet" href="..\static\style.css" crossorigin="anonymous" />
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='resources/favicon.ico') }}">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
   <title>{% block title %}Home{% endblock %}</title>
 </head>
 
@@ -44,9 +44,9 @@
         </div>
       </nav> -->
       <div class="logo">
-          <a href="/" id="logo">Atlas Accounting</a>
+        <a href="{{ homeRoute }}" id="logo">Atlas Accounting</a>
       </div>
-      </header>"
+      </header>
     </div>
 
     <div class="alert alter-dismissable fade show messagesContainer">

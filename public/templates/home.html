@@ -2,32 +2,32 @@
 %}
 
 <div class="userpic">
- <p> {{ user.username }} <img src="../static/resources/avatar.jpg" alt="avatar"> </p> <br>
- <button class="logout"><a href="./logout">Sign out</a></button> 
+    <p> {{ user.username }} <img src="../static/resources/avatar.jpg" alt="avatar"> </p> <br>
+    <button class="logout"><a href="./logout">Sign out</a></button>
 </div>
 
-    <div class="dashboard">
-        <h1>Dashboard</h1>
-        <p>Company ID: {{ user.company_id }}</p>
-        <div class="dashboxes">
-            <button class="dashleft"><a href="">Add User</a></button> 
-            <button class="dashleft"><a href="">View/Edit Users</a></button> <br>
-            <button class="dashleft"><a href="">Event Logs</a></button> 
-            <button class="dashleft"><a href="">Journal Entries</a></button> 
-            <button class="dashleft"><a href="">Insert Value</a></button> 
-        </div>
-        <div class="dashboxes">
-            <div class="pending-ratio">
-                <h1>Pending Jornals: </h1>
-                <!-- place pending journal logic here-->
-            </div>
-            <div class="pending-ratio">
-                <h1>Financial Ratio:    </h1>
-                <!-- Place financial ratio logic here-->
-            </div>
-            
-        </div>        
+<div class="dashboard">
+    <h1>Dashboard</h1>
+    <p>Company ID: {{ user.company_id }}</p>
+    <div class="dashboxes">
+        {{ buttons|safe }}
+        <!-- <button class="dashleft admin"><a href="#">Add User</a></button> 
+            <button class="dashleft admin"><a href="#">View/Edit Users</a></button> <br>
+            <button class="dashleft"><a href="#">Event Logs</a></button> 
+            <button class="dashleft"><a href="#">Journal Entries</a></button> 
+            <button class="dashleft"><a href="#">Insert Value</a></button>  -->
     </div>
+    <div class="dashboxes">
+        <div class="pending-ratio">
+            <h1>Pending Jornals: </h1>
+            <!-- place pending journal logic here-->
+        </div>
+        <div class="pending-ratio">
+            <h1>Financial Ratio: </h1>
+            <!-- Place financial ratio logic here-->
+        </div>
 
+    </div>
+</div>
 
 {% endblock %}

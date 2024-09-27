@@ -1,0 +1,14 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+
+<div class="userpic">
+    <p> {{ user.username }} <img src="../static/resources/avatar.jpg" alt="avatar"> </p> <br>
+    <button class="logout"><a href="./logout">Sign out</a></button>
+</div>
+<div class="page">
+    <div class="userDisplay">
+        {{ users|safe }}
+    </div>
+</div>
+
+{% endblock %}

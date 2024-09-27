@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
-from .models import User, Credential, Company
-from werkzeug.security import generate_password_hash, check_password_hash
-from . import db
 from flask_login import login_user, login_required, logout_user, current_user
+from .models import User, Credential, Company
+from . import db
+from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 
 auth = Blueprint('auth', __name__)
@@ -46,7 +46,7 @@ def login():
                 flash(f'Error: {e}')
                 
 
-    return render_template("login.html", user=current_user)
+    return render_template("login.html", user=current_user, homeRoute='/login')
 
 
 @auth.route('/logout')
@@ -168,7 +168,7 @@ def sign_up():
             db.session.commit()
             return redirect(url_for('views.home'))
 
-    return render_template("sign_up.html", user=current_user)
+    return render_template("sign_up.html", user=current_user, homeRoute='/login')
 
 @auth.route('/forgot', methods=['GET', 'POST'])
 def forgot():
@@ -208,4 +208,4 @@ def forgot():
             flash('No account found with that email and username combination.', category='error')
         db.session.commit()
 
-    return render_template("forgot.html", user=current_user)
+    return render_template("forgot.html", user=current_user, homeRoute='/login')
