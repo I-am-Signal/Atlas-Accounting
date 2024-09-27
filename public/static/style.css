@@ -38,6 +38,37 @@ body {
 .logo a:hover {
   color: #778DA9; /* Optional: you can adjust the hover effect */
 }
+.logo {
+  display: flex;
+  align-items: center; /* Vertically center the items */
+}
+
+.logo i {
+  font-size: 1.5rem;  /* Adjust the size of the globe */
+  margin-right: 10px; /* Add spacing between the globe and the text */
+  color: white;       /* Make sure the icon matches the text color */
+  transform: rotate(30deg);
+  transition: transform 0.5 ease;
+}
+
+.logo i:hover {
+  animation: rotateInfinite 2s linear infinite; /* Infinite rotation on hover */
+}
+
+/* Keyframes for infinite rotation */
+@keyframes rotateInfinite {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.logo a:hover {
+  color: #ffffff; /* Optional hover effect */
+}
+
 
 .page {
   flex-grow: 1;  /* Make the content area grow to fill available space */
@@ -59,7 +90,6 @@ body {
 
 .footer {
   background-color: #415A77;
-  height: 10vh;
   max-height: 100px;
   z-index: 1;
   text-align: center;
@@ -67,45 +97,68 @@ body {
   border-top-right-radius: 20px;
   padding: 10px;
   margin-top: auto;
+  font-size: 0.9rem;
 }
 
 .footer a {
   color: #E0E1DD;
+  margin: 0 10px;
+  transition: color 0.3s;
 }
+
+.footer a:hover {
+  color: #778DA9;
+}
+
 
 .login {
   background-color: #1B263B; 
   color: #E0E1DD;
   width: 300px;
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   z-index: 2;
   display: flex;
   flex-direction: column; /* Stack elements vertically */
   justify-content: center; /* Center the form elements inside the box */
   align-items: center;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);  
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);  
 }
 
 .login h1 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  color: #E0E1DD;
 }
 
 .login form {
   width: 100%;
+  padding: 30px;
 }
 
 .login label {
   width: 100%; /* Make labels full width */
   text-align: left; /* Align text to the left */
   margin: 5px 0; /* Add some vertical spacing */
+  font-size: 1rem;
+  margin-bottom: 15px;
 }
 
 .login input {
   border-radius: 5px;
   border-width: 0px;
   opacity: revert;
+  font-size: 1rem;
+  padding: 10px;
+  max-width: 100%; /* Ensures inputs don't take up full width */
+  box-sizing: border-box; /* Prevents padding from increasing the width */
+  margin-bottom: 15px;
+}
+
+.fa-user, .fa-lock{
+  padding-right: 5px;
+  padding-left: 5px;
 }
 
 .login input:hover {
@@ -113,15 +166,17 @@ body {
 }
 
 .login button {
-  background-color: #415A77;
-  color: #E0E1DD;
-  border-radius: 8px;  /* Make button more rounded */
-  padding: 12px 20px;  /* Increase the padding to make the button bigger */
-  font-size: 20px;  /* Increase button font size */
-  cursor: pointer;  
-  width: auto;
-  max-width: 200px;
-  margin-top: 10px;
+  background-color: #778DA9;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 10px;  /* Make button more rounded */
+  padding: 15px 25px;  /* Increase the padding to make the button bigger */
+  font-size: 1.2rem;  /* Increase button font size */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  outline: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
 }
 
 .button-container {
@@ -137,7 +192,8 @@ body {
 }
 
 .login button:hover {
-  background-color: #778DA9;
+  background-color: #415A77;
+  transform: translateY(-3px);
 }
 
 .login input {
