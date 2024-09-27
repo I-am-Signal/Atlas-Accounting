@@ -1,10 +1,33 @@
 {% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
 %}
-<h1 align="center">Dashboard</h1>
-<p>Hello {{ user.first_name }} {{ user.last_name }}</p>
-<p>Currently Signed in as: {{ user.username }}</p>
-<p>Company ID: {{ user.company_id }}</p>
 
-<p>Insert dashboard elements here</p>
-<a href="./logout">Sign out</a>
+<div class="userpic">
+ <p> {{ user.username }} <img src="../static/resources/avatar.jpg" alt="avatar"> </p> <br>
+ <button class="logout"><a href="./logout">Sign out</a></button> 
+</div>
+
+    <div class="dashboard">
+        <h1>Dashboard</h1>
+        <p>Company ID: {{ user.company_id }}</p>
+        <div class="dashboxes">
+            <button class="dashleft"><a href="">Add User</a></button> 
+            <button class="dashleft"><a href="">View/Edit Users</a></button> <br>
+            <button class="dashleft"><a href="">Event Logs</a></button> 
+            <button class="dashleft"><a href="">Journal Entries</a></button> 
+            <button class="dashleft"><a href="">Insert Value</a></button> 
+        </div>
+        <div class="dashboxes">
+            <div class="pending-ratio">
+                <h1>Pending Jornals: </h1>
+                <!-- place pending journal logic here-->
+            </div>
+            <div class="pending-ratio">
+                <h1>Financial Ratio:    </h1>
+                <!-- Place financial ratio logic here-->
+            </div>
+            
+        </div>        
+    </div>
+
+
 {% endblock %}

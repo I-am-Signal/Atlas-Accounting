@@ -295,3 +295,88 @@ background: linear-gradient(180deg, rgba(180,160,105,1) 19%, rgba(198,198,198,1)
 .forgot a:hover {
   color: #dddddd;
 }
+.userpic{
+  position:absolute;
+  top: 2%;
+  right: 5%; 
+  z-index: 1; 
+  display: flex;
+  align-items:baseline;
+}
+.userpic img {
+  width: 20%;
+  border-radius: 100%;
+  vertical-align:text-bottom;
+  margin-left: 10px;
+  transition: filter 0.3s ease;
+ 
+}
+.userpic img:hover{
+    filter:brightness(.7);
+}
+.logout{
+  background-color: #B4A069;
+  color: #FFFFFF;
+  border-radius: 10px;
+  position: absolute;
+  bottom: -30%;
+  right: 35%;
+  width: 30%;
+  padding: 2% 3%;
+  
+}
+.logout a{
+  text-decoration: none;
+  color: #FFFFFF;
+}
+.logout:hover{
+  background-color: #494740;
+}
+.dashboard{
+  text-align: center; 
+  padding: 10px;
+  width: 90%;
+  margin: 0px 5%;  
+  
+  height: 70vh;
+  position: absolute;
+  top: 15%;
+}
+.dashboxes{  
+  border-radius: 10%;
+  background-color: #636363;
+  padding: 10px;
+  height: 75%;   
+  margin: 10px;
+  position: relative;
+  float: left;
+  left: 10px;
+  width: 47%;  
+}
+.dashleft{
+  height: 10%;
+  width: 30%;
+  margin: 20px;
+  background-color: #EEEEEE;  
+  border-radius: 10px;
+  position: relative;
+  top: 20%;  
+}
+.dashleft a{
+  text-decoration: none;
+  font-size: medium;
+  color: #000000;
+}
+.dashleft:hover{
+  background-color: #494740;
+}
+.pending-ratio{
+background-color: #C6C6C6;
+border-radius: 10px;
+width: 80%;
+height: 40%;
+position: relative;
+left: 10%;
+top: 4%;
+}
+
