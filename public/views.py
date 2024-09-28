@@ -47,7 +47,6 @@ def home():
             <a href="{eventLogsLink}"><button class="dashleft">Event Logs</button></a>
             <a href="{journalEntriesLink}"><button class="dashleft">Journal Entries</button></a>
             <a href="{insertValueLink}"><button class="dashleft">Insert Value</button></a>
-            <a href="{testEmailLink}"><button class="dashleft">Test Email</button></a>
         '''
     )
 
