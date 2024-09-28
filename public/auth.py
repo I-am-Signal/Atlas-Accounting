@@ -36,12 +36,16 @@ def login():
             try:
                 # still need to implement check on if password has been failed guessed 3 times
                 password_entry = Credential.query.filter_by(user_id=user.id).first()
-                if check_password_hash(password_entry.password, password):
+                if check_password_hash(password_entry.password, password) and password_entry.failedAttempts < 3:
                     flash('Logged in successfully!', category='success')
                     login_user(user, remember=True)
+                    password_entry.failedAttempts = 0
                     return redirect(url_for('views.home'))
-                else:
+                elif password_entry.failedAttempts < 3:
                     flash('Incorrect password, try again.', category='error')
+                    password_entry.failedAttempts += 1
+                else:
+                    flash('Incorrect password was used 3 times. Your account is now suspended.')
             except Exception as e:
                 flash(f'Error: {e}')
                 
@@ -89,8 +93,8 @@ def sign_up():
     if request.method == 'POST':
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
-        addr_line_1 = request.form.get('address_line_1')
-        addr_line_2 = request.form.get('address_line_2')
+        addr_line_1 = request.form.get('addr_line_1')
+        addr_line_2 = request.form.get('addr_line_2')
         city = request.form.get('city')
         county = request.form.get('county')
         state = request.form.get('state')
@@ -104,11 +108,11 @@ def sign_up():
 
         user = User.query.filter_by(email=email).first()
         if user:
-            flash('Email already exists.', category='error')
+            flash(f'Email already exists with Company #{user.company_id}', category='error')
         elif len(first_name) < 2:
             flash('First name must be greater than 1 character.', category='error')
         elif len(last_name) < 2:
-            flash('First name must be greater than 1 character.', category='error')
+            flash('Last name must be greater than 1 character.', category='error')
         elif len(addr_line_1) < 5:
             flash('Address Line 1 must be greater than 5 characters.', category='error')
         elif len(addr_line_2) < 5 and len(addr_line_2) > 0:
@@ -131,7 +135,7 @@ def sign_up():
                 first_name=first_name, 
                 last_name=last_name,
                 addr_line_1=addr_line_1,
-                addr_line_2=addr_line_2,
+                addr_line_2=addr_line_2 if len(addr_line_1) > 5 else '',
                 city=city,
                 county=county,
                 state=state,
@@ -160,9 +164,9 @@ def sign_up():
                 db.session.add(new_company)
                 user.company_id = Company.query.filter_by(creator_of_company=user.id).first().id
                 login_user(new_user, remember=True)
-                flash('Account created! Welcome to Atlas Accounting.', category='success')
+                flash(f'Account created with username {user.username}! Welcome to Atlas Accounting.', category='success')
             else:
-                flash('Account was created. Please contact your Company administrator for account activation. Welcome to Atlas Accounting.', category='success')
+                flash(f'Account was created with username {user.username}. Please contact your Company administrator for account activation. Welcome to Atlas Accounting.', category='success')
             
             db.session.add(new_pass)
             db.session.commit()
@@ -170,23 +174,9 @@ def sign_up():
 
     return render_template("sign_up.html", user=current_user, homeRoute='/login')
 
+
 @auth.route('/forgot', methods=['GET', 'POST'])
 def forgot():
-    
-    # old tutorial code, use as a reference when building the forgot password functionality
-    # should request username and email, then provide a confirmation of reset password request via email
-    
-    # if request.method == 'POST': 
-    #     note = request.form.get('note')#Gets the note from the HTML 
-
-    #     if len(note) < 1:
-    #         flash('Note is too short!', category='error') 
-    #     else:
-    #         new_note = Note(data=note, user_id=current_user.id)  #providing the schema for the note 
-    #         db.session.add(new_note) #adding the note to the database 
-    #         db.session.commit()
-    #         flash('Note added!', category='success')
-
     if request.method == 'POST':
         email = request.form.get('email')
         username = request.form.get('username')
@@ -201,7 +191,7 @@ def forgot():
         
         if user:
             # Send email logic (implement this function to send email)
-            #send_reset_email(user)
+            # sendResetEmail(user)
             flash('A reset email has been sent!', category='success')
             return redirect(url_for('auth.login'))
         else:

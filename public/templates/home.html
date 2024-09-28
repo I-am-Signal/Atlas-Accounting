@@ -8,7 +8,7 @@
         <!-- Username and Sign Out Button -->
         <div class="userInfo">
             <p>{{ user.username }}</p>
-            <button class="logout"><a href="./logout">Sign out</a></button>
+            <button class="logout" onclick="window.location.href='./logout';">Sign out</button>
         </div>
     </div>
 </div> 
@@ -18,11 +18,6 @@
     <p>Company ID: {{ user.company_id }}</p>
     <div class="dashboxes">
         {{ buttons|safe }}
-        <!-- <button class="dashleft admin"><a href="#">Add User</a></button> 
-            <button class="dashleft admin"><a href="#">View/Edit Users</a></button> <br>
-            <button class="dashleft"><a href="#">Event Logs</a></button> 
-            <button class="dashleft"><a href="#">Journal Entries</a></button> 
-            <button class="dashleft"><a href="#">Insert Value</a></button>  -->
     </div>
     <div class="dashboxes">
         <div class="pending-ratio">
