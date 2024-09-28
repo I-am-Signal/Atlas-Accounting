@@ -4,11 +4,11 @@ from flask_login import login_required, current_user
 from .models import User, Credential, Company, Suspension
 from werkzeug.security import  check_password_hash
 from . import db
-<<<<<<< HEAD
+
 from datetime import datetime,timedelta
-=======
+
 from datetime import datetime, timedelta
->>>>>>> 4951ba0 (Migrating files from main)
+
 import json
 
 
