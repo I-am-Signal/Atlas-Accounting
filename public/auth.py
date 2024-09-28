@@ -1,12 +1,68 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, get_flashed_messages
 from flask_login import login_user, login_required, logout_user, current_user
+from functools import wraps
 from .models import User, Credential, Company
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
+from sqlalchemy import desc
 
 auth = Blueprint('auth', __name__)
 
+
+def login_required_with_password_expiration(f):
+    @wraps(f)
+    @login_required
+    def login_with_expiration(*args, **kwargs):
+        link_html = f'<a href="{
+                url_for('auth.update_password')
+            }"> Click here</a>'
+
+        curr_pass = Credential.query.filter_by(
+            user_id=current_user.id
+        ).order_by(desc(Credential.create_date)).first()
+        
+        # password has expired
+        if datetime.now() >= curr_pass.expirationDate:
+            get_flashed_messages() # clears the login success message
+            flash((f'Your password has expired. Please use forgot password to change your password.'))
+            # no idea if this will actually log you out if password has expired
+            return redirect(url_for('auth.logout')) 
+        
+        # password will expire with 7 days
+        elif datetime.now() > (curr_pass.expirationDate - timedelta(days=7)):
+            flash ((f'Password will expire soon. {link_html}'))
+        
+        return f(*args, **kwargs)
+    return login_with_expiration
+
+def checkIfPassIsValid(password):
+        if len(password) < 8:
+            return 'Password must be at least 8 characters.'
+        elif not password[0].isalpha():
+            return 'Password must begin with an alphabetical letter.'
+        
+        hasLetter = False
+        hasNumber = False
+        hasSpecial = False
+        
+        specialChars = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/\\"
+        
+        for char in password:
+            if char.isalpha():
+                hasLetter = True
+            elif char.isdigit():
+                hasNumber = True
+            elif char in specialChars:
+                hasSpecial = True
+        if not hasLetter:
+            return 'Password must contain at least one letter.'
+        elif not hasNumber:
+            return 'Password must contain at least one number.'
+        elif not hasSpecial:
+            return 'Password must contain at least one special character.'
+        
+        return 'valid'
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -36,17 +92,21 @@ def login():
         if checkIfAccountCanLogIn(user):
             try:
                 # still need to implement check on if password has been failed guessed 3 times
-                password_entry = Credential.query.filter_by(user_id=user.id).first()
+                password_entry = Credential.query.filter_by(
+                    user_id=user.id
+                ).order_by(desc(Credential.create_date)).first()
+                
                 if check_password_hash(password_entry.password, password) and password_entry.failedAttempts < 3:
-                    flash('Logged in successfully!', category='success')
                     login_user(user, remember=True)
+                    flash('Logged in successfully!', category='success')
                     password_entry.failedAttempts = 0
                     return redirect(url_for('views.home'))
                 elif password_entry.failedAttempts < 3:
                     flash('Incorrect password, try again.', category='error')
                     password_entry.failedAttempts += 1
                 else:
-                    flash('Incorrect password was used 3 times. Your account is now suspended.')
+                    flash('Incorrect password was used 3 or more times. Your account is now suspended.')
+                    # 
             except Exception as e:
                 flash(f'Error: {e}')
                 
@@ -65,33 +125,6 @@ def logout():
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
     """Loads the Sign Up page and handles its logic"""
-    def checkIfPassIsValid(password):
-        if len(password) < 8:
-            return 'Password must be at least 8 characters.'
-        elif not password[0].isalpha():
-            return 'Password must begin with an alphabetical letter.'
-        
-        hasLetter = False
-        hasNumber = False
-        hasSpecial = False
-        
-        specialChars = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/\\"
-        
-        for char in password:
-            if char.isalpha():
-                hasLetter = True
-            elif char.isdigit():
-                hasNumber = True
-            elif char in specialChars:
-                hasSpecial = True
-        if not hasLetter:
-            return 'Password must contain at least one letter.'
-        elif not hasNumber:
-            return 'Password must contain at least one number.'
-        elif not hasSpecial:
-            return 'Password must contain at least one special character.'
-        
-        return 'valid'
     
     if request.method == 'POST':
         first_name = request.form.get('first_name')
@@ -184,22 +217,67 @@ def forgot():
     if request.method == 'POST':
         email = request.form.get('email')
         username = request.form.get('username')
-
-        if len(email) < 1:
-             flash('Please enter Email!', category='error') 
-             
-        if len(username) < 1:
-             flash('Please enter User Name!', category='error') 
         
         user = User.query.filter_by(email=email, username=username).first()
         
         if user:
             # Send email logic (implement this function to send email)
             # sendResetEmail(user)
-            flash('A reset email has been sent!', category='success')
+            flash('Implement email and reset logic', category='success')
+            # flash('A reset email has been sent!', category='success')
             return redirect(url_for('auth.login'))
         else:
             flash('No account found with that email and username combination.', category='error')
         db.session.commit()
 
     return render_template("forgot.html", user=current_user, homeRoute='/login')
+
+
+@auth.route('/update_password', methods=['GET', 'POST'])
+@login_required
+def update_password():
+    """Loads the update password page and handles its logic"""
+    if request.method == 'POST':      
+        
+        previous_passwords = Credential.query.filter_by(
+            user_id=current_user.id
+        ).order_by(desc(Credential.create_date)).all()
+
+        curr_password = request.form.get('password')
+        newpassword = request.form.get('newpassword')
+        confirmpassword = request.form.get('confirmpassword')
+        
+        password_validity = checkIfPassIsValid(newpassword)
+        
+        def checkAllPreviousPasswords(passToCheck):
+            for password_hash in previous_passwords:
+                if check_password_hash(password_hash.password, passToCheck):
+                    return True
+            return False
+        
+        # check if curr_password from form is the same as saved current password
+        if not check_password_hash(previous_passwords[0].password, curr_password):
+            flash('Original password was incorrect.', category='error')
+        elif 'valid' != password_validity: # check if new password is valid
+            flash(password_validity, category='error')
+        elif checkAllPreviousPasswords(newpassword): # check if new password == an old one
+            flash('New password cannot be a previously used password.')
+        elif newpassword != confirmpassword: # check if new == confirm
+            flash('New Password and Confirmation must match.', category='error')
+        else:
+            new_pass = Credential(
+                user_id=current_user.id,
+                password=generate_password_hash(
+                    newpassword, method='pbkdf2:sha256'
+                )
+            )
+            
+            db.session.add(new_pass)
+            db.session.commit()
+            flash('Your password was updated successfully.')
+            return redirect(url_for('views.home'))
+    
+    return render_template(
+        "update_password.html", 
+        user=current_user,
+        homeRoute='/')

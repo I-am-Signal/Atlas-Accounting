@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 
 class BaseColumnMixin:
     id = db.Column(db.Integer, primary_key=True)
-    create_date = db.Column(db.DateTime, default=func.now())
-    modify_date = db.Column(db.DateTime, default=func.now(), onupdate=func.now())
+    create_date = db.Column(db.DateTime, default=datetime.now())
+    modify_date = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
 class User(db.Model, UserMixin, BaseColumnMixin):
     is_activated = db.Column(db.Boolean, default=False)

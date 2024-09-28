@@ -38,14 +38,14 @@
       messages %} {% for category, message in messages %} {% if category ==
       'error' %}
       <div class="alert-danger messagePopUp" role="alert">
-        {{ message }}
+        {{ message|safe }}
         <button type="button" class="close" data-dismiss="alert">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       {% else %}
       <div class="alert-success messagePopUp" role="alert">
-        {{ message }}
+        {{ message|safe }}
         <button type="button" class="close" data-dismiss="alert">
           <span aria-hidden="true">&times;</span>
         </button>
