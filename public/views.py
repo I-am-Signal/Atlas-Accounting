@@ -15,7 +15,7 @@ def home():
     adminAccessible = ''
     if 'administrator' == current_user.role:
         viewUsersLink = url_for('views.view_users')
-        adminAccessible=f'<button class="dashleft admin"><a href="{viewUsersLink}">View/Edit Users</a></button>'
+        adminAccessible=f'<a href="{viewUsersLink}"><button class="dashleft admin">View/Edit Users</button></a>'
     
     eventLogsLink = '#'
     journalEntriesLink = '#'
@@ -26,9 +26,9 @@ def home():
         user=current_user,
         homeRoute='/',
         buttons=f'''{adminAccessible}
-            <button class="dashleft"><a href="{eventLogsLink}">Event Logs</a></button>
-            <button class="dashleft"><a href="{journalEntriesLink}">Journal Entries</a></button>
-            <button class="dashleft"><a href="{insertValueLink}">Insert Value</a></button>
+            <a href="{eventLogsLink}"><button class="dashleft">Event Logs</button></a>
+            <a href="{journalEntriesLink}"><button class="dashleft">Journal Entries</button></a>
+            <a href="{insertValueLink}"><button class="dashleft">Insert Value</button></a>
         '''
     )
 
