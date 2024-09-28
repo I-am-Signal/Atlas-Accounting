@@ -33,9 +33,7 @@ def home():
 
     #change to actual experiation date after testing is done 
     current_time = datetime.now()
-    expire_date = current_user.create_date + timedelta(minutes=10)
-    flash(expire_date)
-    flash(current_time)
+    expire_date = current_user.create_date + timedelta(minutes=10)    
     
     if current_time >= (expire_date - timedelta(minutes=3)):
         flash ((f'Password is about to Expire {link_html}'))  
