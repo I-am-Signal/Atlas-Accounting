@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
+from markupsafe import Markup
 from flask_login import login_required, current_user
 from .models import User, Credential, Company, Suspension
+from werkzeug.security import  check_password_hash
 from . import db
 from datetime import datetime, timedelta
 import json
@@ -21,6 +23,7 @@ def home():
     journalEntriesLink = '#'
     insertValueLink = '#'
     testEmailLink = url_for('email.send')
+    
     updatePasswordLink = url_for('auth.update_password', username = current_user.username)
     link_html = f'<a href="{updatePasswordLink}"> Click here</a>'
 
@@ -35,7 +38,6 @@ def home():
     elif current_time >= expire_date:
         flash((f'Password is Expired {link_html}'))  
         #abstract to login required
-
     
     return render_template(
         "home.html",
