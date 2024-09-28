@@ -203,3 +203,77 @@ def forgot():
         db.session.commit()
 
     return render_template("forgot.html", user=current_user, homeRoute='/login')
+
+@auth.route('/update_password', methods=['GET', 'POST'])
+@login_required
+def update_password():
+    """Loads the update password page and handles its logic"""
+    def checkIfPassIsValid(newpassword):
+        if len(newpassword) < 8:
+            return 'Password must be at least 8 characters.'
+        elif not newpassword[0].isalpha():
+            return 'Password must begin with an alphabetical letter.'
+        
+        hasLetter = False
+        hasNumber = False
+        hasSpecial = False
+        
+        specialChars = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/\\"
+        
+        for char in newpassword:
+            if char.isalpha():
+                hasLetter = True
+            elif char.isdigit():
+                hasNumber = True
+            elif char in specialChars:
+                hasSpecial = True
+        if not hasLetter:
+            return 'Password must contain at least one letter.'
+        elif not hasNumber:
+            return 'Password must contain at least one number.'
+        elif not hasSpecial:
+            return 'Password must contain at least one special character.'
+        
+        return 'valid'
+
+
+    if request.method == 'POST':
+        username = request.args.get('username')       
+        user = User.query.filter_by(username=username).first()
+
+        password = request.form.get('password')
+        newpassword = request.form.get('newpassword')
+        confirmpassword = request.form.get('confirmpassword')
+
+        password_validity = checkIfPassIsValid(newpassword)
+        
+    
+       #compare passwords logic needs work cant pull original password
+        userPassword = Credential.query.filter_by(user_id=user.id).first()
+        
+        #change user password variable to filter by create date
+        if len(password) < 1:
+             flash('Please enter Password!', category='error') 
+        elif check_password_hash(userPassword.password, password):
+           flash('Incorrect Password')             
+        elif len(newpassword) < 1:
+             flash('Please enter New Password!', category='error')
+        elif 'valid' != password_validity:
+            flash(password_validity, category='error')
+        elif newpassword != confirmpassword:
+            flash('New Password and Comfirmation must match!')   
+        else:
+            new_pass = Credential(
+                user_id=user.id,
+                password=generate_password_hash(
+                    newpassword, method='pbkdf2:sha256'
+                )
+            )
+             
+            db.session.add(new_pass)
+            db.session.commit()
+
+    return render_template(
+        "update_password.html", 
+        user=current_user,
+        homeRoute='/')
