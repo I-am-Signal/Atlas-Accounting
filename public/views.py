@@ -1,8 +1,10 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
+from markupsafe import Markup
 from flask_login import login_required, current_user
 from .models import User, Credential, Company, Suspension
+from werkzeug.security import  check_password_hash
 from . import db
-from datetime import datetime
+from datetime import datetime,timedelta
 import json
 
 
@@ -21,6 +23,24 @@ def home():
     journalEntriesLink = '#'
     insertValueLink = '#'
     testEmailLink = url_for('email.send')
+<<<<<<< HEAD
+=======
+    updatePasswordLink = url_for('auth.update_password', username = current_user.username)
+    link_html = f'<a href="{updatePasswordLink}"> Click here</a>'
+
+    #change to actual experiation date after testing is done 
+    current_time = datetime.now()
+    expire_date = current_user.create_date + timedelta(minutes=10)
+    flash(expire_date)
+    flash(current_time)
+    
+    if current_time >= (expire_date - timedelta(minutes=3)):
+        flash ((f'Password is about to Expire {link_html}'))  
+    elif current_time >= expire_date:
+        flash((f'Password is Expired {link_html}'))  
+        #abstract to login required
+
+>>>>>>> 496b77e161502779e22e0c8844c29f2b4f05737e
     
     return render_template(
         "home.html",
@@ -219,4 +239,9 @@ def user():
         )
     
     flash('Your account does not have the right clearance within your Company to view this page.')
+<<<<<<< HEAD
     return redirect(url_for('views.home'))
+=======
+    return redirect(url_for('views.home'))
+
+>>>>>>> 496b77e161502779e22e0c8844c29f2b4f05737e
