@@ -48,9 +48,7 @@ def create_app():
         return User.query.get(int(id))
     
     @app.errorhandler(404)
-    def page_not_found(e):
-
-        """Loads the 404 page"""
+    def page_not_found(e):   
 
         """Loads the 404 page"""
 
