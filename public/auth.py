@@ -180,7 +180,10 @@ def sign_up():
 
 @auth.route('/forgot', methods=['GET', 'POST'])
 def forgot():
+<<<<<<< HEAD
     """Loads the Forgot Password? page and handles its logic"""
+=======
+>>>>>>> a43b7e9 (Alembic is setup (i think), new additions to input validation for viewing users, error page and 404 handling)
     if request.method == 'POST':
         email = request.form.get('email')
         username = request.form.get('username')

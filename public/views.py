@@ -220,9 +220,12 @@ def user():
                 <button type='button' onclick="window.location.href='{ 
                     url_for('views.view_users')
                 }'">Cancel Changes</button>
+<<<<<<< HEAD
                 <button type='button' onclick="window.location.href='{
                     url_for('suspend.suspensions', id=userInfo.id)
                 }'">View Suspensions</button>
+=======
+>>>>>>> a43b7e9 (Alembic is setup (i think), new additions to input validation for viewing users, error page and 404 handling)
             </form>
         '''
         return display
@@ -236,5 +239,9 @@ def user():
         )
     
     flash('Your account does not have the right clearance within your Company to view this page.')
+<<<<<<< HEAD
     return redirect(url_for('views.home'))
 
+=======
+    return redirect(url_for('views.home'))
+>>>>>>> a43b7e9 (Alembic is setup (i think), new additions to input validation for viewing users, error page and 404 handling)
