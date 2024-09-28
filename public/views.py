@@ -23,7 +23,6 @@ def home():
     insertValueLink = '#'
     testEmailLink = url_for('email.send')
 
-    
     return render_template(
         "home.html",
         user=current_user,
@@ -216,9 +215,15 @@ def user():
                 <button type='button' onclick="window.location.href='{ 
                     url_for('views.view_users')
                 }'">Cancel Changes</button>
+
                 <button type='button' onclick="window.location.href='{
                     url_for('suspend.suspensions', id=userInfo.id)
                 }'">View Suspensions</button>
+
+                <button type='button' onclick="window.location.href='{
+                    url_for('suspend.suspensions', id=userInfo.id)
+                }'">View Suspensions</button>
+
             </form>
         '''
         return display
@@ -232,4 +237,9 @@ def user():
         )
     
     flash('Your account does not have the right clearance within your Company to view this page.')
+
     return redirect(url_for('views.home'))
+
+
+
+

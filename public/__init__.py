@@ -42,8 +42,10 @@ def create_app():
         return User.query.get(int(id))
     
     @app.errorhandler(404)
-    def page_not_found(e):
+    def page_not_found(e):   
+
         """Loads the 404 page"""
+
         return render_template(
         "error.html",
         error_header='Error 404 - Page Not Found',

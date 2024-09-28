@@ -213,7 +213,9 @@ def sign_up():
 
 @auth.route('/forgot', methods=['GET', 'POST'])
 def forgot():
+
     """Loads the Forgot Password? page and handles its logic"""
+
     if request.method == 'POST':
         email = request.form.get('email')
         username = request.form.get('username')
@@ -230,7 +232,11 @@ def forgot():
             flash('No account found with that email and username combination.', category='error')
         db.session.commit()
 
-    return render_template("forgot.html", user=current_user, homeRoute='/login')
+    return render_template(
+      "forgot.html",
+      user=current_user,
+      homeRoute='/login'
+    )
 
 
 @auth.route('/update_password', methods=['GET', 'POST'])
