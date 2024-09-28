@@ -23,8 +23,6 @@ def home():
     journalEntriesLink = '#'
     insertValueLink = '#'
     testEmailLink = url_for('email.send')
-<<<<<<< HEAD
-=======
     updatePasswordLink = url_for('auth.update_password', username = current_user.username)
     link_html = f'<a href="{updatePasswordLink}"> Click here</a>'
 
@@ -40,7 +38,6 @@ def home():
         flash((f'Password is Expired {link_html}'))  
         #abstract to login required
 
->>>>>>> 496b77e161502779e22e0c8844c29f2b4f05737e
     
     return render_template(
         "home.html",
@@ -239,9 +236,5 @@ def user():
         )
     
     flash('Your account does not have the right clearance within your Company to view this page.')
-<<<<<<< HEAD
-    return redirect(url_for('views.home'))
-=======
     return redirect(url_for('views.home'))
 
->>>>>>> 496b77e161502779e22e0c8844c29f2b4f05737e

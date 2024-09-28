@@ -202,9 +202,6 @@ def forgot():
             flash('No account found with that email and username combination.', category='error')
         db.session.commit()
 
-<<<<<<< HEAD
-    return render_template("forgot.html", user=current_user, homeRoute='/login')
-=======
     return render_template("forgot.html", user=current_user, homeRoute='/login')
 
 @auth.route('/update_password', methods=['GET', 'POST'])
@@ -280,4 +277,3 @@ def update_password():
         "update_password.html", 
         user=current_user,
         homeRoute='/')
->>>>>>> 496b77e161502779e22e0c8844c29f2b4f05737e
