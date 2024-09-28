@@ -1,24 +1,19 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
-from markupsafe import Markup
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from .models import User, Credential, Company, Suspension
-from werkzeug.security import  check_password_hash
+from .models import User, Company, Credential
 from . import db
-
-from datetime import datetime,timedelta
-
-from datetime import datetime, timedelta
-
-import json
+from .auth import login_required_with_password_expiration
+from datetime import datetime
+from sqlalchemy import desc
 
 
 views = Blueprint('views', __name__)
 
 
 @views.route('/', methods=['GET', 'POST'])
-@login_required
+@login_required_with_password_expiration
 def home():
-    adminAccessible = ''
+    adminAccessible = None
     if 'administrator' == current_user.role:
         viewUsersLink = url_for('views.view_users')
         adminAccessible=f'<a href="{viewUsersLink}"><button class="dashleft admin">View/Edit Users</button></a>'
@@ -28,25 +23,11 @@ def home():
     insertValueLink = '#'
     testEmailLink = url_for('email.send')
 
-    updatePasswordLink = url_for('auth.update_password', username = current_user.username)
-    link_html = f'<a href="{updatePasswordLink}"> Click here</a>'
-
-    #change to actual experiation date after testing is done 
-    current_time = datetime.now()
-    expire_date = current_user.create_date + timedelta(minutes=10)    
-    
-    if current_time >= (expire_date - timedelta(minutes=3)):
-        flash ((f'Password is about to Expire {link_html}'))  
-    elif current_time >= expire_date:
-        flash((f'Password is Expired {link_html}'))  
-        #abstract to login required
-
-
     return render_template(
         "home.html",
         user=current_user,
         homeRoute='/',
-        buttons=f'''{adminAccessible}
+        buttons=f'''{adminAccessible if adminAccessible else ''}
             <a href="{eventLogsLink}"><button class="dashleft">Event Logs</button></a>
             <a href="{journalEntriesLink}"><button class="dashleft">Journal Entries</button></a>
             <a href="{insertValueLink}"><button class="dashleft">Insert Value</button></a>
@@ -119,6 +100,10 @@ def user():
     except Exception as e:
         flash('Error: invalid user id')
         return redirect(url_for('auth.login'))
+    
+    curr_pass = Credential.query.filter_by(
+        user_id=user_id
+    ).order_by(desc(Credential.create_date)).first()
 
     userInfo = User.query.filter_by(id=user_id).first()
     
@@ -164,6 +149,8 @@ def user():
             userInfo.state = request.form.get('state')
             userInfo.dob = datetime.strptime(request.form.get('dob'), "%Y-%m-%d")
             userInfo.role = request.form.get('role')
+            
+            curr_pass.expirationDate = datetime.strptime(request.form.get('start'), '%Y-%m-%dT%H:%M')
             
             db.session.commit()
             flash('Information for User ' + userInfo.username + ' was successfully changed!', category='success')
@@ -218,6 +205,11 @@ def user():
                     <option value='manager' {'selected' if userInfo.role == 'manager' else ''}>Manager</option>
                     <option value='user' {'selected' if userInfo.role == 'user' else ''}>User</option>
                 </select><br>
+                
+                <label for='test_expiration'>TEST EXPIRATION</label>
+                <input id="start" name="start" type="datetime-local" value="{
+                    curr_pass.expirationDate.strftime('%Y-%m-%dT%H:%M') if curr_pass.expirationDate else '' 
+                }"><br>
 
                 <button type='submit'>Submit</button>
                 <button type='button' onclick="window.location.href='{ 
