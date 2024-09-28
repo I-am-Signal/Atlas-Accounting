@@ -20,6 +20,7 @@ def home():
     eventLogsLink = '#'
     journalEntriesLink = '#'
     insertValueLink = '#'
+    testEmailLink = url_for('email.send')
     
     return render_template(
         "home.html",
@@ -29,6 +30,7 @@ def home():
             <a href="{eventLogsLink}"><button class="dashleft">Event Logs</button></a>
             <a href="{journalEntriesLink}"><button class="dashleft">Journal Entries</button></a>
             <a href="{insertValueLink}"><button class="dashleft">Insert Value</button></a>
+            <a href="{testEmailLink}"><button class="dashleft">Test Email</button></a>
         '''
     )
 
@@ -201,6 +203,9 @@ def user():
                 <button type='button' onclick="window.location.href='{ 
                     url_for('views.view_users')
                 }'">Cancel Changes</button>
+                <button type='button' onclick="window.location.href='{
+                    url_for('suspend.suspensions', id=userInfo.id)
+                }'">View Suspensions</button>
             </form>
         '''
         return display
