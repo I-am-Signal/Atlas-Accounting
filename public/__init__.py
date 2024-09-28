@@ -9,7 +9,8 @@ from flask import Flask, render_template, flash
 >>>>>>> 39d1701 (Email and Suspension Additions (neither is complete))
 from flask_sqlalchemy import SQLAlchemy
 from os import path
-from flask_login import LoginManager
+from functools import wraps
+from flask_login import LoginManager, login_required, current_user
 from .config import SECRET_KEY, DB_NAME
 
 db = SQLAlchemy()
@@ -64,9 +65,21 @@ def create_app():
         error_msg='Sorry, the page you are looking for does not exist.',
         homeRoute='/'
     ), 404
+        
+
 
     return app
 
+def login_required_with_password_expiration(f):
+    @wraps(f)
+    @login_required
+    def login_with_expiration(*args, **kwargs):
+        # get most recent password
+        # check if now is < expiration date
+        # notify user to change if expiration is one week or less
+        
+        return f(*args, **kwargs)
+    return login_with_expiration
 
 def create_database(app):
     """Creates the database using the predefined models"""

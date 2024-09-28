@@ -4,7 +4,11 @@ from flask_login import login_required, current_user
 from .models import User, Credential, Company, Suspension
 from werkzeug.security import  check_password_hash
 from . import db
+<<<<<<< HEAD
 from datetime import datetime,timedelta
+=======
+from datetime import datetime, timedelta
+>>>>>>> 4951ba0 (Migrating files from main)
 import json
 
 
@@ -25,8 +29,11 @@ def home():
     testEmailLink = url_for('email.send')
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> fdb32fc (weird spaces)
+=======
+>>>>>>> 4951ba0 (Migrating files from main)
     updatePasswordLink = url_for('auth.update_password', username = current_user.username)
     link_html = f'<a href="{updatePasswordLink}"> Click here</a>'
 
@@ -43,10 +50,13 @@ def home():
         #abstract to login required
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 39d1701 (Email and Suspension Additions (neither is complete))
 =======
 >>>>>>> fdb32fc (weird spaces)
+=======
+>>>>>>> 4951ba0 (Migrating files from main)
     
     return render_template(
         "home.html",
