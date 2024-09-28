@@ -10,6 +10,7 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
+    """Loads the Login page and handles its logic"""
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -56,12 +57,14 @@ def login():
 @auth.route('/logout')
 @login_required
 def logout():
+    """Logs out the current user"""
     logout_user()
     return redirect(url_for('auth.login'))
 
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
+    """Loads the Sign Up page and handles its logic"""
     def checkIfPassIsValid(password):
         if len(password) < 8:
             return 'Password must be at least 8 characters.'
@@ -177,6 +180,7 @@ def sign_up():
 
 @auth.route('/forgot', methods=['GET', 'POST'])
 def forgot():
+    """Loads the Forgot Password? page and handles its logic"""
     if request.method == 'POST':
         email = request.form.get('email')
         username = request.form.get('username')
