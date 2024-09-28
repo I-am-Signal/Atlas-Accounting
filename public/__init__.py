@@ -1,12 +1,10 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
+
 from flask import Flask, render_template, flash
-=======
+
 from flask import Flask, render_template
->>>>>>> a43b7e9 (Alembic is setup (i think), new additions to input validation for viewing users, error page and 404 handling)
-=======
+
 from flask import Flask, render_template, flash
->>>>>>> 39d1701 (Email and Suspension Additions (neither is complete))
+
 from flask_sqlalchemy import SQLAlchemy
 from os import path
 from functools import wraps
@@ -51,14 +49,11 @@ def create_app():
     
     @app.errorhandler(404)
     def page_not_found(e):
-<<<<<<< HEAD
-<<<<<<< HEAD
+
         """Loads the 404 page"""
-=======
->>>>>>> a43b7e9 (Alembic is setup (i think), new additions to input validation for viewing users, error page and 404 handling)
-=======
+
         """Loads the 404 page"""
->>>>>>> 39d1701 (Email and Suspension Additions (neither is complete))
+
         return render_template(
         "error.html",
         error_header='Error 404 - Page Not Found',
