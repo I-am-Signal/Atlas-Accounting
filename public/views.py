@@ -24,6 +24,9 @@ def home():
     insertValueLink = '#'
     testEmailLink = url_for('email.send')
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fdb32fc (weird spaces)
     updatePasswordLink = url_for('auth.update_password', username = current_user.username)
     link_html = f'<a href="{updatePasswordLink}"> Click here</a>'
 
@@ -39,8 +42,11 @@ def home():
         flash((f'Password is Expired {link_html}'))  
         #abstract to login required
 
+<<<<<<< HEAD
 =======
 >>>>>>> 39d1701 (Email and Suspension Additions (neither is complete))
+=======
+>>>>>>> fdb32fc (weird spaces)
     
     return render_template(
         "home.html",
@@ -249,8 +255,13 @@ def user():
     
     flash('Your account does not have the right clearance within your Company to view this page.')
 <<<<<<< HEAD
+<<<<<<< HEAD
     return redirect(url_for('views.home'))
 
 =======
     return redirect(url_for('views.home'))
 >>>>>>> a43b7e9 (Alembic is setup (i think), new additions to input validation for viewing users, error page and 404 handling)
+=======
+    return redirect(url_for('views.home'))
+
+>>>>>>> fdb32fc (weird spaces)

@@ -210,6 +210,9 @@ def forgot():
         db.session.commit()
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fdb32fc (weird spaces)
     return render_template("forgot.html", user=current_user, homeRoute='/login')
 
 @auth.route('/update_password', methods=['GET', 'POST'])
@@ -285,6 +288,9 @@ def update_password():
         "update_password.html", 
         user=current_user,
         homeRoute='/')
+<<<<<<< HEAD
 =======
     return render_template("forgot.html", user=current_user, homeRoute='/login')
 >>>>>>> 39d1701 (Email and Suspension Additions (neither is complete))
+=======
+>>>>>>> fdb32fc (weird spaces)
