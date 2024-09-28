@@ -42,6 +42,7 @@ def home():
             <button class="dashleft"><a href="{eventLogsLink}">Event Logs</a></button>
             <button class="dashleft"><a href="{journalEntriesLink}">Journal Entries</a></button>
             <button class="dashleft"><a href="{insertValueLink}">Insert Value</a></button>
+            
         '''
     )
 
@@ -196,6 +197,40 @@ def user():
             user=current_user,
             homeRoute='/',
             user_viewed=getUserInfo()
+        )
+    
+    flash('Your account does not have the right clearance within your Company to view this page.')
+    return render_template(
+        "home.html",
+        user=current_user,
+        homeRoute='/'
+    )
+
+@views.route('/email', methods=['GET', 'POST'])
+@login_required
+def email():        
+    def getEmailInfo():
+        display = f'''
+            <a href=''>Back</a> <br />
+        
+            <form method='POST' enctype='application/json'>
+                <p>User ID: </p>
+                <input type="email" id="email" placeholder="Recipient's email" required><br>
+                <input type="text" id="subject" placeholder="Subject" required><br>
+                <textarea id="message" placeholder="Message" required></textarea><br>
+                <button type="submit">Send Email</button>
+                
+                
+            </form>
+        '''
+        return display
+    
+    if 'administrator' == current_user.role:
+        return render_template(
+            "email.html",
+            user=current_user,
+            homeRoute='/',
+            send_email=getEmailInfo()
         )
     
     flash('Your account does not have the right clearance within your Company to view this page.')

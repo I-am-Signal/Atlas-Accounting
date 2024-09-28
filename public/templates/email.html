@@ -1,0 +1,47 @@
+{% extends "base.html" %} {% block title %}Sign Up{% endblock %} {% block content
+%}
+<div class="userProfileContainer">
+    <div class="userProfile">
+        <!-- Profile Picture -->
+        <img src="../static/resources/avatar.jpg" alt="avatar">
+        
+        <!-- Username and Sign Out Button -->
+        <div class="userInfo">
+            <p>{{ user.username }}</p>
+            <button class="logout"><a href="./logout">Sign out</a></button>
+            <button class="logout"><a href="./email">Email</a></button>
+        </div>
+    </div>
+</div>
+    
+
+<div class="page">
+    {{ send_email|safe }}
+</div>
+
+<script>
+
+    function sendData(){
+        
+        const email = document.getElementById("email").value;
+        const subject = document.getElementById("subject").value;
+        const message = document.getElementById("message").value;
+    
+        $.ajax({
+            url:'/send_email',
+            method: 'POST',
+            data: { 'data': value },
+                success: function(response) {
+                    document.getElementById('output').innerHTML = response;
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        }
+            
+        
+        
+    </script>
+{% endblock %}
+
