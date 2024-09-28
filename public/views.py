@@ -23,6 +23,7 @@ def home():
     journalEntriesLink = '#'
     insertValueLink = '#'
     testEmailLink = url_for('email.send')
+<<<<<<< HEAD
     updatePasswordLink = url_for('auth.update_password', username = current_user.username)
     link_html = f'<a href="{updatePasswordLink}"> Click here</a>'
 
@@ -38,6 +39,8 @@ def home():
         flash((f'Password is Expired {link_html}'))  
         #abstract to login required
 
+=======
+>>>>>>> 39d1701 (Email and Suspension Additions (neither is complete))
     
     return render_template(
         "home.html",
@@ -47,6 +50,7 @@ def home():
             <a href="{eventLogsLink}"><button class="dashleft">Event Logs</button></a>
             <a href="{journalEntriesLink}"><button class="dashleft">Journal Entries</button></a>
             <a href="{insertValueLink}"><button class="dashleft">Insert Value</button></a>
+            <a href="{testEmailLink}"><button class="dashleft">Test Email</button></a>
         '''
     )
 
@@ -220,11 +224,17 @@ def user():
                     url_for('views.view_users')
                 }'">Cancel Changes</button>
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <button type='button' onclick="window.location.href='{
                     url_for('suspend.suspensions', id=userInfo.id)
                 }'">View Suspensions</button>
 =======
 >>>>>>> a43b7e9 (Alembic is setup (i think), new additions to input validation for viewing users, error page and 404 handling)
+=======
+                <button type='button' onclick="window.location.href='{
+                    url_for('suspend.suspensions', id=userInfo.id)
+                }'">View Suspensions</button>
+>>>>>>> 39d1701 (Email and Suspension Additions (neither is complete))
             </form>
         '''
         return display

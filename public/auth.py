@@ -181,9 +181,13 @@ def sign_up():
 @auth.route('/forgot', methods=['GET', 'POST'])
 def forgot():
 <<<<<<< HEAD
+<<<<<<< HEAD
     """Loads the Forgot Password? page and handles its logic"""
 =======
 >>>>>>> a43b7e9 (Alembic is setup (i think), new additions to input validation for viewing users, error page and 404 handling)
+=======
+    """Loads the Forgot Password? page and handles its logic"""
+>>>>>>> 39d1701 (Email and Suspension Additions (neither is complete))
     if request.method == 'POST':
         email = request.form.get('email')
         username = request.form.get('username')
@@ -205,6 +209,7 @@ def forgot():
             flash('No account found with that email and username combination.', category='error')
         db.session.commit()
 
+<<<<<<< HEAD
     return render_template("forgot.html", user=current_user, homeRoute='/login')
 
 @auth.route('/update_password', methods=['GET', 'POST'])
@@ -280,3 +285,6 @@ def update_password():
         "update_password.html", 
         user=current_user,
         homeRoute='/')
+=======
+    return render_template("forgot.html", user=current_user, homeRoute='/login')
+>>>>>>> 39d1701 (Email and Suspension Additions (neither is complete))
