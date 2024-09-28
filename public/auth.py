@@ -230,9 +230,6 @@ def forgot():
             flash('No account found with that email and username combination.', category='error')
         db.session.commit()
 
-<<<<<<< HEAD
-    return render_template("forgot.html", user=current_user, homeRoute='/login')
-=======
     return render_template("forgot.html", user=current_user, homeRoute='/login')
 
 
