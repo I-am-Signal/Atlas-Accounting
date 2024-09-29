@@ -2,10 +2,9 @@ from flask import Blueprint, request, flash, redirect, url_for, render_template
 from flask_login import login_required, current_user
 from .config import EMAILAPIKEY, FROMEMAIL
 from .models import User
-from .auth import checkRoleClearance
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
-
+from pynliner import Pynliner
 email = Blueprint('email', __name__)
 
 def sendEmail(toEmails: list[str], subject:str, body:str):
@@ -23,7 +22,36 @@ def sendEmail(toEmails: list[str], subject:str, body:str):
     except Exception as e:
         flash(e.message,category='error')
         return None
+    
 
+def sendEmailToAllUsersWithRole(company_id, role, subject, body):
+    """Sends an email with :subject: and :body: to all users with at least
+    the role ranking of :role: in the company with :company_id:"""
+    role_hierarchy = {
+        'administrator': ['administrator'],
+        'manager': ['manager', 'administrator'],
+        'user': ['user', 'manager', 'administrator']
+    }
+    
+    toEmails = [user.email for user in User.query.filter(
+        User.company_id == company_id,
+        User.role.in_(role_hierarchy[role])
+    ).all()]
+    
+    return sendEmail(toEmails=toEmails, subject=subject, body=body)
+
+
+def getNewUserEmailHTML(user_id: int):
+    with open('public/static/style.css', 'r') as f:
+        css_content = f.read()
+        
+    html_content = render_template(
+        "email_templates/new_user.html",
+        userInfo=User.query.filter_by(id=user_id).first(),
+        accountURL=url_for('views.user', id=user_id)
+    )
+    # error '..\\static\\style.css' is an unknown url type (comes from the html)
+    return Pynliner().from_string(html_content).with_cssString(css_content).run()
 
 @email.route('/send', methods=['GET', 'POST'])
 @login_required
@@ -50,12 +78,15 @@ def send():
         else:
             flash(f'Failed to deliver message. Status code: {response.status_code}', category='error')
             return redirect(url_for('views.home'))
-
-    return checkRoleClearance(current_user.role, 'administrator', render_template(
+    
+    if 'administrator' == current_user.role:
+        return render_template(
             "email.html",
             email=emailFromUserPage if emailFromUserPage else '',
             user=current_user,
             homeRoute='/',
             back = url_for('views.home')
         )
-    )
+    
+    flash('Your account does not have the right clearance for this page.')
+    return redirect(url_for('views.home'))
