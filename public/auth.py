@@ -111,12 +111,14 @@ def login():
                     flash('Logged in successfully!', category='success')
                     password_entry.failedAttempts = 0
                     return redirect(url_for('views.home'))
-                elif password_entry.failedAttempts < 3:
+                elif password_entry.failedAttempts < 2:
                     flash('Incorrect password, try again.', category='error')
                     password_entry.failedAttempts += 1
                 else:
-                    flash('Incorrect password was used 3 or more times. Your account is now suspended.')
-                    # 
+                    flash('Incorrect password was used 3 or more times. Your account is now deactivated. Please contact your Company administrator.')
+                    password_entry.failedAttempts += 1
+                    user.is_activated = False
+                db.session.commit()
             except Exception as e:
                 flash(f'Error: {e}')
                 
