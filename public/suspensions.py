@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_required, current_user
 from .models import User, Credential, Company, Suspension
 from . import db
+from .auth import checkRoleClearance
 from datetime import datetime
 import json
 
@@ -77,16 +78,13 @@ def suspensions():
         '''
         return display 
     
-    if 'administrator' == current_user.role:
-        return render_template(
+    return checkRoleClearance(current_user.role, 'administrator', render_template(
             "suspensions.html",
             user=current_user,
             homeRoute='/',
             suspensionInfo=getSuspensionsInfo()
         )
-    
-    flash('Your account does not have the right clearance within your Company to view this page.')
-    return redirect(url_for('views.home'))
+    )
 
 
 
@@ -151,35 +149,13 @@ def suspension():
         flash('Please implement POST for editing individual suspension info', category='error')
         return redirect(url_for('views.view_users'))
     
-    def getSuspensionInfo():
-        display = f'''
-            <a href='{url_for('suspensions.suspensions', id=user_id)}'>Back</a> <br />
-        
-            <form method='POST'>
-                <p>Suspension ID: {int(Suspension.query.order_by(Suspension.id.desc()).first()) + 1}</p>
-                <label for='suspension_id'>Suspension ID</label>
-                
-                <label for='suspension_start_date'>Suspension Start Date</label>
-                <input id='suspension_start_date' name='suspension_start_date' type="date" value="{suspensionInfo.suspension_start_date}"><br>
-                
-                <label for='suspension_end_date'>Suspension End Date</label>
-                <input id='suspension_end_date' name='suspension_end_date' type="date" value="{suspensionInfo.suspension_end_date}"><br>
-
-                <button type='submit'>Submit</button>
-                <button type='button' onclick="window.location.href='{ 
-                    url_for('suspend.suspensions')
-                }'">Cancel Changes</button>
-            </form>
-        '''
-        return display
-    
-    if 'administrator' == current_user.role:
-        return render_template(
-            "user.html",
+    return checkRoleClearance(current_user.role, 'administrator', render_template(
+            "suspension.html",
             user=current_user,
+            back=url_for(' suspensions.suspensions', id=user_id),
             homeRoute='/',
-            user_viewed=getSuspensionInfo()
+            suspensionID=int(Suspension.query.order_by(Suspension.id.desc()).first()) + 1,
+            start_date=suspensionInfo.suspension_start_date,
+            end_date=suspensionInfo.suspension_end_date
         )
-    
-    flash('Your account does not have the right clearance within your Company to view this page.')
-    return redirect(url_for('views.home'))
+    )

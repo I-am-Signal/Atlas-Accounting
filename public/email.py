@@ -2,6 +2,7 @@ from flask import Blueprint, request, flash, redirect, url_for, render_template
 from flask_login import login_required, current_user
 from .config import EMAILAPIKEY, FROMEMAIL
 from .models import User
+from .auth import checkRoleClearance
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
@@ -23,11 +24,11 @@ def sendEmail(toEmails: list[str], subject:str, body:str):
         flash(e.message,category='error')
         return None
 
-# Just for testing, can be removed in production
+
 @email.route('/send', methods=['GET', 'POST'])
 @login_required
 def send():
-    """Loads the Test Email page and handles its logic"""
+    """Loads the Admin Email page and handles its logic"""
     try:
         emailFromUserPage = User.query.filter_by(
             id=int(request.args.get('id'))
@@ -50,14 +51,11 @@ def send():
             flash(f'Failed to deliver message. Status code: {response.status_code}', category='error')
             return redirect(url_for('views.home'))
 
-    if 'administrator' == current_user.role:
-        return render_template(
+    return checkRoleClearance(current_user.role, 'administrator', render_template(
             "email.html",
             email=emailFromUserPage if emailFromUserPage else '',
             user=current_user,
             homeRoute='/',
             back = url_for('views.home')
         )
-    
-    flash('Your account does not have the right clearance for this page.')
-    return redirect(url_for('views.home'))
+    )

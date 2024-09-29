@@ -6,8 +6,20 @@ from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from sqlalchemy import desc
+from enum import Enum
 
 auth = Blueprint('auth', __name__)
+
+def checkRoleClearance(user_role, role_required, templateIfClear=None):
+    class Role(Enum):
+        USER=1
+        MANAGER=2
+        ADMINISTRATOR=3    
+    
+    if Role[user_role.upper()].value < Role[role_required.upper()].value:
+        flash('Your account does not have the right clearance for this page.')
+        return redirect(url_for('views.home'))
+    return templateIfClear
 
 
 def login_required_with_password_expiration(f):
@@ -35,6 +47,7 @@ def login_required_with_password_expiration(f):
         
         return f(*args, **kwargs)
     return login_with_expiration
+
 
 def checkIfPassIsValid(password):
         if len(password) < 8:
@@ -64,6 +77,7 @@ def checkIfPassIsValid(password):
         
         return 'valid'
 
+
 def checkAllPreviousPasswords(passToCheck, user_id):
     previous_passwords = Credential.query.filter_by(
         user_id=user_id
@@ -73,6 +87,7 @@ def checkAllPreviousPasswords(passToCheck, user_id):
         if check_password_hash(password_hash.password, passToCheck):
             return True
     return False
+
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -101,7 +116,6 @@ def login():
         
         if checkIfAccountCanLogIn(user):
             try:
-                # still need to implement check on if password has been failed guessed 3 times
                 password_entry = Credential.query.filter_by(
                     user_id=user.id
                 ).order_by(desc(Credential.create_date)).first()
@@ -225,9 +239,7 @@ def sign_up():
 
 @auth.route('/forgot', methods=['GET', 'POST'])
 def forgot():
-
     """Loads the Forgot Password? page and handles its logic"""
-
     if request.method == 'POST':
         email = request.form.get('email')
         username = request.form.get('username')
@@ -292,4 +304,5 @@ def update_password():
     return render_template(
         "update_password.html", 
         user=current_user,
-        homeRoute='/')
+        homeRoute='/'
+    )
