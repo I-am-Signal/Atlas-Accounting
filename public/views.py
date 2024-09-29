@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from .models import User, Company, Credential
 from . import db
-from .auth import login_required_with_password_expiration
+from .auth import login_required_with_password_expiration, checkRoleClearance
 from datetime import datetime
 from sqlalchemy import desc
 
@@ -22,15 +22,15 @@ def home():
     journalEntriesLink = '#'
     insertValueLink = '#'
 
-    return render_template(
-        "home.html",
-        user=current_user,
-        homeRoute='/',
-        buttons=f'''{adminAccessible if adminAccessible else ''}
-            <a href="{eventLogsLink}"><button class="dashleft">Event Logs</button></a>
-            <a href="{journalEntriesLink}"><button class="dashleft">Journal Entries</button></a>
-            <a href="{insertValueLink}"><button class="dashleft">Insert Value</button></a>
-        '''
+    return checkRoleClearance(current_user.role, 'user', render_template(
+            "home.html",
+            user=current_user,
+            homeRoute='/',
+            viewUsersButton=adminAccessible if adminAccessible else '',
+            eventLogsLink = eventLogsLink,
+            journalEntriesLink=journalEntriesLink,
+            insertValueLink=insertValueLink
+        )
     )
 
 @views.route('/view_users', methods=['GET', 'POST'])
@@ -77,16 +77,14 @@ def view_users():
         '''
         return table 
     
-    if 'administrator' == current_user.role:
-        return render_template(
+    return checkRoleClearance(current_user.role, 'administrator', render_template
+        (
             "view_users.html",
             user=current_user,
             homeRoute='/',
             users=generateUsers()
         )
-    
-    flash('Your account does not have the right clearance for this page.')
-    return redirect(url_for('views.home'))
+    )
 
 
 @views.route('/user', methods=['GET', 'POST'])
@@ -156,12 +154,7 @@ def user():
             flash('Information for User ' + userInfo.username + ' was successfully changed!', category='success')
             return redirect(url_for('views.view_users'))
     
-    if 'administrator' == current_user.role:
-        def renderAsHyperlink(email, url):
-            #render this as hyperlink
-            return email
-        
-        return render_template(
+    return checkRoleClearance(current_user.role, 'administrator', render_template(
             "user.html",
             user=current_user,
             homeRoute='/',
@@ -170,11 +163,4 @@ def user():
             testExpiration = curr_pass.expirationDate.strftime('%Y-%m-%dT%H:%M') if curr_pass.expirationDate else '',
             suspensions=url_for('suspend.suspensions', id=userInfo.id)
         )
-    
-    flash('Your account does not have the right clearance within your Company to view this page.')
-
-    return redirect(url_for('views.home'))
-
-
-
-
+    )
