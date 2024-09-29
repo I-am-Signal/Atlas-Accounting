@@ -1,6 +1,7 @@
 from flask import Blueprint, request, flash, redirect, url_for, render_template
 from flask_login import login_required, current_user
 from .config import EMAILAPIKEY, FROMEMAIL
+from .models import User
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 
@@ -27,7 +28,15 @@ def sendEmail(toEmails: list[str], subject:str, body:str):
 @login_required
 def send():
     """Loads the Test Email page and handles its logic"""
+    try:
+        emailFromUserPage = User.query.filter_by(
+            id=int(request.args.get('id'))
+        ).first().email
+    except Exception as e:
+        pass # if the user id is not valid, don't display an email
+
     if request.method == 'POST' and current_user.role == 'administrator':
+        
         toEmail = request.form.get('toEmail')
         subject = request.form.get('subject')
         body = request.form.get('body')
@@ -44,28 +53,10 @@ def send():
     if 'administrator' == current_user.role:
         return render_template(
             "email.html",
+            email=emailFromUserPage if emailFromUserPage else '',
             user=current_user,
             homeRoute='/',
-            emailStuff=f'''
-            <div class='login'>
-                <form method='POST'>
-                    <p>Please don't send too many, we only get 100 per day</p>
-                    <label for='toEmail'>Send to email:</label>
-                    <input id='toEmail' name='toEmail'>
-                    
-                    <label for='subject'>Subject</label>
-                    <input id='subject' name='subject'>
-                    
-                    <label for='body'>Body</label>
-                    <input id='body' name='body'>
-                    
-                    <button id='test' name='test'>Submit</button>
-                    <button type='button' onclick="window.location.href='{ 
-                        url_for('views.home')
-                    }'">Cancel Changes</button>
-                </form>
-            </div>
-            '''
+            back = url_for('views.home')
         )
     
     flash('Your account does not have the right clearance for this page.')

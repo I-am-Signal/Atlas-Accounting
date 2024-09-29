@@ -15,7 +15,21 @@
     </div> 
     <div class="page">
         <div class="userDisplay">
-            {{ emailStuff|safe }}
+            <div class='login'>
+                <form method='POST'>
+                    <label for='toEmail'>Send to email:</label>
+                    <input id='toEmail' name='toEmail' value='{{ email }}'>
+                    
+                    <label for='subject'>Subject</label>
+                    <input id='subject' name='subject'>
+                    
+                    <label for='body'>Body</label>
+                    <input id='body' name='body'>
+                    
+                    <button id='test' name='test'>Submit</button>
+                    <button type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>
+                </form>
+            </div>
         </div>
     </div>
     

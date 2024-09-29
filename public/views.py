@@ -21,7 +21,6 @@ def home():
     eventLogsLink = '#'
     journalEntriesLink = '#'
     insertValueLink = '#'
-    testEmailLink = url_for('email.send')
 
     return render_template(
         "home.html",
@@ -31,7 +30,6 @@ def home():
             <a href="{eventLogsLink}"><button class="dashleft">Event Logs</button></a>
             <a href="{journalEntriesLink}"><button class="dashleft">Journal Entries</button></a>
             <a href="{insertValueLink}"><button class="dashleft">Insert Value</button></a>
-            <a href="{testEmailLink}"><button class="dashleft">Test Email</button></a>
         '''
     )
 
@@ -66,7 +64,7 @@ def view_users():
                     <td><a href="{ url_for('views.user', id=user.id) }">{user.username}</a></td>
                     <td>{user.first_name}</td>
                     <td>{user.last_name}</td>
-                    <td>{user.email}</td>
+                    <td>{f"<a href='{url_for('email.send', id=user.id)}'>{user.email}</a>"}</td>
                     <td>{user.is_activated}</td>
                     <td>{user.role}</td>
                 </tr>
@@ -106,6 +104,8 @@ def user():
     ).order_by(desc(Credential.create_date)).first()
 
     userInfo = User.query.filter_by(id=user_id).first()
+    
+    userInfo.addr_line_2 = '' if userInfo.addr_line_2 == None else userInfo.addr_line_2
     
     if request.method == 'POST':
         first_name = request.form.get('first_name')
@@ -155,85 +155,20 @@ def user():
             db.session.commit()
             flash('Information for User ' + userInfo.username + ' was successfully changed!', category='success')
             return redirect(url_for('views.view_users'))
-        
-    def getUserInfo():
-        display = f'''
-            <a href='{url_for('views.view_users')}'>Back</a> <br />
-        
-            <form method='POST'>
-                <p>User ID: {userInfo.id}</p>
-                
-                <label for='is_activated'>Activated</label>
-                <select id='is_activated' name='is_activated'>
-                    <option value='True' {'selected' if userInfo.is_activated else ''}>True</option>
-                    <option value='False' {'selected' if not userInfo.is_activated else ''}>False</option>
-                </select><br>
-                
-                <label for='username'>Username</label>
-                <input id='username' name='username' value={userInfo.username}><br>
-                
-                <label for='first_name'>First Name</label>
-                <input id='first_name' name='first_name' value={userInfo.first_name}><br>
-                
-                <label for='last_name'>Last Name</label>
-                <input id='last_name' name='last_name' value={userInfo.last_name}><br>
-                
-                <label for='email'>Email</label>
-                <input id='email' name='email' value={userInfo.email}><br>
-
-                <label for='addr_line_1'>Address Line 1</label>
-                <input id='addr_line_1' name='addr_line_1' value="{userInfo.addr_line_1}"><br>
-
-                <label for='addr_line_2'>Address Line 2</label>
-                <input id='addr_line_2' name='addr_line_2' value="{'' if userInfo.addr_line_2 == None else userInfo.addr_line_2}"><br>
-
-                <label for='city'>City</label>
-                <input id='city' name='city' value="{userInfo.city}"><br>
-
-                <label for='county'>County</label>
-                <input id='county' name='county' value="{userInfo.county}"><br>
-
-                <label for='state'>State</label>
-                <input id='state' name='state' value="{userInfo.state}"><br>
-                
-                <label for='dob'>Date of Birth</label>
-                <input id='dob' name='dob' type="date" value="{userInfo.dob}"><br>
-
-                <label for='role'>Role</label>
-                <select id='role' name='role'>
-                    <option value='administrator' {'selected' if userInfo.role == 'administrator' else ''}>Administrator</option>
-                    <option value='manager' {'selected' if userInfo.role == 'manager' else ''}>Manager</option>
-                    <option value='user' {'selected' if userInfo.role == 'user' else ''}>User</option>
-                </select><br>
-                
-                <label for='test_expiration'>TEST EXPIRATION</label>
-                <input id="start" name="start" type="datetime-local" value="{
-                    curr_pass.expirationDate.strftime('%Y-%m-%dT%H:%M') if curr_pass.expirationDate else '' 
-                }"><br>
-
-                <button type='submit'>Submit</button>
-                <button type='button' onclick="window.location.href='{ 
-                    url_for('views.view_users')
-                }'">Cancel Changes</button>
-
-                <button type='button' onclick="window.location.href='{
-                    url_for('suspend.suspensions', id=userInfo.id)
-                }'">View Suspensions</button>
-
-                <button type='button' onclick="window.location.href='{
-                    url_for('suspend.suspensions', id=userInfo.id)
-                }'">View Suspensions</button>
-
-            </form>
-        '''
-        return display
     
     if 'administrator' == current_user.role:
+        def renderAsHyperlink(email, url):
+            #render this as hyperlink
+            return email
+        
         return render_template(
             "user.html",
             user=current_user,
             homeRoute='/',
-            user_viewed=getUserInfo()
+            back=url_for('views.view_users'),
+            userInfo=userInfo,
+            testExpiration = curr_pass.expirationDate.strftime('%Y-%m-%dT%H:%M') if curr_pass.expirationDate else '',
+            suspensions=url_for('suspend.suspensions', id=userInfo.id)
         )
     
     flash('Your account does not have the right clearance within your Company to view this page.')

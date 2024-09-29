@@ -64,6 +64,16 @@ def checkIfPassIsValid(password):
         
         return 'valid'
 
+def checkAllPreviousPasswords(passToCheck, user_id):
+    previous_passwords = Credential.query.filter_by(
+        user_id=user_id
+    ).order_by(desc(Credential.create_date)).all()
+    
+    for password_hash in previous_passwords:
+        if check_password_hash(password_hash.password, passToCheck):
+            return True
+    return False
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     """Loads the Login page and handles its logic"""
@@ -245,9 +255,9 @@ def update_password():
     """Loads the update password page and handles its logic"""
     if request.method == 'POST':      
         
-        previous_passwords = Credential.query.filter_by(
+        previous_password = Credential.query.filter_by(
             user_id=current_user.id
-        ).order_by(desc(Credential.create_date)).all()
+        ).order_by(desc(Credential.create_date)).first()
 
         curr_password = request.form.get('password')
         newpassword = request.form.get('newpassword')
@@ -255,18 +265,12 @@ def update_password():
         
         password_validity = checkIfPassIsValid(newpassword)
         
-        def checkAllPreviousPasswords(passToCheck):
-            for password_hash in previous_passwords:
-                if check_password_hash(password_hash.password, passToCheck):
-                    return True
-            return False
-        
         # check if curr_password from form is the same as saved current password
-        if not check_password_hash(previous_passwords[0].password, curr_password):
+        if not check_password_hash(previous_password.password, curr_password):
             flash('Original password was incorrect.', category='error')
         elif 'valid' != password_validity: # check if new password is valid
             flash(password_validity, category='error')
-        elif checkAllPreviousPasswords(newpassword): # check if new password == an old one
+        elif checkAllPreviousPasswords(newpassword, current_user.id): # check if new password == an old one
             flash('New password cannot be a previously used password.')
         elif newpassword != confirmpassword: # check if new == confirm
             flash('New Password and Confirmation must match.', category='error')
