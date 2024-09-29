@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="page">
+    <form method='POST'>
+        <p>User ID: {{ userInfo.id }}</p>
+        <label for='username'>Username: {{ userInfo.username }}</label>
+        <label for='first_name'>First Name: {{ userInfo.first_name }}</label>
+        <label for='last_name'>Last Name: {{ userInfo.last_name }}</label>
+        <label for='email'>Email: {{ userInfo.email }}</label>
+        <p>A new user account has been created within your company that has not yet been activated.</p>
+        <button type='button' onclick="window.location.href='{{ accountURL }}'">View Account</button>
+    </form>
+</div>
+
+{% endblock %}

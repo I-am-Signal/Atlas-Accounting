@@ -161,6 +161,37 @@ def user():
             back=url_for('views.view_users'),
             userInfo=userInfo,
             testExpiration = curr_pass.expirationDate.strftime('%Y-%m-%dT%H:%M') if curr_pass.expirationDate else '',
-            suspensions=url_for('suspend.suspensions', id=userInfo.id)
+            suspensions=url_for('suspend.suspensions', id=userInfo.id),
+            delete=url_for('views.delete', id=userInfo.id)
+        )
+    )
+    
+
+@views.route('/delete', methods=['GET', 'POST'])
+@login_required
+def delete():
+    user_id = request.args.get('id')
+    try:
+        user_id=int(user_id)
+    except Exception as e:
+        flash('Error: invalid user id')
+        return redirect(url_for('auth.login'))
+
+    userInfo = User.query.filter_by(id=user_id).first()
+    
+    if request.method == 'POST':
+        if request.form.get('delete') == 'True':
+            usernameToBeDeleted = userInfo.username
+            db.session.delete(userInfo)
+            db.session.commit()
+            flash('Information for User ' + usernameToBeDeleted + ' was successfully deleted!', category='success')
+        return redirect(url_for('views.view_users'))
+    
+    return checkRoleClearance(current_user.role, 'administrator', render_template(
+            "delete.html",
+            user=current_user,
+            homeRoute='/',
+            back=url_for('views.view_users'),
+            userInfo=userInfo
         )
     )
