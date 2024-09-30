@@ -165,7 +165,7 @@ def user():
             delete=url_for('views.delete', id=userInfo.id)
         )
     )
-    
+
 
 @views.route('/delete', methods=['GET', 'POST'])
 @login_required

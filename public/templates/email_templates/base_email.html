@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Home{% endblock %}</title>
+</head>
+
+<body>
+  <div class="pageContainer">
+    <div class="header">
+      <div class="logo">
+        <i class="fa-solid fa-globe"></i>
+        <a href="{{ homeRoute }}" id="logo">Atlas Accounting</a>
+      </div>
+      </header>
+    </div>
+
+    {% block content %} {% endblock %}
+
+    <div class="footer">
+      <a href="#" id="about">About</a> |
+      <a href="#" id="contact">Contact</a> |
+      <a href="#" id="terms">Terms</a> |
+      <a href="#" id="help">Help</a>
+      <br />
+      © 2024 Atlas Accounting
+    </div>
+
+    {% block javascript %}
+    {% endblock %}
+  </div>
+</body>
+
+</html>
