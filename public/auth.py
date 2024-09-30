@@ -234,18 +234,14 @@ def sign_up():
                     company_id=user.company_id,
                     role='administrator',
                     subject='New User',
-                    # please revise the below line once email.getNewUserEmailHTML() is fixed
-                    body=f'Check the users for the new one with ID: {user.id}, Username: {user.username}'
+                    body=getNewUserEmailHTML(user.id)
                 )
-                if response.status_code == 202:
-                    flash('Successfully delivered message', category='success')
-                    return redirect(url_for('views.home'))
-                else:
-                    flash(f'Failed to deliver message. Status code: {response.status_code}', category='error')
+                if not response.status_code == 202:
+                    flash(f'Failed to deliver message to admin. Status code: {response.status_code}', category='error')
             
             db.session.add(new_pass)
             db.session.commit()
-            return redirect(url_for('views.home'))
+            return redirect(url_for('auth.login'))
 
     return render_template("sign_up.html", user=current_user, homeRoute='/login')
 

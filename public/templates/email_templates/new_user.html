@@ -1,5 +1,5 @@
-{% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% extends "email_templates/base_email.html" %}
+{% block title %}New User{% endblock %}
 {% block content %}
 
 <div class="page">
@@ -10,7 +10,7 @@
         <label for='last_name'>Last Name: {{ userInfo.last_name }}</label>
         <label for='email'>Email: {{ userInfo.email }}</label>
         <p>A new user account has been created within your company that has not yet been activated.</p>
-        <button type='button' onclick="window.location.href='{{ accountURL }}'">View Account</button>
+        <a href='{{ accountURL }}'>View Account</button>
     </form>
 </div>
 

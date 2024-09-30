@@ -3,8 +3,8 @@ from flask_login import login_required, current_user
 from .config import EMAILAPIKEY, FROMEMAIL
 from .models import User
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
-from pynliner import Pynliner
+from sendgrid.helpers.mail import Mail, Content
+from premailer import Premailer
 email = Blueprint('email', __name__)
 
 def sendEmail(toEmails: list[str], subject:str, body:str):
@@ -14,7 +14,7 @@ def sendEmail(toEmails: list[str], subject:str, body:str):
         from_email=FROMEMAIL,
         to_emails=toEmails,
         subject=subject,
-        html_content=body
+        html_content=Content("text/html", body)
     )
     try:
         sg = SendGridAPIClient(EMAILAPIKEY)
@@ -50,8 +50,12 @@ def getNewUserEmailHTML(user_id: int):
         userInfo=User.query.filter_by(id=user_id).first(),
         accountURL=url_for('views.user', id=user_id)
     )
-    # error '..\\static\\style.css' is an unknown url type (comes from the html)
-    return Pynliner().from_string(html_content).with_cssString(css_content).run()
+    
+    return Premailer(
+        css_content + html_content,
+        disable_validation=True
+    ).transform()
+
 
 @email.route('/send', methods=['GET', 'POST'])
 @login_required
