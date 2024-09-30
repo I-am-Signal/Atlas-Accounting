@@ -69,13 +69,12 @@ def create_database(app):
     
 def start_scheduler(app):
     from apscheduler.schedulers.background import BackgroundScheduler
+    from .models import Credential, User, Company
+    from datetime import datetime, timedelta
+    from .email import sendEmail, getEmailHTML, sendEmailToAllUsersWithRole
     
     def emailUsersWithExpiringPasswords():
         with app.app_context():
-            from .models import Credential, User
-            from datetime import datetime, timedelta
-            from .email import sendEmail, getEmailHTML
-            
             users = [user for user in User.query.join(
                     Credential,
                     User.id == Credential.user_id
@@ -91,10 +90,45 @@ def start_scheduler(app):
                     body=getEmailHTML(user.id, 'email_templates/expiring.html')
                 )
     
+    def notifyAdminOfExpiredPasswords():
+        with app.app_context():
+            from sqlalchemy import and_
+            
+            # Go through every company
+            for company in [company for company in Company.query.all()]:
+                
+                # get users who have expired passwords AND are part of this company
+                users = User.query.join(
+                    Credential, User.id == Credential.user_id
+                ).filter(
+                    and_(
+                        Credential.expirationDate <= datetime.now(),
+                        User.company_id == company.id  # Filter users by company
+                    )
+                ).all()
+                
+                body = '<p>The password has expired for the following accounts:</p>'
+                
+                for user in users:
+                    body += f'<p>{user.username}</p>'
+                
+                response = sendEmailToAllUsersWithRole(
+                    company_id=company.id,
+                    role='administrator',
+                    subject='Expired User Passwords',
+                    body=body
+                )
+    
     scheduler = BackgroundScheduler()
     scheduler.add_job(
         emailUsersWithExpiringPasswords,
         'cron',
         hour=12,
         minute=30)
+    scheduler.add_job(
+        notifyAdminOfExpiredPasswords,
+        'cron',
+        hour=12,
+        minute=30
+    )
     scheduler.start()
