@@ -1,5 +1,5 @@
 {% extends "email_templates/base_email.html" %}
-{% block title %}New User{% endblock %}
+{% block title %}Account Activated{% endblock %}
 {% block content %}
 
 <div class="page">
@@ -8,7 +8,7 @@
         <label for='username'>Username: {{ userInfo.username }}</label><br />
         <label for='name'>Name: {{ userInfo.first_name }} {{ userInfo.last_name }}</label><br />
         <label for='email'>Email: {{ userInfo.email }}</label><br />
-        <p>A new user account has been created within your company that has not yet been activated.</p>
+        <p>Your account has now been activated. Welcome to Atlas Accounting!</p>
         <a href='{{ accountURL }}'>View Account</a>
     </form>
 </div>

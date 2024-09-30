@@ -3,7 +3,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 from functools import wraps
 from .models import User, Credential, Company
 from . import db
-from .email import sendEmailToAllUsersWithRole, getNewUserEmailHTML
+from .email import sendEmailToAllUsersWithRole, getEmailHTML
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from sqlalchemy import desc
@@ -137,7 +137,9 @@ def login():
             except Exception as e:
                 flash(f'Error: {e}')
                 
-
+    if current_user != None: # if logged in, brings user back to home screen
+        return redirect(url_for('views.home'))
+    
     return render_template("login.html", user=current_user, homeRoute='/login')
 
 
@@ -234,7 +236,7 @@ def sign_up():
                     company_id=user.company_id,
                     role='administrator',
                     subject='New User',
-                    body=getNewUserEmailHTML(user.id)
+                    body=getEmailHTML(user.id, "email_templates/new_user.html")
                 )
                 if not response.status_code == 202:
                     flash(f'Failed to deliver message to admin. Status code: {response.status_code}', category='error')

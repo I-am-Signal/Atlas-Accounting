@@ -41,19 +41,23 @@ def sendEmailToAllUsersWithRole(company_id, role, subject, body):
     return sendEmail(toEmails=toEmails, subject=subject, body=body)
 
 
-def getNewUserEmailHTML(user_id: int):
-    with open('public/static/style.css', 'r') as f:
-        css_content = f.read()
+def getEmailHTML(user_id: int, pathToHTML):
+    """Loads and returns HTML with inline CSS from external stylesheet"""
+    # if you have a good few hours of extra time, and you want to deal with CSS,
+    # you can work on getting the emails to look right with CSS
+    
+    # with open('public/static/style.css', 'r') as f:
+    #     css_content = f.read()
         
     html_content = render_template(
-        "email_templates/new_user.html",
+        pathToHTML,
         userInfo=User.query.filter_by(id=user_id).first(),
-        accountURL=url_for('views.user', id=user_id)
+        accountURL=url_for('views.user', id=user_id, _external=True)
     )
     
     return Premailer(
-        css_content + html_content,
-        disable_validation=True
+        html=html_content
+        # css_text=css_content
     ).transform()
 
 

@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from .models import User, Company, Credential
 from . import db
 from .auth import login_required_with_password_expiration, checkRoleClearance
+from .email import sendEmail, getEmailHTML
 from datetime import datetime
 from sqlalchemy import desc
 
@@ -150,6 +151,15 @@ def user():
             
             curr_pass.expirationDate = datetime.strptime(request.form.get('start'), '%Y-%m-%dT%H:%M')
             
+            if userInfo.is_activated == True:
+                response = sendEmail(
+                    toEmails=userInfo.email,
+                    subject='New User',
+                    body=getEmailHTML(userInfo.id, 'email_templates/activated.html')
+                )
+                if not response.status_code == 202:
+                    flash(f'Failed to deliver message to admin. Status code: {response.status_code}', category='error')
+            
             db.session.commit()
             flash('Information for User ' + userInfo.username + ' was successfully changed!', category='success')
             return redirect(url_for('views.view_users'))
@@ -182,6 +192,8 @@ def delete():
     if request.method == 'POST':
         if request.form.get('delete') == 'True':
             usernameToBeDeleted = userInfo.username
+            for password in Credential.query.filter_by(user_id=user_id).all():
+                db.session.delete(password)
             db.session.delete(userInfo)
             db.session.commit()
             flash('Information for User ' + usernameToBeDeleted + ' was successfully deleted!', category='success')
