@@ -2,11 +2,12 @@ from . import db
 from flask_login import UserMixin
 from sqlalchemy import CheckConstraint
 from sqlalchemy.sql import func
+from datetime import datetime, timedelta
 
 class BaseColumnMixin:
     id = db.Column(db.Integer, primary_key=True)
-    create_date = db.Column(db.DateTime, default=func.now())
-    modify_date = db.Column(db.DateTime, default=func.now(), onupdate=func.now())
+    create_date = db.Column(db.DateTime, default=datetime.now())
+    modify_date = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
 class User(db.Model, UserMixin, BaseColumnMixin):
     is_activated = db.Column(db.Boolean, default=False)
@@ -39,6 +40,7 @@ class Credential(db.Model, BaseColumnMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     password = db.Column(db.String(150))
     failedAttempts = db.Column(db.Integer, default=0)
+    expirationDate = db.Column(db.DateTime, default=lambda: datetime.now() + timedelta(days=365))
 
 class Company(db.Model, BaseColumnMixin):
     creator_of_company = db.Column(db.Integer, db.ForeignKey('user.id'))

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="userProfileContainer">
+    <div class="userProfile">
+        <!-- Profile Picture -->
+        <img src="../static/resources/avatar.jpg" alt="avatar">
+
+        <!-- Username and Sign Out Button -->
+        <div class="userInfo">
+            <p>{{ user.username }}</p>
+            <a href="./logout"><button class="logout">Sign out</button></a>
+        </div>
+    </div>
+</div>
+<div class="page">
+    <div class='login'>
+        <a href='{{ back }}'>Back</a> <br />
+
+        <form method='POST'>
+            <label for='user_id'><strong>User ID:</strong> {{ userInfo.id }}</label> <br />
+            <label for='username'><strong>Username:</strong> {{ userInfo.username }}</label> <br />
+            <label for='first_name'><strong>First Name:</strong> {{ userInfo.first_name }}</label> <br />
+            <label for='last_name'><strong>Last Name:</strong> {{ userInfo.last_name }}</label> <br />
+            <label for='email'><strong>Email:</strong> {{ userInfo.email }}</label> <br />
+            <label for='delete'><strong>Delete this user:</strong></label>
+            <select id="delete" name="delete">
+                <option value="True">Yes</option>
+                <option value="False" selected>No</option>
+            </select><br>
+            <button type='submit'>Submit</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

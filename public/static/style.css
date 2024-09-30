@@ -283,6 +283,10 @@ body {
   text-align: center;
   align-content: center;
 }
+.messagePopUp a{
+  text-decoration: none;
+  color: #0D1B2B;
+}
 
 .messagesContainer {
   display: flex;
@@ -362,6 +366,7 @@ body {
   display: flex;
   align-items: center;
   margin-top: 50px;
+  z-index: 1;
 }
 
 /* Flexbox layout for profile content */

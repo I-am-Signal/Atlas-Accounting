@@ -1,48 +1,37 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from .models import User, Credential, Company, Suspension
+from .models import User, Company, Credential
 from . import db
+from .auth import login_required_with_password_expiration, checkRoleClearance
+from .email import sendEmail, getEmailHTML
 from datetime import datetime
-import json
+from sqlalchemy import desc
 
 
 views = Blueprint('views', __name__)
 
 
 @views.route('/', methods=['GET', 'POST'])
-@login_required
+@login_required_with_password_expiration
 def home():
-    # code for the dashboard
-    
-    # this is the old tutorial code, use as a reference if getting started
-    # if request.method == 'POST': 
-    #     note = request.form.get('note')#Gets the note from the HTML 
-
-    #     if len(note) < 1:
-    #         flash('Note is too short!', category='error') 
-    #     else:
-    #         new_note = Note(data=note, user_id=current_user.id)  #providing the schema for the note 
-    #         db.session.add(new_note) #adding the note to the database 
-    #         db.session.commit()
-    #         flash('Note added!', category='success')
-    adminAccessible = ''
+    adminAccessible = None
     if 'administrator' == current_user.role:
         viewUsersLink = url_for('views.view_users')
-        adminAccessible=f'<button class="dashleft admin"><a href="{viewUsersLink}">View/Edit Users</a></button>'
+        adminAccessible=f'<a href="{viewUsersLink}"><button class="dashleft admin">View/Edit Users</button></a>'
     
     eventLogsLink = '#'
     journalEntriesLink = '#'
     insertValueLink = '#'
-    
-    return render_template(
-        "home.html",
-        user=current_user,
-        homeRoute='/',
-        buttons=f'''{adminAccessible}
-            <button class="dashleft"><a href="{eventLogsLink}">Event Logs</a></button>
-            <button class="dashleft"><a href="{journalEntriesLink}">Journal Entries</a></button>
-            <button class="dashleft"><a href="{insertValueLink}">Insert Value</a></button>
-        '''
+
+    return checkRoleClearance(current_user.role, 'user', render_template(
+            "home.html",
+            user=current_user,
+            homeRoute='/',
+            viewUsersButton=adminAccessible if adminAccessible else '',
+            eventLogsLink = eventLogsLink,
+            journalEntriesLink=journalEntriesLink,
+            insertValueLink=insertValueLink
+        )
     )
 
 @views.route('/view_users', methods=['GET', 'POST'])
@@ -76,31 +65,26 @@ def view_users():
                     <td><a href="{ url_for('views.user', id=user.id) }">{user.username}</a></td>
                     <td>{user.first_name}</td>
                     <td>{user.last_name}</td>
-                    <td>{user.email}</td>
+                    <td>{f"<a href='{url_for('email.send', id=user.id)}'>{user.email}</a>"}</td>
                     <td>{user.is_activated}</td>
                     <td>{user.role}</td>
                 </tr>
             '''
             
-        table += '''
+        table += f'''
                 </tbody>
             </table>
+            <a href='{ url_for('auth.sign_up') }'>Create New User</a>
         '''
         return table 
     
-    if 'administrator' == current_user.role:
-        return render_template(
+    return checkRoleClearance(current_user.role, 'administrator', render_template
+        (
             "view_users.html",
             user=current_user,
             homeRoute='/',
             users=generateUsers()
         )
-    
-    flash('Your account does not have the right clearance for this page.')
-    return render_template(
-        "home.html",
-        user=current_user,
-        homeRoute='/'
     )
 
 
@@ -113,107 +97,116 @@ def user():
     except Exception as e:
         flash('Error: invalid user id')
         return redirect(url_for('auth.login'))
+    
+    curr_pass = Credential.query.filter_by(
+        user_id=user_id
+    ).order_by(desc(Credential.create_date)).first()
+
+    userInfo = User.query.filter_by(id=user_id).first()
+    
+    userInfo.addr_line_2 = '' if userInfo.addr_line_2 == None else userInfo.addr_line_2
+    
+    if request.method == 'POST':
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        email = request.form.get('email')
+        addr_line_1 = request.form.get('addr_line_1')
+        addr_line_2 = request.form.get('addr_line_2')
+        city = request.form.get('city')
+        county = request.form.get('county')
+        state = request.form.get('state')
+        
+        users = User.query.filter_by(email=email).limit(2).all()
+        if users and (len(users) > 2 or users[0].id != userInfo.id):
+            flash('Email cannot be the same as was used in a different account.', category='error')
+        elif len(first_name) < 2:
+            flash('First name must be greater than 1 character.', category='error')
+        elif len(last_name) < 2:
+            flash('Last name must be greater than 1 character.', category='error')
+        elif len(addr_line_1) < 5:
+            flash('Address Line 1 must be greater than 5 characters.', category='error')
+        elif len(addr_line_2) < 5 and len(addr_line_2) > 0:
+            flash('Address Line 2 must be greater than 5 characters or empty.', category='error')
+        elif len(city) < 2:
+            flash('City must be greater than 1 character.', category='error')
+        elif len(county) < 2:
+            flash('County must be greater than 1 character.', category='error')
+        elif len(state) != 2:
+            flash('State must be 2 characters.', category='error')
+        elif len(email) < 4:
+            flash('Email must be greater than 3 characters.', category='error')
+        else:
+            # prevents activation email if the activation state was left unchanged
+            previous_is_activated = userInfo.is_activated
+            
+            userInfo.is_activated = request.form.get('is_activated') == 'True'
+            userInfo.username = request.form.get('username')
+            userInfo.first_name = request.form.get('first_name')
+            userInfo.last_name = request.form.get('last_name')
+            userInfo.email = request.form.get('email')
+            userInfo.addr_line_1 = request.form.get('addr_line_1')
+            userInfo.addr_line_2 = request.form.get('addr_line_2')
+            userInfo.city = request.form.get('city')
+            userInfo.county = request.form.get('county')
+            userInfo.state = request.form.get('state')
+            userInfo.dob = datetime.strptime(request.form.get('dob'), "%Y-%m-%d")
+            userInfo.role = request.form.get('role')
+            
+            curr_pass.expirationDate = datetime.strptime(request.form.get('start'), '%Y-%m-%dT%H:%M')
+            
+            if userInfo.is_activated == True and previous_is_activated == False:
+                response = sendEmail(
+                    toEmails=userInfo.email,
+                    subject='New User',
+                    body=getEmailHTML(userInfo.id, 'email_templates/activated.html')
+                )
+                if not response.status_code == 202:
+                    flash(f'Failed to deliver message to admin. Status code: {response.status_code}', category='error')
+            
+            db.session.commit()
+            flash('Information for User ' + userInfo.username + ' was successfully changed!', category='success')
+            return redirect(url_for('views.view_users'))
+    
+    return checkRoleClearance(current_user.role, 'administrator', render_template(
+            "user.html",
+            user=current_user,
+            homeRoute='/',
+            back=url_for('views.view_users'),
+            userInfo=userInfo,
+            testExpiration = curr_pass.expirationDate.strftime('%Y-%m-%dT%H:%M') if curr_pass.expirationDate else '',
+            suspensions=url_for('suspend.suspensions', id=userInfo.id),
+            delete=url_for('views.delete', id=userInfo.id)
+        )
+    )
+
+
+@views.route('/delete', methods=['GET', 'POST'])
+@login_required
+def delete():
+    user_id = request.args.get('id')
+    try:
+        user_id=int(user_id)
+    except Exception as e:
+        flash('Error: invalid user id')
+        return redirect(url_for('auth.login'))
 
     userInfo = User.query.filter_by(id=user_id).first()
     
     if request.method == 'POST':
-        userInfo.is_activated = bool(request.form.get('is_activated'))
-        userInfo.username = request.form.get('username')
-        userInfo.first_name = request.form.get('first_name')
-        userInfo.last_name = request.form.get('last_name')
-        userInfo.email = request.form.get('email')
-        userInfo.addr_line_1 = request.form.get('address_line_1')
-        userInfo.addr_line_2 = request.form.get('address_line_2')
-        userInfo.city = request.form.get('city')
-        userInfo.county = request.form.get('county')
-        userInfo.state = request.form.get('state')
-        userInfo.zipcode = request.form.get('zipcode')
-        userInfo.dob = datetime.strptime(request.form.get('dob'), "%Y-%m-%d")
-        
-        db.session.commit()
-        flash('Information for User ' + userInfo.username + ' was successfully changed!', category='success')
+        if request.form.get('delete') == 'True':
+            usernameToBeDeleted = userInfo.username
+            for password in Credential.query.filter_by(user_id=user_id).all():
+                db.session.delete(password)
+            db.session.delete(userInfo)
+            db.session.commit()
+            flash('Information for User ' + usernameToBeDeleted + ' was successfully deleted!', category='success')
         return redirect(url_for('views.view_users'))
-        
-    def getUserInfo():
-        display = f'''
-            <a href='{url_for('views.view_users')}'>Back</a> <br />
-        
-            <form method='POST'>
-                <p>User ID: {userInfo.id}</p>
-                
-                <label for='is_activated'>Activated</label>
-                <select id='is_activated' name='is_activated'>
-                    <option value='True' {'selected' if userInfo.is_activated == True else False}>True</option>
-                    <option value='Talse' {'selected' if userInfo.is_activated == False else True}>False</option>
-                </select><br>
-                
-                <label for='username'>Username</label>
-                <input id='username' name='username' value={userInfo.username}><br>
-                
-                <label for='first_name'>First Name</label>
-                <input id='first_name' name='first_name' value={userInfo.first_name}><br>
-                
-                <label for='last_name'>Last Name</label>
-                <input id='last_name' name='last_name' value={userInfo.last_name}><br>
-                
-                <label for='email'>Email</label>
-                <input id='email' name='email' value={userInfo.email}><br>
-
-                <label for='addr_line_1'>Address Line 1</label>
-                <input id='addr_line_1' name='addr_line_1' value="{userInfo.addr_line_1}"><br>
-
-                <label for='addr_line_2'>Address Line 2</label>
-                <input id='addr_line_2' name='addr_line_2' value="{userInfo.addr_line_2}"><br>
-
-                <label for='city'>City</label>
-                <input id='city' name='city' value="{userInfo.city}"><br>
-
-                <label for='county'>County</label>
-                <input id='county' name='county' value="{userInfo.county}"><br>
-
-                <label for='state'>State</label>
-                <input id='state' name='state' value="{userInfo.state}"><br>
-                
-                <label for='dob'>Date of Birth</label>
-                <input id='dob' name='dob' type="date" value="{userInfo.dob}"><br>
-
-                <label for='role'>Role</label>
-                <select id='role' name='role'>
-                    <option value='administrator' {'selected' if userInfo.role == 'administrator' else ''}>Administrator</option>
-                    <option value='manager' {'selected' if userInfo.role == 'manager' else ''}>Manager</option>
-                    <option value='user' {'selected' if userInfo.role == 'user' else ''}>User</option>
-                </select><br>
-
-                <button type='submit'>Submit</button>
-                <button type='cancel'>Cancel Changes</button>
-            </form>
-        '''
-        return display
     
-    if 'administrator' == current_user.role:
-        return render_template(
-            "user.html",
+    return checkRoleClearance(current_user.role, 'administrator', render_template(
+            "delete.html",
             user=current_user,
             homeRoute='/',
-            user_viewed=getUserInfo()
+            back=url_for('views.view_users'),
+            userInfo=userInfo
         )
-    
-    flash('Your account does not have the right clearance within your Company to view this page.')
-    return render_template(
-        "home.html",
-        user=current_user,
-        homeRoute='/'
     )
-
-# Old tutorial method, use as reference for building new ones
-# @views.route('/delete-note', methods=['POST'])
-# def delete_note():  
-#     note = json.loads(request.data) # this function expects a JSON from the INDEX.js file 
-#     noteId = note['noteId']
-#     note = Note.query.get(noteId)
-#     if note:
-#         if note.user_id == current_user.id:
-#             db.session.delete(note)
-#             db.session.commit()
-
-#     return jsonify({})

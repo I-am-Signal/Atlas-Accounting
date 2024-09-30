@@ -1,0 +1,36 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+
+<div class="userProfileContainer">
+    <div class="userProfile">
+        <!-- Profile Picture -->
+        <img src="../static/resources/avatar.jpg" alt="avatar">
+
+        <!-- Username and Sign Out Button -->
+        <div class="userInfo">
+            <p>{{ user.username }}</p>
+            <a href="./logout"><button class="logout">Sign out</button></a>
+        </div>
+    </div>
+</div>
+<div class="page">
+    <a href='{{ back }}'>Back</a> <br />
+
+    <form method='POST'>
+        <p>Suspension ID: {{ suspensionID }}</p>
+        <label for='suspension_id'>Suspension ID</label>
+
+        <label for='suspension_start_date'>Suspension Start Date</label>
+        <input id='suspension_start_date' name='suspension_start_date' type="date"
+            value="{{ start_date }}"><br>
+
+        <label for='suspension_end_date'>Suspension End Date</label>
+        <input id='suspension_end_date' name='suspension_end_date' type="date"
+            value="{{ end_date }}"><br>
+
+        <button type='submit'>Submit</button>
+        <button type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends "email_templates/base_email.html" %}
+{% block title %}New User{% endblock %}
+{% block content %}
+
+<div class="page">
+    <form class='login' method='POST'>
+        <label for='user_id'>User ID: {{ userInfo.id }}</label><br />
+        <label for='username'>Username: {{ userInfo.username }}</label><br />
+        <label for='name'>Name: {{ userInfo.first_name }} {{ userInfo.last_name }}</label><br />
+        <label for='email'>Email: {{ userInfo.email }}</label><br />
+        <p>A new user account has been created within your company that has not yet been activated.</p>
+        <a href='{{ accountURL }}'>View Account</a>
+    </form>
+</div>
+
+{% endblock %}
