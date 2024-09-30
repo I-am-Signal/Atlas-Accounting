@@ -516,3 +516,57 @@ top: 4%;
 .userDisplay tr:hover {
   background-color: #444;  /* Highlight row on hover */
 }
+
+
+/* Grid for form rows */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 20px; /* Space between rows and columns */
+    width: 100%;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #1B263B;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Style for each form row */
+.form-row {
+    display: flex;
+    flex-direction: column; /* Stack label and input vertically */
+}
+
+/* Ensure inputs are consistent in appearance */
+.form-row input, .form-row select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #778DA9;
+    background-color: #E0E1DD;
+    color: #1B263B;
+    font-size: 1rem;
+    margin-top: 5px; /* Space between label and input */
+    width: 100%;
+}
+
+/* Form buttons styling */
+.form-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between; /* Spread buttons */
+}
+
+.form-buttons button {
+    background-color: #778DA9;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.form-buttons button:hover {
+    background-color: #415A77;
+}
