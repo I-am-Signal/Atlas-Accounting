@@ -136,6 +136,9 @@ def user():
         elif len(email) < 4:
             flash('Email must be greater than 3 characters.', category='error')
         else:
+            # prevents activation email if the activation state was left unchanged
+            previous_is_activated = userInfo.is_activated
+            
             userInfo.is_activated = request.form.get('is_activated') == 'True'
             userInfo.username = request.form.get('username')
             userInfo.first_name = request.form.get('first_name')
@@ -151,7 +154,7 @@ def user():
             
             curr_pass.expirationDate = datetime.strptime(request.form.get('start'), '%Y-%m-%dT%H:%M')
             
-            if userInfo.is_activated == True:
+            if userInfo.is_activated == True and previous_is_activated == False:
                 response = sendEmail(
                     toEmails=userInfo.email,
                     subject='New User',
