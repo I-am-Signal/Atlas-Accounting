@@ -11,6 +11,7 @@ from enum import Enum
 
 auth = Blueprint('auth', __name__)
 
+
 def checkRoleClearance(user_role, role_required, templateIfClear=None):
     class Role(Enum):
         USER=1
@@ -136,9 +137,6 @@ def login():
                 db.session.commit()
             except Exception as e:
                 flash(f'Error: {e}')
-                
-    if current_user != None: # if logged in, brings user back to home screen
-        return redirect(url_for('views.home'))
     
     return render_template("login.html", user=current_user, homeRoute='/login')
 
