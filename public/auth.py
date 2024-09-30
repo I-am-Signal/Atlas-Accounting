@@ -126,6 +126,7 @@ def login():
                     login_user(user, remember=True)
                     flash('Logged in successfully!', category='success')
                     password_entry.failedAttempts = 0
+                    db.session.commit()
                     return redirect(url_for('views.home'))
                 elif password_entry.failedAttempts < 2:
                     flash('Incorrect password, try again.', category='error')
