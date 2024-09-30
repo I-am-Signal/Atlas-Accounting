@@ -88,6 +88,110 @@ body {
   border-radius: 20px;
 }
 
+.page form {
+  background-color: #1B263B; /* Dark background */
+  padding: 20px; /* Add padding around the form */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Slight shadow for depth */
+  max-width: 500px; /* Limit the width of the form */
+  margin: 110px auto; /* Center the form on the page */
+  
+}
+
+/* Form Labels */
+.page label {
+  color: #E0E1DD; /* Light text */
+  font-weight: 600;
+  margin-bottom: 8px; /* Add space below the label */
+  display: block;
+}
+
+/* Form Inputs */
+.page input, .page select {
+  width: 100%; /* Full width input fields */
+  padding: 10px;
+  border: 1px solid #778DA9; /* Border matches the color palette */
+  border-radius: 5px; /* Rounded corners */
+  background-color: #E0E1DD; /* Light background for input fields */
+  color: #1B263B; /* Dark text */
+  margin-bottom: 15px; /* Space between fields */
+  box-sizing: border-box; /* Ensure padding doesn't overflow */
+}
+
+/* Date picker styles */
+.page input[type="date"], .page input[type="datetime-local"] {
+  background-color: #E0E1DD;
+  color: #1B263B;
+  border-radius: 5px;
+  border: 1px solid #778DA9;
+}
+
+/* Back link styling */
+.page a {
+  color: #87CEFA;
+  text-decoration: none;
+  margin-bottom: 15px;
+  display: inline-block; /* Prevents the link from flowing into the form */
+  font-weight: 600;
+}
+
+.page a:hover {
+  text-decoration: underline;
+  color: #E0E1DD; /* Match hover color */
+}
+
+/* Form Buttons */
+.page button {
+  background-color: #778DA9;
+  color: #E0E1DD;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  margin-right: 10px; /* Space between buttons */
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.page button:hover {
+  background-color: #415A77; /* Darken button on hover */
+}
+
+.page button[type="submit"] {
+  background-color: #87CEFA; /* Distinguish submit button */
+}
+
+.page button[type="submit"]:hover {
+  background-color: #778DA9;
+}
+
+/* Align form buttons */
+.page .form-buttons {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.page .form-buttons button {
+  flex: 1 1 30%; /* Ensure buttons take up 30% of available space */
+  margin: 5px;
+}
+
+/* Style for the back button */
+.back-button {
+  margin-bottom: 20px; /* Space below the back button */
+  display: inline-block;
+  color: #87CEFA;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+  color: #E0E1DD; /* Match hover color */
+}
+
 .footer {
   background-color: #415A77;
   max-height: 100px;
@@ -439,7 +543,7 @@ body {
 
 .dashleft{
   height: 10%;
-  width: 30%;
+  width: 50%;
   margin: 20px;
   background-color: #E0E1DD;  
   border-radius: 10px;
@@ -515,4 +619,49 @@ top: 4%;
 
 .userDisplay tr:hover {
   background-color: #444;  /* Highlight row on hover */
+}
+
+/* Grid for form rows */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 20px; /* Space between rows and columns */
+}
+
+/* Style for each form row */
+.form-row {
+    display: flex;
+    flex-direction: column; /* Stack label and input vertically */
+}
+
+/* Ensure inputs are consistent in appearance */
+.form-row input, .form-row select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #778DA9;
+    background-color: #E0E1DD;
+    color: #1B263B;
+    font-size: 1rem;
+    margin-top: 5px; /* Space between label and input */
+}
+
+/* Form buttons styling */
+.form-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between; /* Spread buttons */
+}
+
+.form-buttons button {
+    background-color: #778DA9;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.form-buttons button:hover {
+    background-color: #415A77;
 }
