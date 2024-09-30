@@ -159,7 +159,6 @@ def sign_up():
         addr_line_1 = request.form.get('addr_line_1')
         addr_line_2 = request.form.get('addr_line_2')
         city = request.form.get('city')
-        county = request.form.get('county')
         state = request.form.get('state')
         dob = request.form.get('dob')
         email = request.form.get('email')
@@ -182,8 +181,6 @@ def sign_up():
             flash('Address Line 2 must be greater than 5 characters.', category='error')
         elif len(city) < 2:
             flash('City must be greater than 1 character.', category='error')
-        elif len(county) < 2:
-            flash('County must be greater than 1 character.', category='error')
         elif len(state) != 2:
             flash('State must be 2 characters.', category='error')
         elif len(email) < 4:
@@ -200,7 +197,6 @@ def sign_up():
                 addr_line_1=addr_line_1,
                 addr_line_2=addr_line_2 if len(addr_line_1) > 5 else '',
                 city=city,
-                county=county,
                 state=state,
                 dob=datetime.strptime(dob, "%Y-%m-%d"),
                 username= f'{first_name[0]}{last_name}{datetime.now().strftime("%m%y")}',
