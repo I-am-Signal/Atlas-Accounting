@@ -1,0 +1,18 @@
+{% extends "email_templates/base_email.html" %}
+{% block title %}Reset Password{% endblock %}
+{% block content %}
+
+<div class="page">
+    <form class='login' method='POST'>
+        <p>
+            Hello {{ userInfo.username }}, A password reset request was made.
+            If you did not make this request, please contact your Company administrator for further guidance.
+            To reset your password, click the link below and type the following passcode:
+        </p>
+       
+            <h1>{{passcode}}</h1>
+       
+    </form>
+</div>
+
+{% endblock %}
