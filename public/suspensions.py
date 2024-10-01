@@ -7,6 +7,7 @@ from datetime import datetime
 import json
 
 
+
 suspend = Blueprint('suspend', __name__)
 
 
@@ -65,7 +66,7 @@ def suspensions():
         for suspension in suspensions:
             display += f'''
                 <tr>
-                    <td><a href="{url_for('suspend.suspension', id=user_id)}">{suspension.id}</a></td>
+                    <td><a href="{url_for('suspend.suspension', id=user_id, suspension_id='modify')}">{suspension.id}</a></td>
                     <td>{suspension.suspension_start_date}</td>
                     <td>{suspension.suspension_end_date}</td>
                 </tr>
@@ -97,6 +98,7 @@ def suspension():
     
     # MODULARIZE from here
     user_id = request.args.get('id')
+
     try:
         user_id=int(user_id)
     except Exception as e:
@@ -113,49 +115,87 @@ def suspension():
     suspensionInfo = None
     if suspension_id == 'new':
         # handle suspensions that are not present in the db yet
-        flash('Please implement handling new suspensions')
-        return redirect(url_for('suspend.suspensions', id=user_id))
+        if request.method == 'POST':        
+            suspension_start_date = datetime.strptime(request.form.get('suspension_start_date'), "%Y-%m-%d").date()
+            suspension_end_date = datetime.strptime(request.form.get('suspension_end_date'), "%Y-%m-%d").date()
+            #COULD not convert this damn date object to a string goodluck
+            #do the same below
+            # today = datetime.now().strftime("%d-%m-%Y")
+            # # ensure suspension start date is now or after
+            # if suspension_start_date < today:
+            #     flash("Start date must be today or in the future.")
+            #     return redirect(url_for('suspend.suspension',id=user_id))
+        
+             # Ensure end date is on or after the start date
+            if suspension_end_date < suspension_start_date:
+                flash("End date must be on or after the start date.")
+                return
+            
+            new_suspension = Suspension(
+                user_id=user_id,
+                suspension_start_date=suspension_start_date,
+                suspension_end_date=suspension_end_date
+            )
+            
+            db.session.add(new_suspension)
+            db.session.commit()
+            flash('Information for User ' + userInfo.username + ' was successfully added!', category='success')        
+        
+            
+            return redirect(url_for('suspend.suspensions',id=user_id))
     
     
     # below handles suspension that are already present and being pulled from the db
-    try:
-        suspension_id_id=int(suspension_id_id)
-    except Exception as e:
-        flash('Error: invalid suspension id')
-        return redirect(url_for('auth.login'))
+        # try:
+        #     suspension_id=int(suspension_id)
+        # except Exception as e:
+        #     flash('Error: invalid suspension id')
+        #     return redirect(url_for('auth.login'))
 
     suspensionInfo = Suspension.query.filter_by(id=suspension_id).first()
     
-    if not suspensionInfo:
-        flash(f'Error: suspension not found for id {suspension_id}')
-        return redirect(url_for('auth.login'))
     
-    if request.method == 'POST':        
-        suspension_start_date = datetime.strptime(request.form.get('dob'), "%Y-%m-%d")
-        suspension_end_date = datetime.strptime(request.form.get('dob'), "%Y-%m-%d")
+    # if not suspensionInfo:
+        # flash(f'Error: suspension not found for id {suspension_id}')
+        # return redirect(url_for('auth.login'))
+
+
+    if suspension_id == 'modify':
+        if request.method == 'POST':        
+            suspension_start_date = datetime.strptime(request.form.get('suspension_start_date'), "%Y-%m-%d").date()
+            suspension_end_date = datetime.strptime(request.form.get('suspension_end_date'), "%Y-%m-%d").date()
+            today = datetime.strptime(datetime.today(), "%Y-%m-%d").date()
+            
+            # ensure suspension start date is now or after
+            # if suspension_start_date < today:
+            #     flash("Start date must be today or in the future.")
+            #     return redirect(url_for('suspend.suspension',id=user_id))
         
-        # ensure suspension start date is now or after
-        # ensure end date is on or after start date
+             # Ensure end date is on or after the start date
+            if suspension_end_date < suspension_start_date:
+                flash("End date must be on or after the start date.")
+                return
+            
+            #could not figure out the syntax for modifying existing record 
+            if suspensionInfo:
+            # Update the fields
+                suspensionInfo.suspension_start_date = suspension_start_date
+                suspensionInfo.suspension_end_date = suspension_end_date
+            
+           
+            db.session.commit()
+            flash('Information for User ' + userInfo.username + ' was successfully changed!', category='success')        
         
-        # new_suspension = Suspension(
-        #     user_id=user_id,
-        #     suspension_start_date=suspension_start_date,
-        #     suspension_end_date=suspension_end_date
-        # )
-        
-        # db.session.add(new_suspension)
-        # db.session.commit()
-        # flash('Information for User ' + userInfo.username + ' was successfully changed!', category='success')
-        flash('Please implement POST for editing individual suspension info', category='error')
-        return redirect(url_for('views.view_users'))
+            
+            return redirect(url_for('suspend.suspensions',id=user_id))
     
     return checkRoleClearance(current_user.role, 'administrator', render_template(
             "suspension.html",
             user=current_user,
-            back=url_for(' suspensions.suspensions', id=user_id),
+            back=url_for('suspend.suspensions', id=user_id),
             homeRoute='/',
-            suspensionID=int(Suspension.query.order_by(Suspension.id.desc()).first()) + 1,
-            start_date=suspensionInfo.suspension_start_date,
-            end_date=suspensionInfo.suspension_end_date
+            #this does not work to get next suspension id to be displayed
+            #suspensionID=int(Suspension.query.order_by(Suspension.id.desc()).first()) + 1,
+            
         )
     )
