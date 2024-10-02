@@ -259,15 +259,12 @@ def forgot():
         
         user = User.query.filter_by(email=email, username=username).first()
         
+        passcode=str(random.randint(10000, 99999))
+
         if user:
-            passcode =  str(random.randint(10000, 99999))
-
-
             new_pass = Credential(
                 user_id=user.id,
-                password=generate_password_hash(
-                    passcode, method='pbkdf2:sha256'
-                )
+                password=str(random.randint(10000, 99999))
             )
             db.session.add(new_pass)
 
@@ -339,7 +336,6 @@ def update_password():
     )
     
 @auth.route('/reset', methods=['GET', 'POST'])
-@login_required
 def reset():
     from public.views import user
     user_id = request.args.get('id')
@@ -362,25 +358,24 @@ def reset():
 
         password_validity = checkIfPassIsValid(new_password)
 
-        if not check_password_hash(curr_pass.password, reset_code):
+        if curr_pass.password == reset_code:
             flash('The passcode entered is invalid.', category='error')
         elif 'valid' != password_validity:
             flash('The new password entered', category='error')
         elif new_password != confirm_password:
             flash('Passwords do not match.', category='error')
-        elif checkAllPreviousPasswords(new_password):
+        elif checkAllPreviousPasswords(new_password, userInfo.id):
             flash('New password cannot be one used in the past.', category='error')
         else:
             curr_pass.password = generate_password_hash(
                 new_password, method='pbkdf2:sha256'
             )
-            db.sesfsion.commit()
-            flash('Password for User ' + user.username + ' was successfully changed!', category='success')
+            db.session.commit()
+            flash(f'Password for User {userInfo.username} was successfully changed!', category='success')
             login_user(userInfo)
             return redirect(url_for('views.home'))
     
-    return render_template(
-        "reset.html",
+    return render_template("reset.html",
         user=current_user,
         homeRoute='/login'
     )
