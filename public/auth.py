@@ -1,13 +1,17 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, get_flashed_messages
 from flask_login import login_user, login_required, logout_user, current_user
 from functools import wraps
+
 from .models import User, Credential, Company
 from . import db
-from .email import sendEmailToAllUsersWithRole, getEmailHTML
+from .email import sendEmailToAllUsersWithRole, getEmailHTML, sendEmail
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta
 from sqlalchemy import desc
 from enum import Enum
+import random
+
+
 
 auth = Blueprint('auth', __name__)
 
@@ -28,9 +32,8 @@ def login_required_with_password_expiration(f):
     @wraps(f)
     @login_required
     def login_with_expiration(*args, **kwargs):
-        link_html = f'<a href="{
-                url_for('auth.update_password')
-            }"> Click here</a>'
+        link_html = f'<a href="{url_for("auth.update_password")}"> Click here</a>'
+
 
         curr_pass = Credential.query.filter_by(
             user_id=current_user.id
@@ -81,6 +84,7 @@ def checkIfPassIsValid(password):
 
 
 def checkAllPreviousPasswords(passToCheck, user_id):
+    """Returns True if :passToCheck: is the same as a previous password"""
     previous_passwords = Credential.query.filter_by(
         user_id=user_id
     ).order_by(desc(Credential.create_date)).all()
@@ -251,15 +255,30 @@ def forgot():
         
         user = User.query.filter_by(email=email, username=username).first()
         
+        passcode=str(random.randint(10000, 99999))
+
         if user:
-            # Send email logic (implement this function to send email)
-            # sendResetEmail(user)
-            flash('Implement email and reset logic', category='success')
-            # flash('A reset email has been sent!', category='success')
+            new_pass = Credential(
+                user_id=user.id,
+                password=str(random.randint(10000, 99999))
+            )
+            db.session.add(new_pass)
+
+            sendEmail(
+                toEmails=email,
+                subject='Reset Password',
+                body=render_template(
+                    'email_templates/reset_email.html',
+                    userInfo=user,
+                    passcode=passcode
+                )
+            )
+
+            flash('A reset email has been sent!', category='success')
+            db.session.commit()
             return redirect(url_for('auth.login'))
         else:
             flash('No account found with that email and username combination.', category='error')
-        db.session.commit()
 
     return render_template(
       "forgot.html",
@@ -310,4 +329,49 @@ def update_password():
         "update_password.html", 
         user=current_user,
         homeRoute='/'
+    )
+    
+@auth.route('/reset', methods=['GET', 'POST'])
+def reset():
+    from public.views import user
+    user_id = request.args.get('id')
+    try:
+        user_id=int(user_id)
+    except Exception as e:
+        flash('Error: invalid user id')
+        return redirect(url_for('auth.login'))
+
+    userInfo = User.query.filter_by(id=user_id).first()
+    
+    if request.method == 'POST':
+        curr_pass = Credential.query.filter_by(
+                user_id=user_id
+        ).order_by(desc(Credential.create_date)).first()
+        
+        reset_code = request.form.get('reset_code')
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+
+        password_validity = checkIfPassIsValid(new_password)
+
+        if curr_pass.password == reset_code:
+            flash('The passcode entered is invalid.', category='error')
+        elif 'valid' != password_validity:
+            flash('The new password entered', category='error')
+        elif new_password != confirm_password:
+            flash('Passwords do not match.', category='error')
+        elif checkAllPreviousPasswords(new_password, userInfo.id):
+            flash('New password cannot be one used in the past.', category='error')
+        else:
+            curr_pass.password = generate_password_hash(
+                new_password, method='pbkdf2:sha256'
+            )
+            db.session.commit()
+            flash(f'Password for User {userInfo.username} was successfully changed!', category='success')
+            login_user(userInfo)
+            return redirect(url_for('views.home'))
+    
+    return render_template("reset.html",
+        user=current_user,
+        homeRoute='/login'
     )

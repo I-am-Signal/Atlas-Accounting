@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block title %}Reset Password{% endblock %} {% block content %}
+<div class="page">
+    <div class="reset-password">
+        <form method="POST">
+            <h1>Reset Your Password</h1>
+            <p>Enter the reset code sent to your email and choose a new password.</p>
+            
+            <label for="reset_code">Reset Code:</label>
+            <input type="text" name="reset_code" placeholder="Enter the code" required><br><br>
+            <label for="new_password">New Password:</label>
+            <input type="password" name="new_password" placeholder="Enter new password" required><br><br>
+            <label for="confirm_password">Confirm New Password:</label>
+            <input type="password" name="confirm_password" placeholder="Confirm new password" required><br><br>
+            <div class="button-container">
+                <button type="submit" id="submit">Reset Password</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
