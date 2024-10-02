@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, get_flashed_messages
 from flask_login import login_user, login_required, logout_user, current_user
 from functools import wraps
-from .models import User, Credential, Company
+from .models import User, Credential, Company, Suspension
 from . import db
 from .email import sendEmailToAllUsersWithRole, getEmailHTML
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -100,6 +100,14 @@ def login():
         
         user = User.query.filter_by(username=username).first()
         
+        def checkIfSuspended(user):
+            suspensions = Suspension.query.filter_by(user_id=user.id).all()
+            for suspension in suspensions:
+                if suspension.suspension_start_date < datetime.now() < suspension.suspension_end_date:
+                    return True
+            return False
+            
+            
         def checkIfAccountCanLogIn(user):
             if not user: # is this a valid username
                 flash('Username does not exist.', category='error')
@@ -108,11 +116,10 @@ def login():
             if not True == user.is_activated: # has account been activated
                 flash('Account is not currently active. Please contact your Company administrator.', category='error')
                 return False
-
-            # need to implement code to check for activate suspension
-            suspended = False
-            if suspended: # is this account suspended
+            
+            if checkIfSuspended(user): # is this account suspended
                 flash('Account is currently suspended. Please contact your Company administrator.', category='error')
+                return False
             
             return True
         

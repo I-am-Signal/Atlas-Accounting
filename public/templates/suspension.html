@@ -19,13 +19,12 @@
     <form method='POST'>
         <p>Suspension ID: {{ suspensionID }}</p>
         
-
         <label for='suspension_start_date'>Suspension Start Date</label>
-        <input id='suspension_start_date' name='suspension_start_date' type="date"
+        <input id='suspension_start_date' name='suspension_start_date' type="datetime-local"
             value="{{ start_date }}"><br>
 
         <label for='suspension_end_date'>Suspension End Date</label>
-        <input id='suspension_end_date' name='suspension_end_date' type="date"
+        <input id='suspension_end_date' name='suspension_end_date' type="datetime-local"
             value="{{ end_date }}"><br>
 
         <button type='submit'>Submit</button>

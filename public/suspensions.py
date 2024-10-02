@@ -3,8 +3,7 @@ from flask_login import login_required, current_user
 from .models import User, Credential, Company, Suspension
 from . import db
 from .auth import checkRoleClearance
-from datetime import datetime
-import json
+from datetime import datetime, timedelta
 
 
 
@@ -23,13 +22,6 @@ def suspensions():
         return redirect(url_for('auth.login'))
 
     userInfo = User.query.filter_by(id=user_id).first()
-    
-    if request.method == 'POST':
-        userInfo.role = request.form.get('role')
-        
-        db.session.commit()
-        flash('Information for User ' + userInfo.username + ' was successfully changed!', category='success')
-        return redirect(url_for('views.view_users'))
 
     def getSuspensionsInfo():
         display = f'''
@@ -49,11 +41,6 @@ def suspensions():
                     <tbody>
         '''
         
-        suspensions = Suspension.query.join(
-            User,
-            Suspension.user_id == User.id
-        ).filter(Suspension.user_id == user_id).all()
-        
         display += f'''
             <tr>
                 <td><a href="{url_for('suspend.suspension', id=user_id, suspension_id='new')}">Add New Suspension</a></td>
@@ -63,12 +50,32 @@ def suspensions():
             </tr>    
         '''
         
+        suspensions = Suspension.query.join(
+            User,
+            Suspension.user_id == User.id
+        ).filter(Suspension.user_id == user_id).all()
+        
         for suspension in suspensions:
             display += f'''
                 <tr>
-                    <td><a href="{url_for('suspend.suspension', id=user_id, suspension_id='modify')}">{suspension.id}</a></td>
-                    <td>{suspension.suspension_start_date}</td>
-                    <td>{suspension.suspension_end_date}</td>
+                    <td><a href="{url_for('suspend.suspension', id=user_id, suspension_id=suspension.id)}">{suspension.id}</a></td>
+                    <td>
+                        <input 
+                            id='suspension_end_date'
+                            name='suspension_end_date'
+                            type="datetime-local"
+                            value="{suspension.suspension_start_date}" 
+                            readonly">
+                    </td>
+                    <td>
+                        <input 
+                            id='suspension_end_date'
+                            name='suspension_end_date'
+                            type="datetime-local"
+                            value="{suspension.suspension_end_date}" 
+                            readonly">
+                    </td>
+                    <td>{'True' if suspension.suspension_start_date < datetime.now() < suspension.suspension_end_date else 'False'}
                 </tr>
             '''
             
@@ -103,99 +110,86 @@ def suspension():
         user_id=int(user_id)
     except Exception as e:
         flash(f'Error: invalid user id {user_id}', category='error')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('views.view_users'))
 
     userInfo = User.query.filter_by(id=user_id).first()
     
     if not userInfo:
         flash(f'Error: user not found for id {user_id}')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('views.view_users'))
     # MODULARIZE to here
     
-    suspensionInfo = None
-    if suspension_id == 'new':
-        # handle suspensions that are not present in the db yet
-        if request.method == 'POST':        
-            suspension_start_date = datetime.strptime(request.form.get('suspension_start_date'), "%Y-%m-%d").date()
-            suspension_end_date = datetime.strptime(request.form.get('suspension_end_date'), "%Y-%m-%d").date()
-            #COULD not convert this damn date object to a string goodluck
-            #do the same below
-            # today = datetime.now().strftime("%d-%m-%Y")
-            # # ensure suspension start date is now or after
-            # if suspension_start_date < today:
-            #     flash("Start date must be today or in the future.")
-            #     return redirect(url_for('suspend.suspension',id=user_id))
+    if request.method == 'GET':
+        # display new suspension
+        if suspension_id == 'new':      
+            return checkRoleClearance(current_user.role, 'administrator', render_template(
+                    "suspension.html",
+                    user=current_user,
+                    back=url_for('suspend.suspensions', id=user_id),
+                    homeRoute='/',
+                    start_date=(datetime.now() + timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M'),
+                    end_date=(datetime.now() + timedelta(days=1, minutes=5)).strftime('%Y-%m-%dT%H:%M')
+                )
+            )
+
+        # display previous suspension
+        if suspension_id != 'new':
+            curr_suspension = Suspension.query.filter_by(id=int(suspension_id)).first()
+            
+            return checkRoleClearance(current_user.role, 'administrator', render_template(
+                    "suspension.html",
+                    user=current_user,
+                    back=url_for('suspend.suspensions', id=user_id),
+                    homeRoute='/',
+                    suspension_id = curr_suspension.id,
+                    start_date=curr_suspension.suspension_start_date.strftime('%Y-%m-%dT%H:%M'),
+                    end_date=curr_suspension.suspension_end_date.strftime('%Y-%m-%dT%H:%M')
+                )
+            )
+    
+    if request.method == 'POST': 
+        suspension_start_date = datetime.strptime(request.form.get('suspension_start_date'), '%Y-%m-%dT%H:%M')
+        suspension_end_date = datetime.strptime(request.form.get('suspension_end_date'), '%Y-%m-%dT%H:%M')
         
-             # Ensure end date is on or after the start date
-            if suspension_end_date < suspension_start_date:
-                flash("End date must be on or after the start date.")
-                return
+        if suspension_end_date < suspension_start_date:
+            flash("End date must be on or after the start date.")
+            return redirect(url_for('suspend.suspensions',id=user_id))
+        
+        if suspension_id == 'new': 
+            # Ensure suspension start date is the current time or later
+            if suspension_start_date < datetime.now():
+                flash("Start date must be today or in the future.")
+                return redirect(url_for('suspend.suspensions',id=user_id))
             
             new_suspension = Suspension(
                 user_id=user_id,
                 suspension_start_date=suspension_start_date,
                 suspension_end_date=suspension_end_date
             )
-            
             db.session.add(new_suspension)
             db.session.commit()
-            flash('Information for User ' + userInfo.username + ' was successfully added!', category='success')        
+            flash(f'New suspension was added for user {userInfo.username}!', category='success')
+            return redirect(url_for('suspend.suspensions', user_id=userInfo.id))
         
-            
-            return redirect(url_for('suspend.suspensions',id=user_id))
-    
-    
-    # below handles suspension that are already present and being pulled from the db
-        # try:
-        #     suspension_id=int(suspension_id)
-        # except Exception as e:
-        #     flash('Error: invalid suspension id')
-        #     return redirect(url_for('auth.login'))
-
-    suspensionInfo = Suspension.query.filter_by(id=suspension_id).first()
-    
-    
-    # if not suspensionInfo:
-        # flash(f'Error: suspension not found for id {suspension_id}')
-        # return redirect(url_for('auth.login'))
-
-
-    if suspension_id == 'modify':
-        if request.method == 'POST':        
-            suspension_start_date = datetime.strptime(request.form.get('suspension_start_date'), "%Y-%m-%d").date()
-            suspension_end_date = datetime.strptime(request.form.get('suspension_end_date'), "%Y-%m-%d").date()
-            today = datetime.strptime(datetime.today(), "%Y-%m-%d").date()
-            
-            # ensure suspension start date is now or after
-            # if suspension_start_date < today:
-            #     flash("Start date must be today or in the future.")
-            #     return redirect(url_for('suspend.suspension',id=user_id))
         
-             # Ensure end date is on or after the start date
-            if suspension_end_date < suspension_start_date:
-                flash("End date must be on or after the start date.")
-                return
+        if suspension_id != 'new':
+            suspensionInfo = None
+            try:
+                suspension_id=int(suspension_id)
+                suspensionInfo = Suspension.query.filter_by(id=suspension_id).first()
+            except Exception as e:
+                flash(f'Error: invalid user id {user_id}', category='error')
+                return redirect(url_for('views.view_users'))
             
-            #could not figure out the syntax for modifying existing record 
-            if suspensionInfo:
+            if not suspensionInfo:
+                flash(f'Error: Suspension not found with id: {suspension_id}')
+                return redirect(url_for('views.view_users')) 
+            
             # Update the fields
+            if suspensionInfo:
                 suspensionInfo.suspension_start_date = suspension_start_date
                 suspensionInfo.suspension_end_date = suspension_end_date
             
-           
             db.session.commit()
-            flash('Information for User ' + userInfo.username + ' was successfully changed!', category='success')        
-        
-            
-            return redirect(url_for('suspend.suspensions',id=user_id))
-    
-    return checkRoleClearance(current_user.role, 'administrator', render_template(
-            "suspension.html",
-            user=current_user,
-            back=url_for('suspend.suspensions', id=user_id),
-            homeRoute='/',
-            #this does not work to get next suspension id to be displayed
-            #suspensionID=int(Suspension.query.order_by(Suspension.id.desc()).first()) + 1,
-            
-        )
-    )
+            flash(f'Suspension {suspensionInfo.id} for user {userInfo.username} was successfully added!', category='success')        
+            return redirect(url_for('suspend.suspensions',id=userInfo.id))
