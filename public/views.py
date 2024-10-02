@@ -152,7 +152,8 @@ def user():
             userInfo.dob = datetime.strptime(request.form.get('dob'), "%Y-%m-%d")
             userInfo.role = request.form.get('role')
             
-            curr_pass.expirationDate = datetime.strptime(request.form.get('start'), '%Y-%m-%dT%H:%M')
+            # Used in testing password expiration
+            # curr_pass.expirationDate = datetime.strptime(request.form.get('start'), '%Y-%m-%dT%H:%M')
             
             if userInfo.is_activated == True and previous_is_activated == False:
                 response = sendEmail(

@@ -86,11 +86,12 @@
                     <option value='user' {{ 'selected' if userInfo.role == 'user' else '' }}>User</option>
                 </select>
             </div>
-
-            <div class="form-row">
+            
+            <!-- Used in testing password expiration -->
+            <!-- <div class="form-row">
                 <label for='test_expiration'>TEST EXPIRATION</label>
                 <input id="start" name="start" type="datetime-local" value='{{ testExpiration }}'>
-            </div>
+            </div> -->
         </div>
 
         <div class="form-buttons">

@@ -49,7 +49,7 @@ class Company(db.Model, BaseColumnMixin):
     
 class Suspension(db.Model, BaseColumnMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    suspension_start_date = db.Column(db.Date)
-    suspension_end_date = db.Column(db.Date)
+    suspension_start_date = db.Column(db.DateTime)
+    suspension_end_date = db.Column(db.DateTime)
     
     db.relationship('User', backref='suspension', foreign_keys=[user_id])
