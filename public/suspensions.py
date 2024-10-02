@@ -169,7 +169,7 @@ def suspension():
             db.session.add(new_suspension)
             db.session.commit()
             flash(f'New suspension was added for user {userInfo.username}!', category='success')
-            return redirect(url_for('suspend.suspensions', user_id=userInfo.id))
+            return redirect(url_for('suspend.suspensions', id=userInfo.id))
         
         
         if suspension_id != 'new':
