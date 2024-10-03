@@ -4,7 +4,8 @@ from sqlalchemy import CheckConstraint
 from sqlalchemy.sql import func
 from datetime import datetime, timedelta
 
-class BaseColumnMixin:
+class BaseColumnMixin():
+    __abstract__ = True
     id = db.Column(db.Integer, primary_key=True)
     create_date = db.Column(db.DateTime, default=datetime.now())
     modify_date = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
