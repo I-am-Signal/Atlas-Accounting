@@ -1,1 +1,16 @@
 Generic single-database configuration.
+
+## Editing a Revision
+* The `upgrade` method is what is called to upgrade the migration of the database.
+    * The `downgrade` method does the opposite.
+* When editing a revision, you need to add the new additions/revisions to the `upgrade` method and add how to downgrade back to the previous revision by changing back whatever was changed in `upgrade` to the `downgrade` method.
+
+Example: adding a `test` column of type `Integer` to `Credential`
+```python
+def upgrade() -> None:
+    op.add_column('credential', sa.Column('test', sa.Integer()))
+
+def downgrade() -> None:
+    op.drop_column('credential', 'test')
+```
+* This adds the column when upgraded to this revision and removes it when downgrading to the previous revision.

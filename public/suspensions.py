@@ -134,18 +134,23 @@ def suspension():
 
         # display previous suspension
         if suspension_id != 'new':
-            curr_suspension = Suspension.query.filter_by(id=int(suspension_id)).first()
+            try:
+                suspension_id=int(suspension_id)
+                curr_suspension = Suspension.query.filter_by(id=suspension_id).first()
             
-            return checkRoleClearance(current_user.role, 'administrator', render_template(
-                    "suspension.html",
-                    user=current_user,
-                    back=url_for('suspend.suspensions', id=user_id),
-                    homeRoute='/',
-                    suspension_id = curr_suspension.id,
-                    start_date=curr_suspension.suspension_start_date.strftime('%Y-%m-%dT%H:%M'),
-                    end_date=curr_suspension.suspension_end_date.strftime('%Y-%m-%dT%H:%M')
+                return checkRoleClearance(current_user.role, 'administrator', render_template(
+                        "suspension.html",
+                        user=current_user,
+                        back=url_for('suspend.suspensions', id=user_id),
+                        homeRoute='/',
+                        suspension_id = curr_suspension.id,
+                        start_date=curr_suspension.suspension_start_date.strftime('%Y-%m-%dT%H:%M'),
+                        end_date=curr_suspension.suspension_end_date.strftime('%Y-%m-%dT%H:%M')
+                    )
                 )
-            )
+            except Exception as e:
+                flash(f'Error: invalid suspension id: {suspension_id}', category='error')
+                return redirect(url_for('views.view_users'))
     
     if request.method == 'POST': 
         suspension_start_date = datetime.strptime(request.form.get('suspension_start_date'), '%Y-%m-%dT%H:%M')
