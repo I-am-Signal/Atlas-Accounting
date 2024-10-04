@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, get_flashed_messages
 from flask_login import login_user, login_required, logout_user, current_user
 from functools import wraps
-from .models import User, Credential, Company, Suspension
+from .models import User, Credential, Company, Suspension,Account
 from . import db
 from .email import sendEmailToAllUsersWithRole, getEmailHTML, sendEmail
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -382,3 +382,57 @@ def reset():
         user=current_user,
         homeRoute='/login'
     )
+@auth.route('/create_account', methods=['GET', 'POST'])
+def create_account():
+    """Loads the create_account page and handles its logic"""
+   
+
+    if request.method == 'POST':
+        account_name= request.form.get('account_name')
+        account_number = request.form.get('account_number')
+        account_desc = request.form.get('account_desc')
+        normal_side = request.form.get('normal_side')
+        account_category = request.form.get('account_category')
+        account_subcat = request.form.get('account_subcat')
+        initial_balance = request.form.get('initial_balance')
+        debit = request.form.get('debit')
+        credit = request.form.get('credit')
+        order = request.form.get('order')
+        statement = request.form.get('statement')
+        comment = request.form.get('comment')
+        
+        #finish implementing other check requirements 2-5
+        # account = Account.query.filter_by(account_number=account_number).first()
+        # if account:
+        #     flash(f'Account Number already exists', category='error')
+       
+        # else:
+        new_account = Account(
+            account_name=account_name,
+            account_number=account_number,
+            account_desc=account_desc,
+            account_subcat=account_subcat,
+            normal_side=normal_side,
+            account_category=account_category,
+            initial_balance=initial_balance,
+            debit=debit,
+            credit=credit,
+            order=order,
+            statement=statement,
+            comment=comment,
+            user_id=current_user.id
+        )
+        db.session.add(new_account)         
+            
+            
+            #finish pulling account #
+            #account = Account.query.filter_by(user_id=current_user).first()
+                
+        flash(f'New Account created with Account #! Welcome to Atlas Accounting.', category='success')            
+        db.session.commit()
+        return redirect(url_for('views.view_accounts'))
+
+    return render_template("create_account.html",
+                            user=current_user,
+                              homeRoute='/',
+                              back=url_for('views.view_accounts'))
