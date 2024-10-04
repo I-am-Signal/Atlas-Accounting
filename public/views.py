@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from .models import User, Company, Credential
+from .models import User, Company, Credential,Account
 from . import db
 from .auth import login_required_with_password_expiration, checkRoleClearance
 from .email import sendEmail, getEmailHTML
 from datetime import datetime
 from sqlalchemy import desc
+
 
 
 views = Blueprint('views', __name__)
@@ -18,19 +19,22 @@ def home():
     if 'administrator' == current_user.role:
         viewUsersLink = url_for('views.view_users')
         adminAccessible=f'<a href="{viewUsersLink}"><button class="dashleft admin">View/Edit Users</button></a>'
+        viewAccountsLink = url_for('views.view_accounts')
+        adminAccessibleA = f'<a href="{viewAccountsLink}"><button class="dashleft admin">View/Edit Accounts</button></a>'
     
     eventLogsLink = '#'
     journalEntriesLink = '#'
-    insertValueLink = '#'
+    
 
     return checkRoleClearance(current_user.role, 'user', render_template(
             "home.html",
             user=current_user,
             homeRoute='/',
             viewUsersButton=adminAccessible if adminAccessible else '',
+            viewAccountsButton = adminAccessibleA if adminAccessibleA else '',
             eventLogsLink = eventLogsLink,
             journalEntriesLink=journalEntriesLink,
-            insertValueLink=insertValueLink
+            
         )
     )
 
@@ -209,5 +213,54 @@ def delete():
             homeRoute='/',
             back=url_for('views.view_users'),
             userInfo=userInfo
+        )
+    )
+@views.route('/view_accounts', methods=['GET', 'POST'])
+@login_required
+def view_accounts():
+    def generateAccounts():
+        table = f'''
+            <a href='{url_for('views.home')}'>Back</a> <br />
+            
+            <table class="userDisplay">
+                <thead>
+                    <tr>
+                        <th>Account ID</th>
+                        <th>Account Name</th>
+                        <th>Account #</th>
+                        <th>Account Description</th>
+                        <th>Balance</th>
+                        <th>Statement</th>
+                        <th>Date Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+        '''
+        for account in Account.query.filter(Account.id).all():
+            table += f'''
+                <tr>
+                    <td>{account.id}</td>
+                    <td><a href="">{account.account_name}</a></td>
+                    <td>{account.account_number}</td>
+                    <td>{account.account_desc}</td>
+                    <td>{account.balance}</td>
+                    <td>{account.statement}</td>
+                    <td>{account.create_date}</td>
+                </tr>
+            '''
+          
+        table += f'''
+                </tbody>
+            </table>
+            <a href='{url_for('auth.create_account')}'>Create new Account</a>
+        '''
+        return table 
+    
+    return checkRoleClearance(current_user.role, 'administrator', render_template
+        (
+            "view_accounts.html",
+            user=current_user,
+            homeRoute='/',
+            accounts=generateAccounts()
         )
     )

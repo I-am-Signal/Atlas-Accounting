@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="userProfileContainer">
+    <div class="userProfile">
+        <!-- Profile Picture -->
+        <img src="../static/resources/avatar.jpg" alt="avatar">
+
+        <!-- Username and Sign Out Button -->
+        <div class="userInfo">
+            <p>{{ user.username }}</p>
+            <a href="./logout"><button class="logout">Sign out</button></a>
+        </div>
+    </div>
+</div>
+
+<div class="page">
+    <form method='POST' class="user-form">
+        <p>User ID: </p>
+
+        <div class="form-grid">
+            <div class="form-row">
+                <label for='account_name'>Account Name</label>
+                <input id='account_name' name='account_name' >
+            </div>
+
+            <div class="form-row">
+                <label for='account_number'>Account #</label>
+                <input id='acount_number' name='account_number' >
+            </div>
+
+            <div class="form-row">
+                <label for='account_desc'>Account Description</label>
+                <input id='account_desc' name='account_desc' >
+            </div>
+
+            <div class="form-row">
+                <label for='normal_side'>Normal Side </label>
+                <input id='normal_side' name='normal_side' >
+            </div>
+
+            <div class="form-row">
+                <label for='account_category'>Account Category</label>
+                <input id='account_category' name='account_category' >
+            </div>
+
+            <div class="form-row">
+                <label for='account_subcat'>Account Subcategory</label>
+                <input id='account_subcat' name='account_subcat' >
+            </div>
+
+            <div class="form-row">
+                <label for='initial_balance'>Initial Balance</label>
+                <input id='initial_balance' name='initial_balance' >
+            </div>
+            <div class="form-row">
+                <label for='debit'>Debit </label>
+                <input id='debit' name='debit' >
+            </div>
+            <div class="form-row">
+                <label for='credit'>Credit </label>
+                <input id='credit' name='credit' >
+            </div>
+            <div class="form-row">
+                <label for='balance'>Balance </label>
+                <input id='balance' name='balance' >
+            </div>
+            <div class="form-row">
+                <label for='order'>Order </label>
+                <input id='order' name='order' >
+            </div>
+            <div class="form-row">
+                <label for='statement'>Statement </label>
+                <input id='statement' name='statement' >
+            </div>
+            <div class="form-row">
+                <label for='comment'>Comment </label>
+                <input id='comment' name='comment' >
+            </div>
+
+
+            
+            
+            <!-- Used in testing password expiration -->
+            <!-- <div class="form-row">
+                <label for='test_expiration'>TEST EXPIRATION</label>
+                <input id="start" name="start" type="datetime-local" value='{{ testExpiration }}'>
+            </div> -->
+        </div>
+
+        <div class="form-buttons">
+            <button type='submit'>Submit</button>
+            <button type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}
