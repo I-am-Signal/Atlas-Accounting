@@ -5,7 +5,7 @@
 <div class="userProfileContainer">
     <div class="userProfile">
         <!-- Profile Picture -->
-        <img src="../static/resources/avatar.jpg" alt="avatar">
+        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
 
         <!-- Username and Sign Out Button -->
         <div class="userInfo">
@@ -16,7 +16,7 @@
 </div>
 
 <div class="page">
-    <form method='POST' class="user-form">
+    <form method='POST' class="user-form" action="/pfp" enctype="multipart/form-data">
         <p>User ID: {{ userInfo.id }}</p>
 
         <div class="form-grid">
@@ -86,6 +86,13 @@
                     <option value='user' {{ 'selected' if userInfo.role == 'user' else '' }}>User</option>
                 </select>
             </div>
+
+            <div class="form-row">
+                <label for='image'>Profile Picture</label>
+                <input type='file' id='image' name='image' required>
+            </div>
+
+            <input type="hidden" id="id" name="id" value='{{ userInfo.id }}' required>
             
             <!-- Used in testing password expiration -->
             <!-- <div class="form-row">

@@ -10,15 +10,13 @@ class BaseColumnMixin():
     create_date = db.Column(db.DateTime, default=datetime.now())
     modify_date = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
+class CreatedByMixin():
+    created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
+
 class User(db.Model, UserMixin, BaseColumnMixin):
     is_activated = db.Column(db.Boolean, default=False)
     username = db.Column(db.String(150))
     email = db.Column(db.String(150), unique=True)
-    
-    # may be better to store elsewhere, keeping the pathway to reach it
-    # would need to implement a method to retrieve and display if stored locally
-    # picture = db.Column(db.BLOB)
-    
     first_name = db.Column(db.String(150))
     last_name = db.Column(db.String(150))
     addr_line_1 = db.Column(db.String(200))
@@ -36,6 +34,14 @@ class User(db.Model, UserMixin, BaseColumnMixin):
     # )
     
     passwords = db.relationship('Credential')
+    
+class Image(db.Model, BaseColumnMixin):
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    file_name = db.Column(db.String(150))
+    file_mime = db.Column(db.String(1000))
+    file_data = db.Column(db.BLOB)
+    
+    db.relationship('User', backref='profile_picture', foreign_keys=['user_id'])
 
 class Credential(db.Model, BaseColumnMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -43,10 +49,15 @@ class Credential(db.Model, BaseColumnMixin):
     failedAttempts = db.Column(db.Integer, default=0)
     expirationDate = db.Column(db.DateTime, default=lambda: datetime.now() + timedelta(days=365))
 
-class Company(db.Model, BaseColumnMixin):
+class Company(db.Model, BaseColumnMixin, CreatedByMixin):
     creator_of_company = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     db.relationship('User', backref='companies_created', foreign_keys=[creator_of_company])
+    
+# This may be a better way to do Company vvv
+# class Company(db.Model, BaseColumnMixin, CreatedByMixin):
+#     db.relationship('User', backref='companies_created', foreign_keys=[CreatedByMixin.created_by])
+    
     
 class Suspension(db.Model, BaseColumnMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -54,9 +65,9 @@ class Suspension(db.Model, BaseColumnMixin):
     suspension_end_date = db.Column(db.DateTime)
     
     db.relationship('User', backref='suspension', foreign_keys=[user_id])
-class Account(db.Model,BaseColumnMixin):
+
+class Account(db.Model,BaseColumnMixin, CreatedByMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    create_date = db.Column(db.DateTime, default=datetime.now())
     account_number = db.Column(db.Integer, default=0)
     account_name = db.Column(db.String(150))
     account_desc = db.Column(db.String(500))
@@ -70,3 +81,5 @@ class Account(db.Model,BaseColumnMixin):
     order = db.Column(db.Integer, default = 0)
     statement = db.Column(db.String(150))
     comment = db.Column(db.String(150))
+    
+    db.relationship('User', backref='account', foreign_keys=[user_id])

@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Home{% endblock %}
+{% block title %}Delete User{% endblock %}
 {% block content %}
 
 <div class="userProfileContainer">
     <div class="userProfile">
         <!-- Profile Picture -->
-        <img src="../static/resources/avatar.jpg" alt="avatar">
+        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
 
         <!-- Username and Sign Out Button -->
         <div class="userInfo">
@@ -14,6 +14,7 @@
         </div>
     </div>
 </div>
+
 <div class="page">
     <div class='login'>
         <a href='{{ back }}'>Back</a> <br />

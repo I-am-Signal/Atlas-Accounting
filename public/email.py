@@ -8,8 +8,10 @@ from premailer import Premailer
 email = Blueprint('email', __name__)
 
 def sendEmail(toEmails: list[str], subject:str, body:str):
-    """Sends an email with the :subject: and :body: to the :toEmails: from the 
-    FROMEMAIL in config.py."""
+    """
+    Sends an email with the :subject: and :body: to the :toEmails: from the 
+    FROMEMAIL in config.py.
+    """
     message = Mail(
         from_email=FROMEMAIL,
         to_emails=toEmails,
@@ -17,10 +19,9 @@ def sendEmail(toEmails: list[str], subject:str, body:str):
         html_content=Content("text/html", body)
     )
     try:
-        sg = SendGridAPIClient(EMAILAPIKEY)
-        return sg.send(message)
+        return SendGridAPIClient(EMAILAPIKEY).send(message)
     except Exception as e:
-        flash(e.message,category='error')
+        flash(e.message, category='error')
         return None
     
 

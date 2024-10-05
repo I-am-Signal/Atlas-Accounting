@@ -4,7 +4,7 @@
 <div class="userProfileContainer">
     <div class="userProfile">
         <!-- Profile Picture -->
-        <img src="../static/resources/avatar.jpg" alt="avatar">
+        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
 
         <!-- Username and Sign Out Button -->
         <div class="userInfo">
@@ -13,19 +13,19 @@
         </div>
     </div>
 </div>
+
 <div class="page">
     <a href='{{ back }}'>Back</a> <br />
 
     <form method='POST'>
         <p>Suspension ID: {{ suspensionID }}</p>
-        
+
         <label for='suspension_start_date'>Suspension Start Date</label>
         <input id='suspension_start_date' name='suspension_start_date' type="datetime-local"
             value="{{ start_date }}"><br>
 
         <label for='suspension_end_date'>Suspension End Date</label>
-        <input id='suspension_end_date' name='suspension_end_date' type="datetime-local"
-            value="{{ end_date }}"><br>
+        <input id='suspension_end_date' name='suspension_end_date' type="datetime-local" value="{{ end_date }}"><br>
 
         <button type='submit'>Submit</button>
         <button type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>

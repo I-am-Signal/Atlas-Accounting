@@ -1,12 +1,12 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, send_from_directory
 from flask_login import login_required, current_user
-from .models import User, Company, Credential,Account
+from .models import User, Company, Credential, Image
 from . import db
 from .auth import login_required_with_password_expiration, checkRoleClearance
 from .email import sendEmail, getEmailHTML
 from datetime import datetime
 from sqlalchemy import desc
-
+from werkzeug.utils import secure_filename
 
 
 views = Blueprint('views', __name__)
@@ -15,23 +15,19 @@ views = Blueprint('views', __name__)
 @views.route('/', methods=['GET', 'POST'])
 @login_required_with_password_expiration
 def home():
-    adminAccessible = None
     if 'administrator' == current_user.role:
-        viewUsersLink = url_for('views.view_users')
-        adminAccessible=f'<a href="{viewUsersLink}"><button class="dashleft admin">View/Edit Users</button></a>'
-        viewAccountsLink = url_for('views.view_accounts')
-        adminAccessibleA = f'<a href="{viewAccountsLink}"><button class="dashleft admin">View/Edit Accounts</button></a>'
+        view_users_link = f'<a href="{url_for('views.view_users')}"><button class="dashleft admin">View/Edit Users</button></a>'
+        view_coa_link = f'<a href="{url_for('chart.view_accounts')}"><button class="dashleft admin">View/Edit Accounts</button></a>'
     
     eventLogsLink = '#'
     journalEntriesLink = '#'
-    
 
     return checkRoleClearance(current_user.role, 'user', render_template(
             "home.html",
             user=current_user,
             homeRoute='/',
-            viewUsersButton=adminAccessible if adminAccessible else '',
-            viewAccountsButton = adminAccessibleA if adminAccessibleA else '',
+            viewUsersButton = view_users_link if view_users_link else '',
+            viewAccountsButton = view_coa_link if view_coa_link else '',
             eventLogsLink = eventLogsLink,
             journalEntriesLink=journalEntriesLink,
             
@@ -95,6 +91,7 @@ def view_users():
 @views.route('/user', methods=['GET', 'POST'])
 @login_required
 def user():
+    # when user_id check method is implemented, call it here instead of this
     user_id = request.args.get('id')
     try:
         user_id=int(user_id)
@@ -156,9 +153,6 @@ def user():
             userInfo.dob = datetime.strptime(request.form.get('dob'), "%Y-%m-%d")
             userInfo.role = request.form.get('role')
             
-            # Used in testing password expiration
-            # curr_pass.expirationDate = datetime.strptime(request.form.get('start'), '%Y-%m-%dT%H:%M')
-            
             if userInfo.is_activated == True and previous_is_activated == False:
                 response = sendEmail(
                     toEmails=userInfo.email,
@@ -184,10 +178,10 @@ def user():
         )
     )
 
-
 @views.route('/delete', methods=['GET', 'POST'])
 @login_required
 def delete():
+    # when user_id check method is implemented, call it here instead of this
     user_id = request.args.get('id')
     try:
         user_id=int(user_id)
@@ -215,52 +209,48 @@ def delete():
             userInfo=userInfo
         )
     )
-@views.route('/view_accounts', methods=['GET', 'POST'])
+
+@views.route('/pfp', methods=['POST', 'GET'])
 @login_required
-def view_accounts():
-    def generateAccounts():
-        table = f'''
-            <a href='{url_for('views.home')}'>Back</a> <br />
+def pfp():
+    """
+    GET: Returns the profile picture\n
+    POST: Uploads and saves the profile picture
+    """
+    if request.method == 'POST':
+        # when user_id check method is implemented, call it here instead of this
+        user_id = int(request.args.get('id'))
+        if 'image' in request.files:
+            image = request.files['image']
+            if image.filename == '':
+                flash('No image selected', category='error')
+                return "Failed", 400
             
-            <table class="userDisplay">
-                <thead>
-                    <tr>
-                        <th>Account ID</th>
-                        <th>Account Name</th>
-                        <th>Account #</th>
-                        <th>Account Description</th>
-                        <th>Balance</th>
-                        <th>Statement</th>
-                        <th>Date Created</th>
-                    </tr>
-                </thead>
-                <tbody>
-        '''
-        for account in Account.query.filter(Account.id).all():
-            table += f'''
-                <tr>
-                    <td>{account.id}</td>
-                    <td><a href="">{account.account_name}</a></td>
-                    <td>{account.account_number}</td>
-                    <td>{account.account_desc}</td>
-                    <td>{account.balance}</td>
-                    <td>{account.statement}</td>
-                    <td>{account.create_date}</td>
-                </tr>
-            '''
-          
-        table += f'''
-                </tbody>
-            </table>
-            <a href='{url_for('auth.create_account')}'>Create new Account</a>
-        '''
-        return table 
+            elif image:
+                user_pfp = Image(
+                    user_id = user_id,
+                    file_name = secure_filename(image.filename),
+                    file_mime = image.content_type,
+                    file_data = image.read()
+                )
+                db.session.add(user_pfp)
+                db.session.commit()
+                flash('File uploaded successfully.', category='success')
+                return redirect(url_for('views.home'))
+        else:
+            flash('No image part', category='error')
+            return "Failed", 400
     
-    return checkRoleClearance(current_user.role, 'administrator', render_template
-        (
-            "view_accounts.html",
-            user=current_user,
-            homeRoute='/',
-            accounts=generateAccounts()
-        )
-    )
+    if request.method == 'GET':
+        user_id = request.args.get('id')
+        image = Image.query.filter_by(user_id=int(user_id)).first()
+        
+        if not image:
+            return send_from_directory('static/resources', 'avatar.jpg')
+        
+        from io import BytesIO
+        return send_file(
+            BytesIO(image.file_data),
+            mimetype=image.file_mime,
+            as_attachment=False,
+            download_name=image.file_name)

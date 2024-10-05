@@ -1,37 +1,38 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
-    %}
-    
-    <div class="userProfileContainer">
-        <div class="userProfile">
-            <!-- Profile Picture -->
-            <img src="../static/resources/avatar.jpg" alt="avatar">
-            
-            <!-- Username and Sign Out Button -->
-            <div class="userInfo">
-                <p>{{ user.username }}</p>
-                <a href="./logout"><button class="logout">Sign out</button></a>
-            </div>
-        </div>
-    </div> 
-    <div class="page">
-        <div class="userDisplay">
-            <div class='login'>
-                <form method='POST'>
-                    <label for='toEmail'>Send to email:</label>
-                    <input id='toEmail' name='toEmail' value='{{ email }}'>
-                    
-                    <label for='subject'>Subject</label>
-                    <input id='subject' name='subject'>
-                    
-                    <label for='body'>Body</label>
-                    <input id='body' name='body'>
-                    
-                    <button id='test' name='test'>Submit</button>
-                    <button type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>
-                </form>
-            </div>
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content%}
+
+<div class="userProfileContainer">
+    <div class="userProfile">
+        <!-- Profile Picture -->
+        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
+
+        <!-- Username and Sign Out Button -->
+        <div class="userInfo">
+            <p>{{ user.username }}</p>
+            <a href="./logout"><button class="logout">Sign out</button></a>
         </div>
     </div>
-    
-    {% endblock %}
-    
+</div>
+
+<div class="page">
+    <div class="userDisplay">
+        <div class='login'>
+            <form method='POST'>
+                <label for='toEmail'>Send to email:</label>
+                <input id='toEmail' name='toEmail' value='{{ email }}'>
+
+                <label for='subject'>Subject</label>
+                <input id='subject' name='subject'>
+
+                <label for='body'>Body</label>
+                <input id='body' name='body'>
+
+                <button id='test' name='test'>Submit</button>
+                <button type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
