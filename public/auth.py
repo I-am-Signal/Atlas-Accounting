@@ -11,7 +11,6 @@ from enum import Enum
 import random
 
 
-
 auth = Blueprint('auth', __name__)
 
 
@@ -132,17 +131,19 @@ def login():
                     user_id=user.id
                 ).order_by(desc(Credential.create_date)).first()
                 
+                failedAttemptLimit = 3
+                
                 if check_password_hash(password_entry.password, password) and password_entry.failedAttempts < 3:
                     login_user(user, remember=True)
                     flash('Logged in successfully!', category='success')
                     password_entry.failedAttempts = 0
                     db.session.commit()
                     return redirect(url_for('views.home'))
-                elif password_entry.failedAttempts < 2:
+                elif password_entry.failedAttempts < failedAttemptLimit:
                     flash('Incorrect password, try again.', category='error')
                     password_entry.failedAttempts += 1
                 else:
-                    flash('Incorrect password was used 3 or more times. Your account is now deactivated. Please contact your Company administrator.')
+                    flash(f'Incorrect password was used {failedAttemptLimit} or more times. Your account is now deactivated. Please contact your Company administrator.')
                     password_entry.failedAttempts += 1
                     user.is_activated = False
                 db.session.commit()
@@ -340,7 +341,7 @@ def update_password():
     
 @auth.route('/reset', methods=['GET', 'POST'])
 def reset():
-    from public.views import user
+    # when user_id check method is implemented, call it here instead of this
     user_id = request.args.get('id')
     try:
         user_id=int(user_id)
@@ -382,57 +383,3 @@ def reset():
         user=current_user,
         homeRoute='/login'
     )
-@auth.route('/create_account', methods=['GET', 'POST'])
-def create_account():
-    """Loads the create_account page and handles its logic"""
-   
-
-    if request.method == 'POST':
-        account_name= request.form.get('account_name')
-        account_number = request.form.get('account_number')
-        account_desc = request.form.get('account_desc')
-        normal_side = request.form.get('normal_side')
-        account_category = request.form.get('account_category')
-        account_subcat = request.form.get('account_subcat')
-        initial_balance = request.form.get('initial_balance')
-        debit = request.form.get('debit')
-        credit = request.form.get('credit')
-        order = request.form.get('order')
-        statement = request.form.get('statement')
-        comment = request.form.get('comment')
-        
-        #finish implementing other check requirements 2-5
-        # account = Account.query.filter_by(account_number=account_number).first()
-        # if account:
-        #     flash(f'Account Number already exists', category='error')
-       
-        # else:
-        new_account = Account(
-            account_name=account_name,
-            account_number=account_number,
-            account_desc=account_desc,
-            account_subcat=account_subcat,
-            normal_side=normal_side,
-            account_category=account_category,
-            initial_balance=initial_balance,
-            debit=debit,
-            credit=credit,
-            order=order,
-            statement=statement,
-            comment=comment,
-            user_id=current_user.id
-        )
-        db.session.add(new_account)         
-            
-            
-            #finish pulling account #
-            #account = Account.query.filter_by(user_id=current_user).first()
-                
-        flash(f'New Account created with Account #! Welcome to Atlas Accounting.', category='success')            
-        db.session.commit()
-        return redirect(url_for('views.view_accounts'))
-
-    return render_template("create_account.html",
-                            user=current_user,
-                              homeRoute='/',
-                              back=url_for('views.view_accounts'))

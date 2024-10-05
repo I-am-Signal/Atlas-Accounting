@@ -1,37 +1,40 @@
-{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
-%}
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content%}
+
 <div class="userProfileContainer">
     <div class="userProfile">
         <!-- Profile Picture -->
-        <img src="../static/resources/avatar.jpg" alt="avatar">
-        
+        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
+
         <!-- Username and Sign Out Button -->
         <div class="userInfo">
             <p>{{ user.username }}</p>
-            <button class="logout" onclick="window.location.href='./logout';">Sign out</button>
+            <a href="./logout"><button class="logout">Sign out</button></a>
         </div>
     </div>
-</div> 
-  <div class="page">
-  <div class="dashboard">
-    <h1>Dashboard</h1>
-    <p>Company ID: {{ user.company_id }}</p>
-    <div class="dashboxes">
-        {{ viewUsersButton|safe }}
-        <a href="{{ eventLogsLink }}"><button class="dashleft">Event Logs</button></a>
-        <a href="{{ journalEntriesLink }}"><button class="dashleft">Journal Entries</button></a>
-        {{ viewAccountsButton|safe }}
-    </div>
-    <div class="dashboxes">
-        <div class="pending-ratio">
-            <h1>Pending Jornals: </h1>
-            <!-- place pending journal logic here-->
+</div>
+
+<div class="page">
+    <div class="dashboard">
+        <h1>Dashboard</h1>
+        <p>Company ID: {{ user.company_id }}</p>
+        <div class="dashboxes">
+            {{ viewUsersButton|safe }}
+            <a href="{{ eventLogsLink }}"><button class="dashleft">Event Logs</button></a>
+            <a href="{{ journalEntriesLink }}"><button class="dashleft">Journal Entries</button></a>
+            {{ viewAccountsButton|safe }}
         </div>
-        <div class="pending-ratio">
-            <h1>Financial Ratio: </h1>
-            <!-- Place financial ratio logic here-->
+        <div class="dashboxes">
+            <div class="pending-ratio">
+                <h1>Pending Journals: </h1>
+                <!-- place pending journal logic here-->
+            </div>
+            <div class="pending-ratio">
+                <h1>Financial Ratio: </h1>
+                <!-- Place financial ratio logic here-->
+            </div>
         </div>
     </div>
-  </div>
 </div>
 {% endblock %}

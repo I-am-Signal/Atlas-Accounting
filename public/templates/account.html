@@ -5,7 +5,7 @@
 <div class="userProfileContainer">
     <div class="userProfile">
         <!-- Profile Picture -->
-        <img src="../static/resources/avatar.jpg" alt="avatar">
+        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
 
         <!-- Username and Sign Out Button -->
         <div class="userInfo">
@@ -32,7 +32,7 @@
 
             <div class="form-row">
                 <label for='account_desc'>Account Description</label>
-                <input id='account_desc' name='account_desc' value='{{ accountInfo.account_desc }}'>
+                <textarea id='account_desc' name='account_desc' value='{{ accountInfo.account_desc }}'>
             </div>
 
             <div class="form-row">

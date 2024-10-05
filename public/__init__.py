@@ -22,12 +22,14 @@ def create_app():
     from .auth import auth
     from .email import email
     from .suspensions import suspend
+    from .chart import chart
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(email, url_prefix='/')
     app.register_blueprint(suspend, url_prefix='/')
-
+    app.register_blueprint(chart, url_prefix='/')
+    
     # Update this when authentication via models changes
     from .models import User
     
@@ -58,6 +60,18 @@ def create_app():
         error_msg='Sorry, the page you are looking for does not exist.',
         homeRoute='/'
     ), 404
+    
+    @app.errorhandler(400)
+    def bad_request(e):   
+
+        """Loads the 400 page"""
+
+        return render_template(
+        "error.html",
+        error_header='Error 400 - Bad Request',
+        error_msg='Sorry, there was a bad request.',
+        homeRoute='/'
+    ), 400
     
     return app
 
@@ -132,3 +146,7 @@ def start_scheduler(app):
         minute=30
     )
     scheduler.start()
+    
+def formatMoney(amount: float):
+    """returns a string that contains the formatted :amount:"""
+    return f'{amount:,.2f}'
