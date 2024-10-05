@@ -16,7 +16,7 @@ def create_account():
    
 
     if request.method == 'POST':
-        account_name= request.form.get('account_name')
+        account_name = request.form.get('account_name')
         account_number = request.form.get('account_number')
         account_desc = request.form.get('account_desc')
         normal_side = request.form.get('normal_side')
