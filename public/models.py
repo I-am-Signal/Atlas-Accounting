@@ -49,7 +49,7 @@ class Credential(db.Model, BaseColumnMixin):
     failedAttempts = db.Column(db.Integer, default=0)
     expirationDate = db.Column(db.DateTime, default=lambda: datetime.now() + timedelta(days=365))
 
-class Company(db.Model, BaseColumnMixin, CreatedByMixin):
+class Company(db.Model, BaseColumnMixin):
     creator_of_company = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     db.relationship('User', backref='companies_created', foreign_keys=[creator_of_company])
@@ -59,7 +59,7 @@ class Company(db.Model, BaseColumnMixin, CreatedByMixin):
 #     db.relationship('User', backref='companies_created', foreign_keys=[CreatedByMixin.created_by])
     
     
-class Suspension(db.Model, BaseColumnMixin):
+class Suspension(db.Model, BaseColumnMixin, CreatedByMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     suspension_start_date = db.Column(db.DateTime)
     suspension_end_date = db.Column(db.DateTime)

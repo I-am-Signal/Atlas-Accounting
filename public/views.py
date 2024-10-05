@@ -224,7 +224,7 @@ def pfp():
             image = request.files['image']
             if image.filename == '':
                 flash('No image selected', category='error')
-                return "Failed", 400
+                return redirect(url_for('views.user', id=user_id))
             
             elif image:
                 user_pfp = Image(
@@ -233,17 +233,25 @@ def pfp():
                     file_mime = image.content_type,
                     file_data = image.read()
                 )
-                db.session.add(user_pfp)
+                
+                # account for if an image exists already
+                curr_image = Image.query.filter_by(user_id=user_id).first()
+                if curr_image:
+                    curr_image = user_pfp
+                else:
+                    db.session.add(user_pfp)
+                
                 db.session.commit()
                 flash('File uploaded successfully.', category='success')
                 return redirect(url_for('views.home'))
         else:
             flash('No image part', category='error')
-            return "Failed", 400
+            return redirect(url_for('views.user', id=user_id))
     
     if request.method == 'GET':
-        user_id = request.args.get('id')
-        image = Image.query.filter_by(user_id=int(user_id)).first()
+        # when user_id check method is implemented, call it here instead of this
+        user_id = int(request.args.get('id'))
+        image = Image.query.filter_by(user_id=user_id).first()
         
         if not image:
             return send_from_directory('static/resources', 'avatar.jpg')
