@@ -66,20 +66,19 @@ class Suspension(db.Model, BaseColumnMixin, CreatedByMixin):
     
     db.relationship('User', backref='suspension', foreign_keys=[user_id])
 
-class Account(db.Model,BaseColumnMixin, CreatedByMixin):
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    account_number = db.Column(db.Integer, default=0)
-    account_name = db.Column(db.String(150))
-    account_desc = db.Column(db.String(500))
+class Account(db.Model, BaseColumnMixin, CreatedByMixin):
+    number = db.Column(db.Integer)
+    name = db.Column(db.String(150))
+    description = db.Column(db.String(500))
     normal_side = db.Column(db.String(150))
-    account_category = db.Column(db.String(150))
-    account_subcat = db.Column(db.String(150))
-    initial_balance = db.Column(db.Integer, default = 0)
-    debit = db.Column(db.Integer, default = 0)
-    credit = db.Column(db.Integer, default = 0)
-    balance = db.Column(db.Integer, default = 0)
+    category = db.Column(db.String(150))
+    subcategory = db.Column(db.String(150))
+    initial_balance = db.Column(db.Float, default = 0.0)
+    debit = db.Column(db.Float, default = 0.0)
+    credit = db.Column(db.Float, default = 0.0)
+    balance = db.Column(db.Float, default = 0.0)
     order = db.Column(db.Integer, default = 0)
     statement = db.Column(db.String(150))
     comment = db.Column(db.String(150))
     
-    db.relationship('User', backref='account', foreign_keys=[user_id])
+    db.relationship('User', backref='account_created_by', foreign_keys=[CreatedByMixin.created_by])

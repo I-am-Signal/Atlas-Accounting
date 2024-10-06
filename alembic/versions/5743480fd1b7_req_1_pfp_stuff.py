@@ -19,17 +19,24 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column('suspension', sa.Column('created_by', sa.Integer(), sa.ForeignKey('user.id')))
+    with op.batch_alter_table('suspension') as batch_op:
+        batch_op.add_column(sa.Column('created_by', sa.Integer()))
+        batch_op.create_foreign_key(
+            'fk_suspension_created_by_user',
+            'user',
+            ['created_by'],
+            ['id']
+        )
     
     op.create_table(
         'account',
         sa.Column('user_id', sa.Integer(), sa.ForeignKey('user.id'), nullable=False),
-        sa.Column('account_number', sa.Integer(), nullable=False),
-        sa.Column('account_name', sa.String(150), nullable=False),
-        sa.Column('account_desc', sa.String(500), nullable=True),
+        sa.Column('number', sa.Integer(), nullable=False),
+        sa.Column('name', sa.String(150), nullable=False),
+        sa.Column('description', sa.String(500), nullable=True),
         sa.Column('normal_side', sa.String(150), nullable=True),
-        sa.Column('account_category', sa.String(150), nullable=True),
-        sa.Column('account_subcat', sa.String(150), nullable=True),
+        sa.Column('category', sa.String(150), nullable=True),
+        sa.Column('subcategory', sa.String(150), nullable=True),
         sa.Column('initial_balance', sa.Float(), default=0.0, nullable=False),
         sa.Column('debit', sa.Float(), default=0.0, nullable=False),
         sa.Column('credit', sa.Float(), default=0.0, nullable=False),
@@ -57,4 +64,6 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_table('image')
     op.drop_table('account')
-    op.drop_column('suspension', 'created_by')
+    with op.batch_alter_table('suspension') as batch_op:
+        batch_op.drop_constraint('fk_suspension_created_by_user', type_='foreignkey')
+        batch_op.drop_column('created_by')

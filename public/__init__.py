@@ -147,6 +147,11 @@ def start_scheduler(app):
     )
     scheduler.start()
     
-def formatMoney(amount: float):
+def formatMoney(amount: float) -> str:
     """returns a string that contains the formatted :amount:"""
     return f'{amount:,.2f}'
+
+def unformatMoney(formatted_amount: str) -> float:
+    """Removes currency symbols, commas, and spaces, returning a plain numeric string."""
+    import re
+    return float(re.sub(r'[^\d.-]', '', formatted_amount))
