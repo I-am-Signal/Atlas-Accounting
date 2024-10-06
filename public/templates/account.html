@@ -17,66 +17,91 @@
 
 <div class="page">
     <form method='POST' class="user-form">
-        <p>User ID: {{ userInfo.id }}</p>
-
         <div class="form-grid">
             <div class="form-row">
                 <label for='account_name'>Account Name</label>
-                <input id='account_name' name='account_name' value='{{ accountInfo.account_name }}'>
+                <input id='account_name' name='account_name' value='{{ accountInfo.name if accountInfo else "" }}'>
             </div>
 
             <div class="form-row">
-                <label for='account_number'>Account #</label>
-                <input id='acount_number' name='account_number' value='{{ accountInfo.account_number }}'>
+                <label for='account_number'>Account Number</label>
+                <input id='acount_number' name='account_number' value='{{ accountInfo.number if accountInfo else "" }}'>
             </div>
 
             <div class="form-row">
                 <label for='account_desc'>Account Description</label>
-                <textarea id='account_desc' name='account_desc' value='{{ accountInfo.account_desc }}'>
+                <input id='account_desc' name='account_desc'
+                    value='{{ accountInfo.description if accountInfo else "" }}'>
             </div>
 
             <div class="form-row">
-                <label for='normal_side'>Normal Side </label>
-                <input id='normal_side' name='normal_side' value='{{ accountInfo.normal_side }}'>
+                <label for='normal_side'>Normal Side</label>
+                <select id='normal_side' name='normal_side'>
+                    <option value="" {% if not accountInfo %}selected{% endif %}>Select...</option>
+                    <option value="Debit" {% if accountInfo and accountInfo.normal_side=='Debit' %}selected{% endif %}>
+                        Debit</option>
+                    <option value="Credit" {% if accountInfo and accountInfo.normal_side=='Credit' %}selected{% endif
+                        %}>Credit</option>
+                </select>
             </div>
+
 
             <div class="form-row">
                 <label for='account_category'>Account Category</label>
-                <input id='account_category' name='account_category' value='{{ accountInfo.account_category }}'>
+                <input id='account_category' name='account_category'
+                    value='{{ accountInfo.category if accountInfo else "" }}'>
             </div>
 
             <div class="form-row">
                 <label for='account_subcat'>Account Subcategory</label>
-                <input id='account_subcat' name='account_subcat' value='{{ accountInfo.account_subcat }}'>
+                <input id='account_subcat' name='account_subcat'
+                    value='{{ accountInfo.subcategory if accountInfo else "" }}'>
             </div>
 
             <div class="form-row">
+                {% if not accountInfo %}
                 <label for='initial_balance'>Initial Balance</label>
-                <input id='initial_balance' name='initial_balance' value='{{ accountInfo.initial_balance }}'>
+                <input id='initial_balance' name='initial_balance' value='0.00'>
+                {% else %}
+                <label for='balance'>Balance</label>
+                <input id='balance' name='balance' value='{{ accountInfo.balance }}'>
+                {% endif %}
             </div>
-            <div class="form-row">
-                <label for='debit'>Debit </label>
+
+            {% if accountInfo != None %}
+            <div class='form-row'>
+                <label for='debit'>Debit</label>
                 <input id='debit' name='debit' value='{{ accountInfo.debit }}'>
             </div>
-            <div class="form-row">
-                <label for='credit'>Credit </label>
+            <div class='form-row'>
+                <label for='credit'>Credit</label>
                 <input id='credit' name='credit' value='{{ accountInfo.credit }}'>
             </div>
-            <div class="form-row">
-                <label for='balance'>Balance </label>
-                <input id='balance' name='balance' value='{{ accountInfo.balance }}'>
-            </div>
+            {% endif %}
+
+
             <div class="form-row">
                 <label for='order'>Order </label>
-                <input id='order' name='order' value='{{ accountInfo.order }}'>
+                <input id='order' name='order' value='{{ accountInfo.order if accountInfo else "" }}'>
             </div>
+
             <div class="form-row">
                 <label for='statement'>Statement </label>
-                <input id='statement' name='statement' value='{{ accountInfo.statement }}'>
+                <select id='statement' name='statement'>
+                    <option value="" {% if not accountInfo %}selected{% endif %}>Select...</option>
+                    {% for statement in statementTypes %}
+                    <option value="{{ statement }}" {% if accountInfo and accountInfo.statement==statement %}selected{%
+                        endif %}>
+                        {{ statement }}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
+
+
             <div class="form-row">
                 <label for='comment'>Comment </label>
-                <input id='comment' name='comment' value='{{ accountInfo.comment }}'>
+                <input id='comment' name='comment' value='{{ accountInfo.comment if accountInfo else "" }}'>
             </div>
         </div>
 
@@ -88,5 +113,23 @@
         </div>
     </form>
 </div>
+
+<script type="module">
+    import { currencyInput, ensureSidesAreBalancedWithELs } from '../static/account.js';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        let currencyElements = ['initial_balance',
+        'balance',
+        'debit',
+        'credit'];
+        for(let element of currencyElements){
+            try{
+                currencyInput(element);
+            }catch{} // only catches when element does not exist
+        }
+
+        ensureSidesAreBalancedWithELs('normal_side', 'balance', 'debit', 'credit');
+    });
+</script>
 
 {% endblock %}
