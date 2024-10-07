@@ -2,18 +2,7 @@
 {% block title %}Home{% endblock %}
 {% block content%}
 
-<div class="userProfileContainer">
-    <div class="userProfile">
-        <!-- Profile Picture -->
-        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
 
-        <!-- Username and Sign Out Button -->
-        <div class="userInfo">
-            <p>{{ user.username }}</p>
-            <a href="./logout"><button class="logout">Sign out</button></a>
-        </div>
-    </div>
-</div>
 
 <div class="page">
     <div class="dashboard">
@@ -21,8 +10,8 @@
         <p>Company ID: {{ user.company_id }}</p>
         <div class="dashboxes">
             {{ viewUsersButton|safe }}
-            <a href="{{ eventLogsLink }}"><button class="dashleft">Event Logs</button></a>
-            <a href="{{ journalEntriesLink }}"><button class="dashleft">Journal Entries</button></a>
+            <a href="{{ eventLogsLink }}"><button class="dashleft" data-toggle="tooltip" data-placement="right" title="Link to Event Logs">Event Logs</button></a>
+            <a href="{{ journalEntriesLink }}"><button class="dashleft" data-toggle="tooltip" data-placement="right" title="Link to Journal Entries">Journal Entries</button></a>
             {{ viewAccountsButton|safe }}
         </div>
         <div class="dashboxes">

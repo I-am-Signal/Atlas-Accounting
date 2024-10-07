@@ -16,8 +16,8 @@ views = Blueprint('views', __name__)
 @login_required_with_password_expiration
 def home():
     if 'administrator' == current_user.role:
-        view_users_link = f'<a href="{url_for('views.view_users')}"><button class="dashleft admin">View/Edit Users</button></a>'
-        view_coa_link = f'<a href="{url_for('chart.view_accounts')}"><button class="dashleft admin">View/Edit Accounts</button></a>'
+        view_users_link = f'<a href="{url_for('views.view_users')}"><button class="dashleft admin" data-toggle="tooltip" data-placement="right" title="Link to User List">View/Edit Users</button></a>'
+        view_coa_link = f'<a href="{url_for('chart.view_accounts')}"><button class="dashleft admin" data-toggle="tooltip" data-placement="right" title="Link to Chart of Accounts">View/Edit Accounts</button></a>'
     
     eventLogsLink = '#'
     journalEntriesLink = '#'
@@ -62,10 +62,10 @@ def view_users():
             table += f'''
                 <tr>
                     <td>{user.id}</td>
-                    <td><a href="{ url_for('views.user', id=user.id) }">{user.username}</a></td>
+                    <td><a href="{ url_for('views.user', id=user.id) }' data-toggle="tooltip" data-placement="bottom" title="View User Info">{user.username}</a></td>
                     <td>{user.first_name}</td>
                     <td>{user.last_name}</td>
-                    <td>{f"<a href='{url_for('email.send', id=user.id)}'>{user.email}</a>"}</td>
+                    <td>{f"<a href='{url_for('email.send', id=user.id)}' data-toggle='tooltip' data-placement='right' title='Send Email to User'>{user.email}</a>"}</td>
                     <td>{user.is_activated}</td>
                     <td>{user.role}</td>
                 </tr>
@@ -262,3 +262,14 @@ def pfp():
             mimetype=image.file_mime,
             as_attachment=False,
             download_name=image.file_name)
+
+@views.route('/help', methods=['GET'])
+@login_required
+def help():
+
+    return checkRoleClearance(current_user.role, 'user', render_template(
+            "help.html",
+            user=current_user,
+            homeRoute='/'           
+        )
+    )
