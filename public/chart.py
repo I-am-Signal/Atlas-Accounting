@@ -126,7 +126,7 @@ def view_accounts():
             table += f'''
                 <tr>
                     <td>{account.number}</td>
-                    <td><a href="{url_for('chart.show_account', number=account.number)}">{account.name}</a></td>
+                    <td><a href="{url_for('chart.show_account', number=account.number)} data-toggle="tooltip" data-placement="right" title="View Account Info"">{account.name}</a></td>
                     <td>{account.category}</td>
                     <td>{account.subcategory}</td>
                     <td>{account.statement}</td>
