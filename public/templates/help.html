@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="page">
+    <div class="helpBox">
+        <h1>Welcome to the Financial Management System</h1>             
+                    <div>
+                        <h4>1. User Roles</h4>
+                        <p>This application supports three types of users: Administrator, Manager, and Accountant. Each role has specific permissions and access levels.</p>
+
+                        <h4>2. Login</h4>
+                        <p>Users can log in using their credentials. If you forget your password, use the 'Forgot Password' option.</p>
+
+                        <h4>3. Financial Reports</h4>
+                        <p>Users can generate financial reports including trial balances, income statements, and balance sheets for specified date ranges.</p>
+
+                        <h4>4. Adjusting Entries</h4>
+                        <p>Adjusting journal entries can be created and submitted for approval. Ensure to include proper documentation for each entry.</p>
+
+                        <h4>5. Financial Ratios</h4>
+                        <p>The dashboard displays key financial ratios, color-coded to indicate performance levels.</p>
+
+                        <h4>6. Event Logs</h4>
+                        <p>All changes made in the system are logged for auditing purposes. You can view these logs under the relevant sections.</p>
+                    </div>    
+                    
+            <p><a href="{{ url_for('views.home') }}">Home</a></p>
+        
+    </div>   
+</div>
+
+{% endblock %}
