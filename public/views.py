@@ -318,6 +318,7 @@ def pfp():
             as_attachment=False,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
             download_name=image.file_name,
         )
 
@@ -337,3 +338,6 @@ def help():
 =======
             download_name=image.file_name)
 >>>>>>> parent of 6571762 (Merge pull request #42 from I-am-Signal/ac)
+=======
+            download_name=image.file_name)
+>>>>>>> parent of af1e913 (Rquirements 17/18)
