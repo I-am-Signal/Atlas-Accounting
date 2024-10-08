@@ -1,36 +1,64 @@
-{% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
-%}
+{% extends "base.html" %}{% block title %}Login{% endblock %}{% block content %}
 <div class="page">
   <div class="login">
     <form method="POST">
       <h1>Login</h1>
-      <i class="fa-solid fa-user"></i>      
+
+      <i class="fa-solid fa-user"></i>
       <label for="username">Username:</label> <br />
       <input 
-        type="username"
+        type="text"
         id="username"
         name="username"
         placeholder="Enter username"
       > <br /> <br />
+
       <i class="fa-solid fa-lock"></i>
       <label for="password">Password:</label> <br />
-      <input
-        type="password"
-        id="password"
-        name="password"
-        placeholder="Enter password"
-      > <br />
+      <div class="input-group">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Enter password"
+        >
+        <span class="input-group-text" id="toggle-password">
+          <i class="far fa-eye"></i>
+        </span>
+      </div> <br />
+
       <div id="forgotPasswordContainer">
-      <a href="/forgot" id="forgotPassword">Forgot password?</a> <br />
+        <a href="/forgot" id="forgotPassword">Forgot password?</a> <br />
       </div>
+
       <div class="button-container">
-      <button type="submit" id="submit">Submit</button> <br />
+        <button type="submit" id="submit">Submit</button> <br />
       </div>
+
       <div id="createAccountContainer">
-      <label for="notWithUs">Not with us?</label> <br />
-      <a href="/sign-up" id="createAccount">Create new account</a>
+        <label for="notWithUs">Not with us?</label> <br />
+        <a href="/sign-up" id="createAccount">Create new account</a>
       </div>
     </form>
   </div>
 </div>
+
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<script>
+  const passwordInput = document.getElementById('password');
+  const togglePassword = document.getElementById('toggle-password');
+  const togglePasswordIcon = togglePassword.querySelector('i');
+
+  togglePassword.addEventListener('click', function () {
+    // Toggle the type attribute
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+
+    // Toggle the icon
+    togglePasswordIcon.classList.toggle('fa-eye');
+    togglePasswordIcon.classList.toggle('fa-eye-slash');
+  });
+</script>
+
 {% endblock %}
