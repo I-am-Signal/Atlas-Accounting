@@ -137,6 +137,28 @@ def user():
         elif len(email) < 4:
             flash('Email must be greater than 3 characters.', category='error')
         else:
+            if 'image' in request.files:
+                image = request.files['image']
+                if image.filename != '':
+                    
+                    # account for if an image exists already
+                    curr_image = Image.query.filter_by(user_id=userInfo.id).first()
+                    if curr_image:
+                        curr_image.file_name = secure_filename(image.filename)
+                        curr_image.file_mime = image.content_type
+                        curr_image.file_data = image.read()
+                    else:
+                        db.session.add(
+                            Image(
+                                user_id = userInfo.id,
+                                file_name = secure_filename(image.filename),
+                                file_mime = image.content_type,
+                                file_data = image.read()
+                            )
+                        )
+                    
+                    db.session.commit()
+            
             # prevents activation email if the activation state was left unchanged
             previous_is_activated = userInfo.is_activated
             
@@ -210,43 +232,10 @@ def delete():
         )
     )
 
-@views.route('/pfp', methods=['POST', 'GET'])
+@views.route('/pfp', methods=['GET'])
 @login_required
 def pfp():
-    """
-    GET: Returns the profile picture\n
-    POST: Uploads and saves the profile picture
-    """
-    if request.method == 'POST':
-        # when user_id check method is implemented, call it here instead of this
-        user_id = int(request.args.get('id'))
-        if 'image' in request.files:
-            image = request.files['image']
-            if image.filename == '':
-                flash('No image selected', category='error')
-                return redirect(url_for('views.user', id=user_id))
-            
-            elif image:
-                user_pfp = Image(
-                    user_id = user_id,
-                    file_name = secure_filename(image.filename),
-                    file_mime = image.content_type,
-                    file_data = image.read()
-                )
-                
-                # account for if an image exists already
-                curr_image = Image.query.filter_by(user_id=user_id).first()
-                if curr_image:
-                    curr_image = user_pfp
-                else:
-                    db.session.add(user_pfp)
-                
-                db.session.commit()
-                flash('File uploaded successfully.', category='success')
-                return redirect(url_for('views.home'))
-        else:
-            flash('No image part', category='error')
-            return redirect(url_for('views.user', id=user_id))
+    """GET: Returns the profile picture\n"""
     
     if request.method == 'GET':
         # when user_id check method is implemented, call it here instead of this

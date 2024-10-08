@@ -16,7 +16,7 @@
 </div>
 
 <div class="page">
-    <form method='POST' class="user-form" action="/pfp" enctype="multipart/form-data">
+    <form method='POST' class="user-form" action="/user?id={{ userInfo.id }}" enctype="multipart/form-data">
         <p>User ID: {{ userInfo.id }}</p>
 
         <div class="form-grid">
@@ -89,10 +89,10 @@
 
             <div class="form-row">
                 <label for='image'>Profile Picture</label>
-                <input type='file' id='image' name='image' required>
+                <input type='file' id='image' name='image'>
             </div>
 
-            <input type="hidden" id="id" name="id" value='{{ userInfo.id }}' required>
+            <input type="hidden" id="id" name="id" value='{{ userInfo.id }}'>
             
             <!-- Used in testing password expiration -->
             <!-- <div class="form-row">
