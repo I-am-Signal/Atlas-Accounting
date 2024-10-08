@@ -317,6 +317,7 @@ def pfp():
             mimetype=image.file_mime,
             as_attachment=False,
 <<<<<<< HEAD
+<<<<<<< HEAD
             download_name=image.file_name,
         )
 
@@ -330,6 +331,9 @@ def help():
         "user",
         render_template("help.html", user=current_user, homeRoute="/"),
     )
+=======
+            download_name=image.file_name)
+>>>>>>> parent of 6571762 (Merge pull request #42 from I-am-Signal/ac)
 =======
             download_name=image.file_name)
 >>>>>>> parent of 6571762 (Merge pull request #42 from I-am-Signal/ac)
