@@ -547,8 +547,9 @@ top: 4%;
     color: #1B263B;
     font-size: 1rem;
     margin-top: 5px; /* Space between label and input */
-    width: 100%;
 }
+.form-row input{ width: 90%; }
+.form-row select{ width: 98%; }
 
 /* Form buttons styling */
 .form-buttons {
