@@ -16,8 +16,8 @@ views = Blueprint("views", __name__)
 @login_required_with_password_expiration 
 def home():
     if "administrator" == current_user.role:
-        view_users_link = f'<a href="{url_for("views.view_users")}"><button class="dashleft admin" data-toggle="tooltip" data-placement="right" title="Link to User List">View/Edit Users</button></a>'
-        view_coa_link = f'<a href="{url_for("chart.view_accounts")}"><button class="dashleft admin" data-toggle="tooltip" data-placement="right" title="Link to Chart of Accounts">View/Edit Accounts</button></a>'
+        view_users_link = f'<a href="{url_for("views.view_users")}"><button class="dashleft admin">View/Edit Users</button></a>'
+        view_coa_link = f'<a href="{url_for("chart.view_accounts")}"><button class="dashleft admin">View/Edit Accounts</button></a>'
 
     eventLogsLink = "#"
     journalEntriesLink = "#"
