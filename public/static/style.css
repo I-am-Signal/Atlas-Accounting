@@ -571,27 +571,4 @@ top: 4%;
 .form-buttons button:hover {
     background-color: #415A77;
 }
-.help{
-  position: absolute;
-  top: 56rem;
-  right: 5rem;
-  
-}
-.helpBox{  
-    background-color: #1B263B; 
-    color: #E0E1DD;
-   
-    border-radius: 12px;
-    z-index: 2;
-    display: flex;
-    flex-direction: column; /* Stack elements vertically */
-    justify-content: center; /* Center the form elements inside the box */
-    align-items: center;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);  
-  
-}
-.collapsebar{
-  position: absolute;
-  right: 0rem;
 
-}
