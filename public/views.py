@@ -1,13 +1,4 @@
-from flask import (
-    Blueprint,
-    render_template,
-    request,
-    flash,
-    redirect,
-    url_for,
-    send_file,
-    send_from_directory,
-)
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, send_from_directory
 from flask_login import login_required, current_user
 from .models import User, Company, Credential, Image
 from . import db
@@ -21,8 +12,8 @@ from werkzeug.utils import secure_filename
 views = Blueprint("views", __name__)
 
 
-@views.route("/", methods=["GET", "POST"])
-@login_required_with_password_expiration
+@views.route('/', methods=['GET', 'POST'])
+@login_required_with_password_expiration 
 def home():
     if "administrator" == current_user.role:
         view_users_link = f'<a href="{url_for("views.view_users")}"><button class="dashleft admin" data-toggle="tooltip" data-placement="right" title="Link to User List">View/Edit Users</button></a>'
@@ -157,6 +148,26 @@ def user():
         elif len(email) < 4:
             flash("Email must be greater than 3 characters.", category="error")
         else:
+            if 'image' in request.files:
+                image = request.files['image']
+                if image.filename != '':
+                    
+                    # account for if an image exists already
+                    curr_image = Image.query.filter_by(user_id=userInfo.id).first()
+                    if curr_image:
+                        curr_image.file_name = secure_filename(image.filename)
+                        curr_image.file_mime = image.content_type
+                        curr_image.file_data = image.read()
+                    else:
+                        db.session.add(
+                            Image(
+                                user_id = userInfo.id,
+                                file_name = secure_filename(image.filename),
+                                file_mime = image.content_type,
+                                file_data = image.read()
+                            )
+                        )
+            
             # prevents activation email if the activation state was left unchanged
             previous_is_activated = userInfo.is_activated
 
@@ -254,46 +265,12 @@ def delete():
         ),
     )
 
-
-@views.route("/pfp", methods=["POST", "GET"])
+@views.route('/pfp', methods=['GET'])
 @login_required
 def pfp():
-    """
-    GET: Returns the profile picture\n
-    POST: Uploads and saves the profile picture
-    """
-    if request.method == "POST":
-        # when user_id check method is implemented, call it here instead of this
-        user_id = int(request.args.get("id"))
-        if "image" in request.files:
-            image = request.files["image"]
-            if image.filename == "":
-                flash("No image selected", category="error")
-                return redirect(url_for("views.user", id=user_id))
-
-            elif image:
-                user_pfp = Image(
-                    user_id=user_id,
-                    file_name=secure_filename(image.filename),
-                    file_mime=image.content_type,
-                    file_data=image.read(),
-                )
-
-                # account for if an image exists already
-                curr_image = Image.query.filter_by(user_id=user_id).first()
-                if curr_image:
-                    curr_image = user_pfp
-                else:
-                    db.session.add(user_pfp)
-
-                db.session.commit()
-                flash("File uploaded successfully.", category="success")
-                return redirect(url_for("views.home"))
-        else:
-            flash("No image part", category="error")
-            return redirect(url_for("views.user", id=user_id))
-
-    if request.method == "GET":
+    """GET: Returns the profile picture\n"""
+    
+    if request.method == 'GET':
         # when user_id check method is implemented, call it here instead of this
         user_id = int(request.args.get("id"))
         image = Image.query.filter_by(user_id=user_id).first()
@@ -309,14 +286,3 @@ def pfp():
             as_attachment=False,
             download_name=image.file_name,
         )
-
-
-@views.route("/help", methods=["GET"])
-@login_required
-def help():
-
-    return checkRoleClearance(
-        current_user.role,
-        "user",
-        render_template("help.html", user=current_user, homeRoute="/"),
-    )
