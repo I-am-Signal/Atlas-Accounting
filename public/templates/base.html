@@ -75,6 +75,12 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"></script>
 
+      <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+      </script>
+
     {% block javascript %}
     <script type="text/javascript">
       // old code from the tutorial, us as a reference for building new stuff
