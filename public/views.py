@@ -13,7 +13,7 @@ views = Blueprint('views', __name__)
 
 
 @views.route('/', methods=['GET', 'POST'])
-@login_required_with_password_expiration
+@login_required_with_password_expiration 
 def home():
     if 'administrator' == current_user.role:
         view_users_link = f'<a href="{url_for('views.view_users')}"><button class="dashleft admin">View/Edit Users</button></a>'
