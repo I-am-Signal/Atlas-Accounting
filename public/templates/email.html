@@ -10,7 +10,7 @@
         <!-- Username and Sign Out Button -->
         <div class="userInfo">
             <p>{{ user.username }}</p>
-            <a href="./logout"><button class="logout">Sign out</button></a>
+            <a href="./logout"><button id="signout" class="logout">Sign out</button></a>
         </div>
     </div>
 </div>
@@ -29,7 +29,7 @@
                 <input id='body' name='body'>
 
                 <button id='test' name='test'>Submit</button>
-                <button type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>
+                <button id="cancel" type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>
             </form>
         </div>
     </div>

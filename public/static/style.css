@@ -673,5 +673,6 @@ top: 4%;
   color: rgb(255, 255, 255);
   border: 1px solid #737373;
   text-align: center;
+  z-index: 3;
   
 }

@@ -60,9 +60,10 @@
       <a href="#" id="about">About</a> |
       <a href="#" id="contact">Contact</a> |
       <a href="#" id="terms">Terms</a> |
-      <a href="#" id="help">Help</a>
+      <a href="{{ helpRoute }}" id="help">Help</a>
       <br />
       © 2024 Atlas Accounting
+      
     </div>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -75,11 +76,26 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"></script>
 
-      <!-- <script>
+      <script>
         $(document).ready(function(){
-            $('[data-toggle="tooltip"]').tooltip();
+          $('#users').tooltip({title:"View List of Users",placement:"bottom"});
+          $('#accounts').tooltip({title:"View List of Accounts",placement:"bottom"});
+          $('#signout').tooltip({title:"Logs You Out of Current Session",placement:"bottom"});
+          $('#journalentry').tooltip({title:"test",placement:"bottom"});
+          $('#viewuserinfo').tooltip({title:"Pulls user info to view or edit",placement:"bottom"});
+          $('#sendemail').tooltip({title:"Craft Email to this User",placement:"bottom"});
+          $('#createUser').tooltip({title:"Create a new User in the System",placement:"bottom"});
+          $('#submit').tooltip({title:"Submits any changes made above",placement:"bottom"});
+          $('#test').tooltip({title:"Submits any changes made above",placement:"bottom"});
+          $('#cancel').tooltip({title:"test",placement:"bottom"});
+          $('#delete').tooltip({title:"test",placement:"bottom"});
+          $('#viewsus').tooltip({title:"test",placement:"bottom"});
+          $('#insert').tooltip({title:"test",placement:"bottom"});
+          $('#eventlog').tooltip({title:"test",placement:"bottom"});
+          $('#createAccount').tooltip({title:"test",placement:"bottom"});
+          $('#showAccount').tooltip({title:"test",placement:"bottom"});
         });
-      </script> -->
+      </script>
 
     {% block javascript %}
     <script type="text/javascript">
