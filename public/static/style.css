@@ -590,8 +590,25 @@ top: 4%;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);  
   
 }
-.collapsebar{
-  position: absolute;
-  right: 0rem;
+
+.tooltip {
+  max-width: 236px !important;
+  margin: 10px;
+  height: 20px;
+  min-width: 20px;
+  padding: 2px;
+  font-size: 12px;
+  border-radius: 5px;
+  background: grey;
+  color: rgb(255, 255, 255);
+  border: 1px solid #737373;
+  text-align: center;
+  
+}
+
+
+
+
+
 
 }
