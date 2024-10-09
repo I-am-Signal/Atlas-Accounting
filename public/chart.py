@@ -25,6 +25,7 @@ def show_account():
             'Balance Sheet', 
             'Retained Earnings Statement'
         ] # pull the actual statement types instead of these predetermined ones
+        
         return checkRoleClearance(current_user.role, 'administrator', render_template(
                 "account.html",
                 user=current_user,
@@ -46,14 +47,8 @@ def show_account():
         order = request.form.get('order')
         statement = request.form.get('statement')
         comment = request.form.get('comment')
-        
-        #finish implementing other check requirements 2-5
-        # account = Account.query.filter_by(account_number=account_number).first()
-        # if account:
-        #     flash(f'Account Number already exists', category='error')
        
-        curr_account = Account.query.filter_by(number=account_number).first()
-        # else:
+        curr_account = Account.query.filter_by(number=account_number, name=account_name).first()
         if curr_account:
             debit = request.form.get('debit')
             credit = request.form.get('credit')
@@ -73,6 +68,17 @@ def show_account():
             flash(f'Account #{curr_account.number}\'s information has been successfully updated.', category='success')
             
         else:
+            # check for duplicate number or name
+            number  = Account.query.filter_by(number=account_number).first()
+            name = Account.query.filter_by(name=account_name).first()
+            
+            if number or name and not(number and name):
+                flash(
+                    "New accounts cannot have the same name or number as previous accounts.",
+                      category='error'
+                )
+                return redirect(url_for('chart.show_account'))
+            
             initial_balance = request.form.get('initial_balance')
 
             new_account = Account(
@@ -82,8 +88,8 @@ def show_account():
                 normal_side=normal_side, # check for valid normal side
                 category=account_category,
                 subcategory=account_subcat,
-                initial_balance=initial_balance, # check if valid
-                balance=initial_balance,
+                initial_balance=unformatMoney(initial_balance), # check if valid
+                balance=unformatMoney(initial_balance),
                 order=order, # check if > 0, is int, and is not the same for the cat/subcat
                 statement=statement, # check if valid statement type
                 comment=comment,
@@ -122,7 +128,9 @@ def view_accounts():
                 </thead>
                 <tbody>
         '''
-        for account in Account.query.filter(Account.id).order_by(asc(Account.number)).all():
+        for account in Account.query.filter(Account.id).filter_by(
+                company_id = current_user.company_id
+            ).order_by(asc(Account.number)).all():
             table += f'''
                 <tr>
                     <td>{account.number}</td>
