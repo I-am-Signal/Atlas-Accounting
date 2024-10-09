@@ -47,6 +47,10 @@ def show_account():
         statement = request.form.get('statement')
         comment = request.form.get('comment')
         
+        if not account_number.isdigit():
+            flash('Invalid account number. Only digits are allowed.', category='error')
+            return redirect(url_for('chart.view_accounts'))
+
         #finish implementing other check requirements 2-5
         # account = Account.query.filter_by(account_number=account_number).first()
         # if account:
@@ -82,8 +86,8 @@ def show_account():
                 normal_side=normal_side, # check for valid normal side
                 category=account_category,
                 subcategory=account_subcat,
-                initial_balance=initial_balance, # check if valid
-                balance=initial_balance,
+                initial_balance=unformatMoney(initial_balance), # check if valid
+                balance=unformatMoney(initial_balance),
                 order=order, # check if > 0, is int, and is not the same for the cat/subcat
                 statement=statement, # check if valid statement type
                 comment=comment,
