@@ -641,3 +641,38 @@ top: 4%;
 .calendar-nav button:hover {
   background-color: #0056b3;
 }
+.help{
+  position: absolute;
+  top: 56rem;
+  right: 5rem;
+  
+}
+.helpBox{  
+    background-color: #1B263B; 
+    color: #E0E1DD;
+   
+    border-radius: 12px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: center; /* Center the form elements inside the box */
+    align-items: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);  
+  
+}
+
+.tooltip {
+  max-width: 236px !important;
+  margin: 10px;
+  height: 20px;
+  min-width: 20px;
+  padding: 2px;
+  font-size: 12px;
+  border-radius: 5px;
+  background: grey;
+  color: rgb(255, 255, 255);
+  border: 1px solid #737373;
+  text-align: center;
+  z-index: 3;
+  
+}
