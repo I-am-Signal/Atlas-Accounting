@@ -2,7 +2,82 @@
 {% block title %}Home{% endblock %}
 {% block content%}
 
+<div class="userProfileContainer">
+    <div class="userProfile">
+        <!-- Profile Picture -->
+        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
 
+        <!-- Username and Sign Out Button -->
+        <div class="userInfo">
+            <p>{{ user.username }}</p>
+            <a href="./logout"><button class="logout">Sign out</button></a>
+        </div>
+    </div>
+</div>
+
+<div class="calendarContainer">
+    <div class="calendar-header">October 2024</div>
+    <table class="calendar">
+        <thead>
+            <tr>
+                <th>Sun</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td> <!-- Empty cells for days before October starts -->
+                <td></td>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>6</td>
+                <td>7</td>
+                <td>8</td>
+                <td>9</td>
+                <td>10</td>
+                <td>11</td>
+                <td>12</td>
+            </tr>
+            <tr>
+                <td>13</td>
+                <td>14</td>
+                <td>15</td>
+                <td>16</td>
+                <td>17</td>
+                <td>18</td>
+                <td>19</td>
+            </tr>
+            <tr>
+                <td>20</td>
+                <td>21</td>
+                <td>22</td>
+                <td>23</td>
+                <td>24</td>
+                <td>25</td>
+                <td>26</td>
+            </tr>
+            <tr>
+                <td>27</td>
+                <td>28</td>
+                <td>29</td>
+                <td>30</td>
+                <td>31</td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
 <div class="page">
     <div class="dashboard">
@@ -10,8 +85,8 @@
         <p>Company ID: {{ user.company_id }}</p>
         <div class="dashboxes">
             {{ viewUsersButton|safe }}
-            <a href="{{ eventLogsLink }}"><button class="dashleft" data-toggle="tooltip" data-placement="right" title="Link to Event Logs">Event Logs</button></a>
-            <a href="{{ journalEntriesLink }}"><button class="dashleft" data-toggle="tooltip" data-placement="right" title="Link to Journal Entries">Journal Entries</button></a>
+            <a href="{{ eventLogsLink }}"><button class="dashleft">Event Logs</button></a>
+            <a href="{{ journalEntriesLink }}"><button class="dashleft">Journal Entries</button></a>
             {{ viewAccountsButton|safe }}
         </div>
         <div class="dashboxes">

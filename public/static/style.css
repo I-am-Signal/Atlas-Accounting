@@ -421,8 +421,9 @@ body {
   width: 90%;
   margin: 0px 5%;  
   height: auto;
-  position: absolute;
   top: 15%;
+  display: block;
+  
 }
 
 .dashboxes{  
@@ -571,6 +572,75 @@ top: 4%;
 .form-buttons button:hover {
     background-color: #415A77;
 }
+
+.calendarContainer {
+  top: 100px;
+  left: 20px;
+  width: 350px; /* Adjust width as needed */
+  border: 1px solid #0D1B2A; /* Dark Blue Border */
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #E0E1DD; /* Light Gray Background */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin-bottom: 100px;
+  position: absolute;
+}
+
+/* Calendar header (Month and Year) */
+.calendar-header {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 10px;
+  background-color: #778DA9; /* Light Blue Header */
+  color: #0D1B2A; /* Dark Blue Text */
+  padding: 10px;
+  border-radius: 4px;
+}
+
+/* Style the table inside the calendar */
+.calendar {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.calendar th {
+  background-color: #415A77; /* Steel Blue for Table Headers */
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  color: #E0E1DD; /* Light Gray Text */
+}
+
+.calendar td {
+  width: 14.28%; /* There are 7 days in a week, so divide 100% by 7 */
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #0D1B2A; /* Dark Blue Border */
+  color: #1B263B; /* Navy Blue Text */
+}
+
+.calendar .today {
+  background-color: #ffeb3b; /* Highlight today's date */
+}
+
+/* Calendar navigation */
+.calendar-nav {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.calendar-nav button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.calendar-nav button:hover {
+  background-color: #0056b3;
+}
 .help{
   position: absolute;
   top: 56rem;
@@ -604,11 +674,4 @@ top: 4%;
   border: 1px solid #737373;
   text-align: center;
   
-}
-
-
-
-
-
-
 }

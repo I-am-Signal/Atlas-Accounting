@@ -16,44 +16,16 @@
       href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
       crossorigin="anonymous"
     /> -->
-<<<<<<< Updated upstream
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-=======
-  
->>>>>>> Stashed changes
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" crossorigin="anonymous" />
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='resources/favicon.ico') }}">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-   <title>{% block title %}Home{% endblock %}</title>
+  <title>{% block title %}Home{% endblock %}</title>
 </head>
 
 <body>
-<div class="collapsebar">
-  <p> 
-    <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-      Collapse User Tab needs UI help!
-    </a>
-  </p>
-</div>
-
-<div class="userProfileContainer"> 
-  <div class="collapse" id="collapseExample">
-    <div class="userProfile">
-        <!-- Profile Picture -->
-        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
-
-        <!-- Username and Sign Out Button -->
-        <div class="userInfo">
-            <p>{{ user.username }}</p>
-            <a href="./logout"><button class="logout" data-toggle="tooltip" data-placement="right" title="Log you out of Current Session">Sign out</button></a>
-        </div>
-    </div>
-  </div>
-</div>
-
-<div class="pageContainer">
+  <div class="pageContainer">
     <div class="header">
       <div class="logo">
         <i class="fa-solid fa-globe"></i>
@@ -90,21 +62,8 @@
       <a href="#" id="terms">Terms</a> |
       <a href="#" id="help">Help</a>
       <br />
-      © 2024 Atlas Accounting 
-      <div class="help">
-        <a href="./help"><button class="logout">Help</button></a>
-      </div>           
+      © 2024 Atlas Accounting
     </div>
-    
-    <!-- bootstrap for tooltips -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script>
-      $(document).ready(function(){
-          $('[data-toggle="tooltip"]').tooltip();
-      });
-    </script>
 
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
       integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
@@ -116,12 +75,11 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"></script>
 
-      <script>
-        
-        $(document).ready(function(){            
-            $('#users').tooltip({title:"test",placement:"bottom"});
+      <!-- <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
         });
-      </script>
+      </script> -->
 
     {% block javascript %}
     <script type="text/javascript">
