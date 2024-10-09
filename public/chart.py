@@ -47,8 +47,18 @@ def show_account():
         order = request.form.get('order')
         statement = request.form.get('statement')
         comment = request.form.get('comment')
+        
+        if not account_number.isdigit():
+            flash('Invalid account number. Only digits are allowed.', category='error')
+            return redirect(url_for('chart.view_accounts'))
+
+        #finish implementing other check requirements 2-5
+        # account = Account.query.filter_by(account_number=account_number).first()
+        # if account:
+        #     flash(f'Account Number already exists', category='error')
        
         curr_account = Account.query.filter_by(number=account_number, name=account_name).first()
+        # else:
         if curr_account:
             debit = request.form.get('debit')
             credit = request.form.get('credit')
@@ -72,7 +82,7 @@ def show_account():
             number  = Account.query.filter_by(number=account_number).first()
             name = Account.query.filter_by(name=account_name).first()
             
-            if number or name and not(number and name):
+            if not(number and name) and (number or name):
                 flash(
                     "New accounts cannot have the same name or number as previous accounts.",
                       category='error'
