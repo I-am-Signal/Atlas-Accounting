@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="userProfileContainer">
+    <div class="userProfile">
+        <!-- Profile Picture -->
+        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
+
+        <!-- Username and Sign Out Button -->
+        <div class="userInfo">
+            <p>{{ user.username }}</p>
+            <a href="./logout"><button class="logout">Sign out</button></a>
+        </div>
+    </div>
+</div>
+
+<div class="page">
+    <div class='userDisplay'>
+        <form method="POST">
+        
+            {{ entry|safe }}
+
+        </form>
+    </div>
+</div>
+
+<script type="module">
+    import { currencyInput, ensureSidesAreBalancedWithELs } from '../static/account.js';
+    let accountCount = 2
+    document.addEventListener('DOMContentLoaded', () => {
+        let currencyElements = [];
+        for (let i = 0; i < accountCount; i++){
+            currencyElements.push('debit' + i);
+            currencyElements.push('credit' + i);
+        }
+
+        for(let element of currencyElements){
+            try{ currencyInput(element); } catch {} // only catches when element does not exist
+        }
+    });
+</script>
+{% endblock %}
