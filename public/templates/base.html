@@ -25,6 +25,7 @@
 </head>
 
 <body>
+  <button class="openbtn" onclick="openNav()">&#8652;</button>
   <div class="pageContainer">
     <div class="header">
       <div class="logo">
@@ -33,6 +34,7 @@
       </div>
       </header>
     </div>
+
 
     <div class="alert alter-dismissable fade show messagesContainer">
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
@@ -56,7 +58,7 @@
 
     {% block content %} {% endblock %}
 
-    <div class="footer">
+    <div id="footer" class="footer">
       <a href="#" id="about">About</a> |
       <a href="#" id="contact">Contact</a> |
       <a href="#" id="terms">Terms</a> |
@@ -76,6 +78,7 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"></script>
 
+      <!-- Tool tips  -->
       <script>
         $(document).ready(function(){
           $('#users').tooltip({title:"View List of Users",placement:"bottom"});
@@ -96,6 +99,8 @@
           $('#showAccount').tooltip({title:"test",placement:"bottom"});
         });
       </script>
+      			
+			
 
     {% block javascript %}
     <script type="text/javascript">
@@ -111,6 +116,22 @@
     </script>
     {% endblock %}
   </div>
+  <!-- Sidebar Script -->
+  <script src="{{ url_for('static', filename='sidebar.js') }}"></script>
+  <div  id='mySidebar' class='sidebar'>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    {% if dashUser %}
+    <a href=''>Dashboard</a>
+    <a href=''>Profile</a>
+    <a href=''>Logout</a>
+{% else %}
+    <a href=''>Home</a>
+    <a href=''>Login</a>
+    <a href=''>Sign-up</a>
+    <a href=''>Contact-Us</a>
+    <a href=''>About-us</a>
+{% endif %}
+  </div>	
 </body>
 
 </html>

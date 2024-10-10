@@ -336,6 +336,7 @@ def update_password():
     return render_template(
         "update_password.html", 
         user=current_user,
+        dashUser=current_user,
         homeRoute='/'
     )
     

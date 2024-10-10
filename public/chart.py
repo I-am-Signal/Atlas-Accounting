@@ -28,6 +28,7 @@ def show_account():
         return checkRoleClearance(current_user.role, 'administrator', render_template(
                 "account.html",
                 user=current_user,
+                dashUser=current_user,
                 homeRoute='/',
                 accountInfo=accountInfo if accountInfo else None,
                 statementTypes=statementTypes if statementTypes else None,
@@ -156,6 +157,7 @@ def view_accounts():
         (
             "view_accounts.html",
             user=current_user,
+            dashUser=current_user,
             homeRoute='/',
             accounts=generateAccounts()
         )
