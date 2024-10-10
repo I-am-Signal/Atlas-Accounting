@@ -573,18 +573,7 @@ top: 4%;
     background-color: #415A77;
 }
 
-.calendarContainer {
-  top: 100px;
-  left: 20px;
-  width: 350px; /* Adjust width as needed */
-  border: 1px solid #0D1B2A; /* Dark Blue Border */
-  padding: 10px;
-  border-radius: 5px;
-  background-color: #E0E1DD; /* Light Gray Background */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  margin-bottom: 100px;
-  position: absolute;
-}
+
 
 /* Calendar header (Month and Year) */
 .calendar-header {
