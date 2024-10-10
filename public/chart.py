@@ -26,7 +26,7 @@ def show_account():
             'Retained Earnings Statement'
         ] # pull the actual statement types instead of these predetermined ones
         
-        return checkRoleClearance(current_user.role, 'administrator', render_template(
+        return checkRoleClearance(current_user.role, 'user', render_template(
                 "account.html",
                 user=current_user,
                 dashUser=current_user,
