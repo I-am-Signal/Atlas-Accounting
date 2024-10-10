@@ -1,3 +1,18 @@
+function clearCurrencyOfSymbols(currencyString) {
+    return Number(String(currencyString)
+        .replace(/[^0-9\.-]+/g, ""))
+}
+
+
+function formatCurrency(currencyString) {
+    return Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(
+        clearCurrencyOfSymbols(currencyString)
+    )
+}
+
 export function currencyInput(elementID) {
     // initial display of number
     document.getElementById(elementID).value = formatCurrency(
@@ -12,6 +27,7 @@ export function currencyInput(elementID) {
 };
 
 
+// all below functions might need to be scrapped
 export function ensureSidesAreBalancedWithELs(
     normal_side_id,
     balance_id,
@@ -115,20 +131,4 @@ function ensureSidesAreBalanced(
     balance.value = formatCurrency(bAmount);
     debit.value = formatCurrency(dAmount);
     credit.value = formatCurrency(cAmount);
-}
-
-
-function clearCurrencyOfSymbols(currencyString) {
-    return Number(String(currencyString)
-        .replace(/[^0-9\.-]+/g, ""))
-}
-
-
-function formatCurrency(currencyString) {
-    return Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD'
-    }).format(
-        clearCurrencyOfSymbols(currencyString)
-    )
 }
