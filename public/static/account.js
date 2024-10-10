@@ -1,10 +1,10 @@
-function clearCurrencyOfSymbols(currencyString) {
+export function clearCurrencyOfSymbols(currencyString) {
     return Number(String(currencyString)
         .replace(/[^0-9\.-]+/g, ""))
 }
 
 
-function formatCurrency(currencyString) {
+export function formatCurrency(currencyString) {
     return Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD'

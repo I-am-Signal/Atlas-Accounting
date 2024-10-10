@@ -39,6 +39,7 @@ def show_account():
     
     
     if request.method == 'POST':
+        account_number_original = request.args.get('number')
         account_name = request.form.get('account_name')
         account_number = request.form.get('account_number')
         account_desc = request.form.get('account_desc')
@@ -49,30 +50,22 @@ def show_account():
         statement = request.form.get('statement')
         comment = request.form.get('comment')
         
-        if not account_number.isdigit():
+        if not account_number.isdigit() or not account_number_original.isdigit():
             flash('Invalid account number. Only digits are allowed.', category='error')
             return redirect(url_for('chart.view_accounts'))
 
-        #finish implementing other check requirements 2-5
-        # account = Account.query.filter_by(account_number=account_number).first()
-        # if account:
-        #     flash(f'Account Number already exists', category='error')
-       
-        curr_account = Account.query.filter_by(number=account_number, name=account_name).first()
-        # else:
+        curr_account = Account.query.filter_by(
+            number=int(account_number_original), 
+            name=account_name
+        ).first()
+        
         if curr_account:
-            debit = request.form.get('debit')
-            credit = request.form.get('credit')
-            balance = request.form.get('balance')
-            
             curr_account.name = account_name
             curr_account.description = account_desc
             curr_account.normal_side = normal_side # check for valid normal side
             curr_account.category = account_category
             curr_account.subcategory = account_subcat
-            curr_account.debit = unformatMoney(debit) # check for valid debit
-            curr_account.credit = unformatMoney(credit) # check for valid credit
-            curr_account.balance = unformatMoney(balance) # check for valid balance
+            curr_account.balance = unformatMoney(request.form.get('balance')) # check for valid balance
             curr_account.order = order # check if > 0, is int, and is not the same for the cat/subcat
             curr_account.statement = statement # check if valid statement type
             curr_account.comment = comment
@@ -114,6 +107,54 @@ def show_account():
         return redirect(url_for('chart.view_accounts'))
 
 
+@chart.route("/deactivate", methods=["GET", "POST"])
+@login_required
+def deactivate():
+    # when user_id check method is implemented, call it here instead of this
+    ref_id = request.args.get("number")
+    if not ref_id.isdigit():
+        flash("Error: invalid reference number.", category='error')
+        return redirect(url_for("chart.view_accounts"))
+    ref_id = int(ref_id)
+    
+    account = Account.query.filter_by(number=ref_id).first()
+
+    if request.method == "POST":
+        # check account balance empty before deactivation
+        if request.form.get("deactivate") != '' and account.balance != 0:
+            flash('Accounts with a balance cannot be deactivated', category='error')
+            return redirect(url_for('chart.view_accounts'))
+        
+        deactivate = request.form.get("deactivate") == 'True'
+        active = account.is_activated
+        flashMessage = f'Account number {account.number} was successfully '
+        
+        if deactivate != active:
+            # early return as there is nothing to do
+            flash('No changes occurred.', category='success')
+            return redirect(url_for('chart.view_accounts'))
+        
+        account.is_activated = not active        
+        db.session.commit()
+        
+        flashMessage += 'deactivated!' if deactivate and active else 'reactivated!'
+        flash(flashMessage, category='success')
+        return redirect(url_for("chart.view_accounts"))
+
+    return checkRoleClearance(
+        current_user.role,
+        "administrator",
+        render_template(
+            "deactivate.html",
+            user=current_user,
+            dashUser=current_user,
+            homeRoute="/",
+            back=url_for("views.view_users"),
+            account=account,
+        ),
+    )
+
+
 @chart.route('/view_accounts', methods=['GET'])
 @login_required
 def view_accounts():
@@ -128,6 +169,7 @@ def view_accounts():
     # Used for when messing with account company ids to reset them for display
     # for account in Account.query.all():
     #     account.company_id = current_user.company_id
+    #     account.is_activated = True
     #     db.session.commit()
     
     def generateAccounts():

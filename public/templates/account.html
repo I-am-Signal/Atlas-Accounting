@@ -68,18 +68,6 @@
                 {% endif %}
             </div>
 
-            {% if accountInfo != None %}
-            <div class='form-row'>
-                <label for='debit'>Debit</label>
-                <input id='debit' name='debit' value='{{ accountInfo.debit }}'>
-            </div>
-            <div class='form-row'>
-                <label for='credit'>Credit</label>
-                <input id='credit' name='credit' value='{{ accountInfo.credit }}'>
-            </div>
-            {% endif %}
-
-
             <div class="form-row">
                 <label for='order'>Order </label>
                 <input id='order' name='order' value='{{ accountInfo.order if accountInfo else "" }}'>
@@ -108,8 +96,8 @@
         <div class="form-buttons">
             <button id="submit" type='submit'>Submit</button>
             <button id="cancel" type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>
-            <button  id="insert" type='button' onclick="window.location.href=''">Insert Value</button>
-            <button id="delete" type='button' onclick="window.location.href=''">Delete Account</button>
+            <button id="insert" type='button' onclick="window.location.href=''">Insert Value</button>
+            <button id="delete" type='button' onclick="window.location.href='{{ url_for('chart.deactivate', number=accountInfo.number)}}'">Deactivate</button>
         </div>
     </form>
 </div>
