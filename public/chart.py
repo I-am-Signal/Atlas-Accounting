@@ -29,6 +29,7 @@ def show_account():
         return checkRoleClearance(current_user.role, 'administrator', render_template(
                 "account.html",
                 user=current_user,
+                dashUser=current_user,
                 homeRoute='/',
                 accountInfo=accountInfo if accountInfo else None,
                 statementTypes=statementTypes if statementTypes else None,
@@ -155,7 +156,7 @@ def view_accounts():
             table += f'''
                 <tr>
                     <td>{account.number}</td>
-                    <td><a href="{url_for('chart.show_account', number=account.number)}">{account.name}</a></td>
+                    <td><a id="showAccount" href="{url_for('chart.show_account', number=account.number)}">{account.name}</a></td>
                     <td>{account.category}</td>
                     <td>{account.subcategory}</td>
                     <td>{account.statement}</td>
@@ -174,7 +175,7 @@ def view_accounts():
         table += f'''
                 </tbody>
             </table>
-            <a href='{url_for('chart.show_account')}'>Create new Account</a>
+            <a id="createAccount" href='{url_for('chart.show_account')}'>Create new Account</a>
         '''
         return table 
     
@@ -182,6 +183,7 @@ def view_accounts():
         (
             "view_accounts.html",
             user=current_user,
+            dashUser=current_user,
             homeRoute='/',
             accounts=generateAccounts()
         )

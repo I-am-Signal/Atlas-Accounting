@@ -641,3 +641,96 @@ top: 4%;
 .calendar-nav button:hover {
   background-color: #0056b3;
 }
+.help{
+  position: absolute;
+  top: 56rem;
+  right: 5rem;
+  
+}
+.helpBox{  
+    background-color: #1B263B; 
+    color: #E0E1DD;
+   
+    border-radius: 12px;
+    z-index: 2;
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: center; /* Center the form elements inside the box */
+    align-items: center;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);  
+  
+}
+
+.tooltip {
+  max-width: 236px !important;
+  margin: 10px;
+  height: 20px;
+  min-width: 20px;
+  padding: 2px;
+  font-size: 12px;
+  border-radius: 5px;
+  background: grey;
+  color: rgb(255, 255, 255);
+  border: 1px solid #737373;
+  text-align: center;
+  z-index: 3;
+  
+}
+/* The sidebar menu */
+.sidebar {
+	height: 100vh; /* 100% Full-height */
+	width: 0; /* 0 width - change this with JavaScript */
+	position: fixed; /* Stay in place */
+	z-index: 3; /* Stay on top */
+	top: 0;
+	right: 0;
+	background-color: #111; /* Black*/
+	overflow-x: hidden; /* Disable horizontal scroll */
+	padding-top: 60px; /* Place content 60px from the top */
+	transition: 0.5s; /* 0.5 second transition effect to slide in the sidebar */
+  }
+  
+  /* The sidebar links */
+  .sidebar a {
+	padding: 8px 8px 8px 32px;
+	text-decoration: none;
+	font-size: 25px;
+	color: #028afa;
+	display: block;
+	transition: 0.3s;
+	
+  }
+  
+  /* When you mouse over the navigation links, change their color */
+  .sidebar a:hover {
+	color: #f1f1f1;
+  }
+  
+  /* Position and style the close button (top right corner) */
+  .sidebar .closebtn {
+	position: absolute;
+	top: 0;
+	right: 25px;
+	font-size: 36px;
+	margin-left: 50px;
+  }
+  
+  /* The button used to open the sidebar */
+  .openbtn {
+	position: absolute;
+	top: 0px;	
+  right:10px;
+	font-size: 20px;
+	cursor: pointer;
+	background-color: #111;
+	color: white;	
+	border: none;
+	height: 30px;
+  z-index: 2;
+
+	
+  }
+  
+  .openbtn:hover {
+	background-color: #444;
+  }

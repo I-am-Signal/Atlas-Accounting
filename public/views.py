@@ -16,9 +16,9 @@ views = Blueprint("views", __name__)
 @login_required_with_password_expiration 
 def home():
     if "administrator" == current_user.role:
-        view_users_link = f'<a href="{url_for("views.view_users")}"><button class="dashleft admin">View/Edit Users</button></a>'
-        view_coa_link = f'<a href="{url_for("chart.view_accounts")}"><button class="dashleft admin">View/Edit Accounts</button></a>'
-
+        view_users_link = f'<a href="{url_for("views.view_users")}"><button id="users" class="dashleft" >View/Edit Users</button></a>'
+        view_coa_link = f'<a href="{url_for("chart.view_accounts")}"><button id="accounts" class="dashleft admin" >View/Edit Accounts</button></a>'
+        
     eventLogsLink = "#"
     journalEntriesLink = url_for("chart.ledger")
 
@@ -28,11 +28,14 @@ def home():
         render_template(
             "home.html",
             user=current_user,
+            dashUser=current_user,
             homeRoute="/",
+            helpRoute="/help",
             viewUsersButton=view_users_link if view_users_link else "",
             viewAccountsButton=view_coa_link if view_coa_link else "",
             eventLogsLink=eventLogsLink,
             journalEntriesLink=journalEntriesLink,
+            
         ),
     )
 
@@ -66,10 +69,10 @@ def view_users():
             table += f"""
                 <tr>
                     <td>{user.id}</td>
-                    <td><a href="{ url_for('views.user', id=user.id) }">{user.username}</a></td>
+                    <td><a id="viewuserinfo" href="{ url_for('views.user', id=user.id) }">{user.username}</a></td>
                     <td>{user.first_name}</td>
                     <td>{user.last_name}</td>
-                    <td>{f"<a href='{url_for('email.send', id=user.id)}'>{user.email}</a>"}</td>
+                    <td>{f"<a id='sendemail' href='{url_for('email.send', id=user.id)}'>{user.email}</a>"}</td>
                     <td>{user.is_activated}</td>
                     <td>{user.role}</td>
                 </tr>
@@ -78,7 +81,7 @@ def view_users():
         table += f"""
                 </tbody>
             </table>
-            <a href='{ url_for('auth.sign_up') }'>Create New User</a>
+            <a id="createUser" href='{ url_for('auth.sign_up') }'>Create New User</a>
         """
         return table
 
@@ -86,7 +89,7 @@ def view_users():
         current_user.role,
         "administrator",
         render_template(
-            "view_users.html", user=current_user, homeRoute="/", users=generateUsers()
+            "view_users.html", user=current_user, homeRoute="/", users=generateUsers(),dashUser=current_user,
         ),
     )
 
@@ -211,6 +214,7 @@ def user():
         render_template(
             "user.html",
             user=current_user,
+            dashUser=current_user,
             homeRoute="/",
             back=url_for("views.view_users"),
             userInfo=userInfo,
@@ -259,6 +263,7 @@ def delete():
         render_template(
             "delete.html",
             user=current_user,
+            dashUser=current_user,
             homeRoute="/",
             back=url_for("views.view_users"),
             userInfo=userInfo,
@@ -285,4 +290,14 @@ def pfp():
             mimetype=image.file_mime,
             as_attachment=False,
             download_name=image.file_name,
+        )
+    
+@views.route('/help')
+@login_required
+def help():
+    return render_template(
+        "help.html",
+        user=current_user,
+        dashUser=current_user,
+        homeRoute="/",            
         )

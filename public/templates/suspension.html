@@ -9,7 +9,7 @@
         <!-- Username and Sign Out Button -->
         <div class="userInfo">
             <p>{{ user.username }}</p>
-            <a href="./logout"><button class="logout">Sign out</button></a>
+            <a href="./logout"><button id="signout" class="logout">Sign out</button></a>
         </div>
     </div>
 </div>
@@ -27,8 +27,8 @@
         <label for='suspension_end_date'>Suspension End Date</label>
         <input id='suspension_end_date' name='suspension_end_date' type="datetime-local" value="{{ end_date }}"><br>
 
-        <button type='submit'>Submit</button>
-        <button type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>
+        <button id="submit" type='submit'>Submit</button>
+        <button id="cancel" type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>
     </form>
 </div>
 
