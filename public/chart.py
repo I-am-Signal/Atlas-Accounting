@@ -28,6 +28,7 @@ def show_account():
         
         return checkRoleClearance(current_user.role, 'user', render_template(
                 "account.html",
+                access=True if current_user.role == 'user' else False,
                 user=current_user,
                 dashUser=current_user,
                 homeRoute='/',
