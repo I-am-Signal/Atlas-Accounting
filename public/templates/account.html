@@ -123,9 +123,7 @@
         'debit',
         'credit'];
         for(let element of currencyElements){
-            try{
-                currencyInput(element);
-            }catch{} // only catches when element does not exist
+            try{ currencyInput(element); } catch {} // only catches when element does not exist
         }
 
         ensureSidesAreBalancedWithELs('normal_side', 'balance', 'debit', 'credit');

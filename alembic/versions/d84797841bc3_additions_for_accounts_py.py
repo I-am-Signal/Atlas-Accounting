@@ -40,6 +40,8 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer(), primary_key=True),
         sa.Column('status', sa.String(length=150), nullable=False, default='pending'),
         sa.Column('company_id', sa.Integer(), sa.ForeignKey('company.id', name='fk_journal_entry_company_id'), nullable=False),
+        sa.Column('entry_type', sa.String(length=150), nullable=False, default='Transfer'),
+        sa.Column('description', sa.String(length=150), nullable=False),
         sa.Column('create_date', sa.DateTime(), default=sa.func.now()),
         sa.Column('modify_date', sa.DateTime(), default=sa.func.now(), onupdate=sa.func.now()),
         sa.Column('created_by', sa.Integer(), sa.ForeignKey('user.id', name='fk_journal_entry_created_by'))
@@ -51,6 +53,7 @@ def upgrade() -> None:
         sa.Column('side_for_transaction', sa.String(length=150), nullable=False),
         sa.Column('account_number', sa.Integer(), sa.ForeignKey('account.number', name='fk_transaction_account_number'), nullable=False),
         sa.Column('amount_changing', sa.Float(), nullable=False),
+        sa.Column('to', sa.Boolean(), nullable=False, default=False),
         sa.Column('create_date', sa.DateTime(), default=sa.func.now()),
         sa.Column('modify_date', sa.DateTime(), default=sa.func.now(), onupdate=sa.func.now()),
         sa.Column('created_by', sa.Integer(), sa.ForeignKey('user.id', name='fk_transaction_created_by'))
