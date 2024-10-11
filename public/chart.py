@@ -211,6 +211,10 @@ def view_accounts():
         filter_name = request.args.get('filter_name', None)
         filter_category = request.args.get('filter_category', None)
         filter_subcategory = request.args.get('filter_subcategory', None)
+        filter_statement = request.args.get('filter_statement', None)
+        filter_true = request.args.get('filter_true', None)
+
+
 
 
         table = f'''
@@ -227,7 +231,13 @@ def view_accounts():
                 <input type="text" id="filter_category" name="filter_category" placeholder="Enter Category Name" value="{filter_category if filter_category else ''}" />   
                 
                 <label for="filter_subcategory"></label>
-                <input type="text" id="filter_subcategory" name="filter_subcategory" placeholder="Enter Subcategory Name" value="{filter_subcategory if filter_subcategory else ''}" />   
+                <input type="text" id="filter_subcategory" name="filter_subcategory" placeholder="Enter Subcategory" value="{filter_subcategory if filter_subcategory else ''}" />  
+                
+                <label for="filter_statement"></label>
+                <input type="text" id="filter_statement" name="filter_statement" placeholder="Enter Statement Type" value="{filter_statement if filter_statement else ''}" />  
+                
+                <label for="filter_true"></label>
+                <input type="text" id="filter_true" name="filter_true" placeholder="Active" value="{filter_true if filter_true else ''}" />    
                 
                     <button type="submit" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">Filter</button>
                
@@ -266,6 +276,12 @@ def view_accounts():
             
         if filter_subcategory:
             query = query.filter(Account.subcategory.like(f"%{filter_subcategory}%"))
+            
+        if filter_statement:
+            query = query.filter(Account.statement.like(f"%{filter_statement}%"))
+            
+        if filter_true:
+            query = query.filter(Account.is_activated.like(f"%{filter_true}%"))
 
 
         accounts = query.order_by(Account.is_activated.desc(), Account.number.asc()).all()
