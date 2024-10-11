@@ -22,7 +22,7 @@ def view_eventlogs():
                     <tr>
                         <th>Log ID</th> 
                         <th>Account Number</th>
-                        <th>Account Name</th>                                          
+                        <th id="showAccount">Account Name</th>                                          
                         <th>Change Made by: UserID </th>
                         <th>Date Modified</th>
                     </tr>
@@ -31,12 +31,13 @@ def view_eventlogs():
         '''
         for event in Event.query.filter(Event.id).order_by(asc(Event.number)).all():
             
+            account = Account.query.filter_by(number=event.number).first()
             table += f'''
                 <tr onclick="window.location.href='{url_for('eventlog.view_event',number=event.id)}'" style="cursor: pointer;">
                     
                     <td>{event.id}</td>
                     <td>{event.number}</td>
-                    <td><a id="showAccount" href="">{event.name}</a></td>                                        
+                    <td><a  href="{url_for('chart.show_account',number=account.number)}">{event.name}</a></td>                                        
                     <td>{event.created_by}</td>
                     <td>
                         <input 
@@ -62,7 +63,7 @@ def view_eventlogs():
         (
             "view_eventlogs.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute='/',
             events=generateLogs(),
             
@@ -79,7 +80,7 @@ def view_event():
     return render_template(
         "view_event.html",
         user=current_user,
-        dashUser=current_user,
+        dashUser=current_user.role,
         homeRoute="/",  
         event = curr_event,
         account =curr_acct,

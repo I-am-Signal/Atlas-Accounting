@@ -89,7 +89,7 @@ def suspensions():
     return checkRoleClearance(current_user.role, 'administrator', render_template(
             "suspensions.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute='/',
             suspensionInfo=getSuspensionsInfo()
         )
@@ -126,7 +126,7 @@ def suspension():
             return checkRoleClearance(current_user.role, 'administrator', render_template(
                     "suspension.html",
                     user=current_user,
-                    dashUser=current_user,
+                    dashUser=current_user.role,
                     back=url_for('suspend.suspensions', id=user_id),
                     homeRoute='/',
                     start_date=(datetime.now() + timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M'),
@@ -143,7 +143,7 @@ def suspension():
                 return checkRoleClearance(current_user.role, 'administrator', render_template(
                         "suspension.html",
                         user=current_user,
-                        dashUser=current_user,
+                        dashUser=current_user.role,
                         back=url_for('suspend.suspensions', id=user_id),
                         homeRoute='/',
                         suspension_id = curr_suspension.id,

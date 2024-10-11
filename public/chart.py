@@ -30,7 +30,7 @@ def show_account():
                 "account.html",
                 access=True if current_user.role == 'user' else False,
                 user=current_user,
-                dashUser=current_user,
+                dashUser=current_user.role,
                 homeRoute='/',
                 accountInfo=accountInfo if accountInfo else None,
                 statementTypes=statementTypes if statementTypes else None,
@@ -179,7 +179,7 @@ def deactivate():
         render_template(
             "deactivate.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute="/",
             back=url_for("views.view_users"),
             account=account,
@@ -210,9 +210,9 @@ def view_accounts():
             <table class="userDisplay">
                 <thead>
                     <tr>
-                        <th>Ledger</th>
+                        <th id="showLedger" >Ledger</th>
                         <th>Account Number</th>
-                        <th>Account Name</th>
+                        <th id="showAccount">Account Name</th>
                         <th>Category</th>
                         <th>Subcategory</th>
                         <th>Statement</th>
@@ -230,9 +230,9 @@ def view_accounts():
             ).all():
             table += f'''
                 <tr>
-                    <td><a id="showLedger" href="{url_for('chart.ledger', number=account.number)}">Show Ledger</a></td>
+                    <td><a href="{url_for('chart.ledger', number=account.number)}">Show Ledger</a></td>
                     <td>{account.number}</td>
-                    <td><a id="showAccount" href="{url_for('chart.show_account', number=account.number)}">{account.name}</a></td>
+                    <td><a  href="{url_for('chart.show_account', number=account.number)}">{account.name}</a></td>
                     <td>{account.category}</td>
                     <td>{account.subcategory}</td>
                     <td>{account.statement}</td>
@@ -259,7 +259,7 @@ def view_accounts():
         (
             "view_accounts.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute='/',
             accounts=generateAccounts()
         )
@@ -357,7 +357,7 @@ def ledger():
             '''
             return table 
     
-    return checkRoleClearance(current_user.role, 'administrator', render_template
+    return checkRoleClearance(current_user.role, 'user', render_template
         (
             "ledger.html",
             user=current_user,
@@ -571,7 +571,7 @@ def journal_entry():
         (
             "journal_entry.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute='/',
             entry=generateJournalEntry(ref_id)
         )

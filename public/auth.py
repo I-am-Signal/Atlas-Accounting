@@ -292,6 +292,7 @@ def forgot():
     return render_template(
       "forgot.html",
       user=current_user,
+      dashUser=current_user.role,
       homeRoute='/login'
     )
 
@@ -337,7 +338,7 @@ def update_password():
     return render_template(
         "update_password.html", 
         user=current_user,
-        dashUser=current_user,
+        dashUser=current_user.role,
         homeRoute='/'
     )
     
@@ -383,5 +384,6 @@ def reset():
     
     return render_template("reset.html",
         user=current_user,
+        dashUser=current_user.role,
         homeRoute='/login'
     )

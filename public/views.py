@@ -20,10 +20,9 @@ def home():
 
     if "administrator" == current_user.role:
         view_users_link = f'<a href="{url_for("views.view_users")}"><button id="users" class="dashleft" >View/Edit Users</button></a>'
+    
     view_coa_link = f'<a href="{url_for("chart.view_accounts")}"><button id="accounts" class="dashleft admin" >View/Edit Accounts</button></a>'
     view_evl_link = f'<a href="{url_for("eventlog.view_eventlogs")}"><button id="eventlog" class="dashleft admin" >View Event Logs</button></a>'
-
-    
     journalEntriesLink = url_for("chart.ledger")
 
     return checkRoleClearance(
@@ -32,7 +31,7 @@ def home():
         render_template(
             "home.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute="/",
             helpRoute="/help",
             viewUsersButton=view_users_link if view_users_link else "",
@@ -55,10 +54,10 @@ def view_users():
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Username</th>
+                        <th id="viewuserinfo">Username</th>
                         <th>First Name</th>
                         <th>Last Name</th>
-                        <th>Email</th>
+                        <th id='sendemail'>Email</th>
                         <th>Activated</th>
                         <th>Role</th>
                     </tr>
@@ -73,10 +72,10 @@ def view_users():
             table += f"""
                 <tr>
                     <td>{user.id}</td>
-                    <td><a id="viewuserinfo" href="{ url_for('views.user', id=user.id) }">{user.username}</a></td>
+                    <td><a  href="{ url_for('views.user', id=user.id) }">{user.username}</a></td>
                     <td>{user.first_name}</td>
                     <td>{user.last_name}</td>
-                    <td>{f"<a id='sendemail' href='{url_for('email.send', id=user.id)}'>{user.email}</a>"}</td>
+                    <td>{f"<a  href='{url_for('email.send', id=user.id)}'>{user.email}</a>"}</td>
                     <td>{user.is_activated}</td>
                     <td>{user.role}</td>
                 </tr>
@@ -93,7 +92,7 @@ def view_users():
         current_user.role,
         "administrator",
         render_template(
-            "view_users.html", user=current_user, homeRoute="/", users=generateUsers(),dashUser=current_user,
+            "view_users.html", user=current_user, homeRoute="/", users=generateUsers(),dashUser=current_user.role,
         ),
     )
 
@@ -218,7 +217,7 @@ def user():
         render_template(
             "user.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute="/",
             back=url_for("views.view_users"),
             userInfo=userInfo,
@@ -267,7 +266,7 @@ def delete():
         render_template(
             "delete.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute="/",
             back=url_for("views.view_users"),
             userInfo=userInfo,
@@ -302,7 +301,7 @@ def help():
     return render_template(
         "help.html",
         user=current_user,
-        dashUser=current_user,
+        dashUser=current_user.role,
         homeRoute="/",            
         )
 
