@@ -151,7 +151,7 @@ def login():
             except Exception as e:
                 flash(f'Error: {e}')
     
-    return render_template("login.html", user=current_user, homeRoute='/login')
+    return render_template("login.html", user=current_user, homeRoute='/login',helpRoute="/help",)
 
 
 @auth.route('/logout')
@@ -252,7 +252,7 @@ def sign_up():
             db.session.commit()
             return redirect(url_for('auth.login'))
 
-    return render_template("sign_up.html", user=current_user, homeRoute='/login')
+    return render_template("sign_up.html", user=current_user, homeRoute='/login',helpRoute="/help",)
 
 
 @auth.route('/forgot', methods=['GET', 'POST'])
@@ -293,7 +293,8 @@ def forgot():
       "forgot.html",
       user=current_user,
       dashUser=current_user.role,
-      homeRoute='/login'
+      homeRoute='/login',
+      helpRoute="/help",
     )
 
 
@@ -339,7 +340,8 @@ def update_password():
         "update_password.html", 
         user=current_user,
         dashUser=current_user.role,
-        homeRoute='/'
+        homeRoute='/',
+        helpRoute="/help",
     )
     
 @auth.route('/reset', methods=['GET', 'POST'])
@@ -385,5 +387,6 @@ def reset():
     return render_template("reset.html",
         user=current_user,
         dashUser=current_user.role,
-        homeRoute='/login'
+        homeRoute='/login',
+        helpRoute="/help",
     )

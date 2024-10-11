@@ -102,6 +102,7 @@ def view_users():
             "view_users.html",
             user=current_user,
             homeRoute="/",
+            helpRoute="/help",
             users=generateUsers(),
             dashUser=current_user,
         ),
@@ -230,6 +231,7 @@ def user():
             user=current_user,
             dashUser=current_user,
             homeRoute="/",
+            helpRoute="/help",
             back=url_for("views.view_users"),
             userInfo=userInfo,
             testExpiration=(
@@ -279,6 +281,7 @@ def delete():
             user=current_user,
             dashUser=current_user,
             homeRoute="/",
+            helpRoute="/help",
             back=url_for("views.view_users"),
             userInfo=userInfo,
         ),
@@ -316,6 +319,7 @@ def help():
         user=current_user,
         dashUser=current_user,
         homeRoute="/",
+        helpRoute="/help",
     )
 
 
@@ -327,4 +331,5 @@ def contact():
         user=current_user,
         dashUser=current_user,
         homeRoute="/",
+        helpRoute="/help",
     )

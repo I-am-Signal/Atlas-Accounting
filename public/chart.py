@@ -32,6 +32,7 @@ def show_account():
                 user=current_user,
                 dashUser=current_user.role,
                 homeRoute='/',
+                helpRoute="/help",
                 accountInfo=accountInfo if accountInfo else None,
                 statementTypes=statementTypes if statementTypes else None,
                 back=url_for('chart.view_accounts')
@@ -181,6 +182,7 @@ def deactivate():
             user=current_user,
             dashUser=current_user.role,
             homeRoute="/",
+            helpRoute="/help",
             back=url_for("views.view_users"),
             account=account,
         ),
@@ -322,6 +324,7 @@ def view_accounts():
             user=current_user,
             dashUser=current_user.role,
             homeRoute='/',
+            helpRoute="/help",
             accounts=generateAccounts()
         )
     )
@@ -422,7 +425,9 @@ def ledger():
         (
             "ledger.html",
             user=current_user,
+            dashUser=current_user.role,
             homeRoute='/',
+            helpRoute="/help",
             ledger=generateLedger()
         )
     )
@@ -634,6 +639,7 @@ def journal_entry():
             user=current_user,
             dashUser=current_user.role,
             homeRoute='/',
+            helpRoute="/help",
             entry=generateJournalEntry(ref_id)
         )
     )

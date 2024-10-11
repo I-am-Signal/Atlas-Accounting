@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="page">
-    <div class="helpBox">
+    <div class="userDisplay" id="helpBox">
         <h1>Welcome to the Financial Management System</h1>             
                     <div>
                         <h4>1. User Roles</h4>
@@ -25,7 +25,7 @@
                         <p>All changes made in the system are logged for auditing purposes. You can view these logs under the relevant sections.</p>
                     </div>    
                     
-            <p><a href="{{ url_for('views.home') }}">Home</a></p>
+            <p><a  href="{{ url_for('views.home') }}">Home</a></p>
         
     </div>   
 </div>

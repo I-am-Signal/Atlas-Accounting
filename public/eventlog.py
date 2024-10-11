@@ -65,6 +65,7 @@ def view_eventlogs():
             user=current_user,
             dashUser=current_user.role,
             homeRoute='/',
+            helpRoute="/help",
             events=generateLogs(),
             
         ),
@@ -82,6 +83,7 @@ def view_event():
         user=current_user,
         dashUser=current_user.role,
         homeRoute="/",  
+        helpRoute="/help",
         event = curr_event,
         account =curr_acct,
         back=url_for("eventlog.view_eventlogs"),         

@@ -91,6 +91,7 @@ def suspensions():
             user=current_user,
             dashUser=current_user.role,
             homeRoute='/',
+            helpRoute="/help",
             suspensionInfo=getSuspensionsInfo()
         )
     )
@@ -129,6 +130,7 @@ def suspension():
                     dashUser=current_user.role,
                     back=url_for('suspend.suspensions', id=user_id),
                     homeRoute='/',
+                    helpRoute="/help",
                     start_date=(datetime.now() + timedelta(minutes=5)).strftime('%Y-%m-%dT%H:%M'),
                     end_date=(datetime.now() + timedelta(days=1, minutes=5)).strftime('%Y-%m-%dT%H:%M')
                 )
@@ -146,6 +148,7 @@ def suspension():
                         dashUser=current_user.role,
                         back=url_for('suspend.suspensions', id=user_id),
                         homeRoute='/',
+                        helpRoute="/help",
                         suspension_id = curr_suspension.id,
                         start_date=curr_suspension.suspension_start_date.strftime('%Y-%m-%dT%H:%M'),
                         end_date=curr_suspension.suspension_end_date.strftime('%Y-%m-%dT%H:%M')
