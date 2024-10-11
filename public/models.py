@@ -13,6 +13,8 @@ class BaseColumnMixin():
 class CreatedByMixin():
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+
+
 class User(db.Model, UserMixin, BaseColumnMixin):
     is_activated = db.Column(db.Boolean, default=False)
     username = db.Column(db.String(150))
@@ -82,3 +84,20 @@ class Account(db.Model, BaseColumnMixin, CreatedByMixin):
     comment = db.Column(db.String(150))
     
     db.relationship('User', backref='account_created_by', foreign_keys=[CreatedByMixin.created_by])
+    
+
+class Event(db.Model, BaseColumnMixin):
+    created_by = db.Column(db.Integer)
+    number = db.Column(db.Integer)
+    name = db.Column(db.String(150))
+    description = db.Column(db.String(500))
+    normal_side = db.Column(db.String(150))
+    category = db.Column(db.String(150))
+    subcategory = db.Column(db.String(150))
+    initial_balance = db.Column(db.Float, default = 0.0)
+    debit = db.Column(db.Float, default = 0.0)
+    credit = db.Column(db.Float, default = 0.0)
+    balance = db.Column(db.Float, default = 0.0)
+    order = db.Column(db.Integer, default = 0)
+    statement = db.Column(db.String(150))
+    comment = db.Column(db.String(150))

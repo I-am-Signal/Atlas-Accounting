@@ -18,8 +18,9 @@ def home():
     if "administrator" == current_user.role:
         view_users_link = f'<a href="{url_for("views.view_users")}"><button id="users" class="dashleft" >View/Edit Users</button></a>'
         view_coa_link = f'<a href="{url_for("chart.view_accounts")}"><button id="accounts" class="dashleft admin" >View/Edit Accounts</button></a>'
-        
-    eventLogsLink = "#"
+        view_evl_link = f'<a href="{url_for("eventlog.view_eventlogs")}"><button id="eventlog" class="dashleft admin" >View Event Logs</button></a>'
+
+    
     journalEntriesLink = "#"
     
 
@@ -34,7 +35,7 @@ def home():
             helpRoute="/help",
             viewUsersButton=view_users_link if view_users_link else "",
             viewAccountsButton=view_coa_link if view_coa_link else "",
-            eventLogsLink=eventLogsLink,
+            viewEventsButton=view_evl_link if view_evl_link else "",
             journalEntriesLink=journalEntriesLink,
             
         ),
@@ -302,3 +303,4 @@ def help():
         dashUser=current_user,
         homeRoute="/",            
         )
+

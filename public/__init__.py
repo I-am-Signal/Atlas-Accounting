@@ -23,12 +23,15 @@ def create_app():
     from .email import email
     from .suspensions import suspend
     from .chart import chart
+    from .eventlog import eventlog
+    
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
     app.register_blueprint(email, url_prefix='/')
     app.register_blueprint(suspend, url_prefix='/')
     app.register_blueprint(chart, url_prefix='/')
+    app.register_blueprint(eventlog, url_prefix='/')
     
     # Update this when authentication via models changes
     from .models import User

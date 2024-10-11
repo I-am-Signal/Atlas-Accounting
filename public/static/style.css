@@ -479,28 +479,28 @@ top: 4%;
   margin: 20px auto;  /* Center the table */
 }
 
-.userDisplay table {
+.userDisplay table,.eventDisplay table {
   width: 100%;  /* Make sure the table takes up full width of container */
   border-collapse: collapse;  /* Remove gaps between table cells */
 }
 
-.userDisplay th, .userDisplay td {
+.userDisplay th, .userDisplay td,.eventDisplay th,.eventDisplay td {
   padding: 10px 15px;  /* Add padding inside table cells */
   text-align: left;  /* Align text to the left */
 }
 
-.userDisplay th {
+.userDisplay th, .eventDisplay th{
   background-color: #415A77;  /* Slightly lighter grey for the table headers */
   color: #ffffff;
   font-weight: bold;
   text-transform: uppercase;  /* Make header text uppercase */
 }
 
-.userDisplay tr:nth-child(even) {
+.userDisplay tr:nth-child(even),.eventDisplay tr:nth-child(even) {
   background-color: #0D1B2A;  /* Alternate row background for better readability */
 }
 
-.userDisplay tr:nth-child(odd) {
+.userDisplay tr:nth-child(odd),.eventDisplay tr:nth-child(odd) {
   background-color: #0D1B2B;  /* Alternate row color */
 }
 
@@ -514,7 +514,7 @@ top: 4%;
   text-decoration: underline;  /* Underline links on hover */
 }
 
-.userDisplay tr:hover {
+.userDisplay tr:hover,.eventDisplay tr:hover {
   background-color: #444;  /* Highlight row on hover */
 }
 
@@ -733,4 +733,8 @@ top: 4%;
   
   .openbtn:hover {
 	background-color: #444;
+  }
+  .eventTable{
+    display: flex;
+    flex-direction: column;
   }
