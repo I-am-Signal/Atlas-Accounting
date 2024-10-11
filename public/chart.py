@@ -216,7 +216,7 @@ def view_accounts():
         table = f'''
             <a href='{url_for('views.home')}'>Back</a> <br />
             
-            <form method="get" action="{url_for('chart.view_accounts')}">
+            <form method="get" action="{url_for('chart.view_accounts')}" style="margin-left:100px">
                 <label for="filter_number"></label>
                 <input type="text" id="filter_number" name="filter_number" placeholder="Enter Account Number" value="{filter_number if filter_number else ''}" />
                 
@@ -229,9 +229,9 @@ def view_accounts():
                 <label for="filter_subcategory"></label>
                 <input type="text" id="filter_subcategory" name="filter_subcategory" placeholder="Enter Subcategory Name" value="{filter_subcategory if filter_subcategory else ''}" />   
                 
-                <button type="submit">Filter</button>
+                    <button type="submit" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">Filter</button>
                
-                <a href="{url_for('chart.view_accounts')}" style="margin-left: 10px;">
+                <a href="{url_for('chart.view_accounts')}" style="background-color: #AF4C4C; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; font-weight:normal;>
                     <button type="button">Clear Filters</button>
                 </a>
                 
