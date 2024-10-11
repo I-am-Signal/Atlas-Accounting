@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content%}
-
+<h1>Welcome, {{ user.first_name }} {{ user.last_name }}!</h1>
 <div class="userProfileContainer">
     <div class="userProfile">
         <!-- Profile Picture -->
@@ -91,11 +91,11 @@
         </div>
         <div class="dashboxes">
             <div class="pending-ratio">
-                <h1>Pending Journals: </h1>
+                <h1>Pending Journals: 0</h1>
                 <!-- place pending journal logic here-->
             </div>
             <div class="pending-ratio">
-                <h1>Financial Ratio: </h1>
+                <h1>Financial Ratio: 0</h1>
                 <!-- Place financial ratio logic here-->
             </div>
         </div>

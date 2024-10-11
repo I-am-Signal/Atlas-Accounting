@@ -21,8 +21,7 @@ def home():
         view_evl_link = f'<a href="{url_for("eventlog.view_eventlogs")}"><button id="eventlog" class="dashleft admin" >View Event Logs</button></a>'
 
     
-    journalEntriesLink = "#"
-    
+    journalEntriesLink = url_for("chart.ledger")
 
     return checkRoleClearance(
         current_user.role,

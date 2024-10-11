@@ -18,25 +18,30 @@
 <div class="page">
     <form method='POST' class="user-form">
         <div class="form-grid">
+            <p><a href='{{ back }}'>Back</a><br>
+                {% if not access %}
+                    Account is viewable but cannot be edited because your account does not have the access clearance of 'user'.
+                {% endif %}
+            </p><br />
             <div class="form-row">
                 <label for='account_name'>Account Name</label>
-                <input id='account_name' name='account_name' value='{{ accountInfo.name if accountInfo else "" }}'>
+                <input id='account_name' name='account_name' value='{{ accountInfo.name if accountInfo else "" }}' {{ 'readonly' if not access else ''}}>
             </div>
 
             <div class="form-row">
                 <label for='account_number'>Account Number</label>
-                <input id='acount_number' name='account_number' value='{{ accountInfo.number if accountInfo else "" }}'>
+                <input id='acount_number' name='account_number' value='{{ accountInfo.number if accountInfo else "" }}' {{ 'readonly' if not access else ''}}>
             </div>
 
             <div class="form-row">
                 <label for='account_desc'>Account Description</label>
                 <input id='account_desc' name='account_desc'
-                    value='{{ accountInfo.description if accountInfo else "" }}'>
+                    value='{{ accountInfo.description if accountInfo else "" }}' {{ 'readonly' if not access else ''}}>
             </div>
 
             <div class="form-row">
                 <label for='normal_side'>Normal Side</label>
-                <select id='normal_side' name='normal_side'>
+                <select id='normal_side' name='normal_side' {{ 'readonly' if not access else ''}}>
                     <option value="" {% if not accountInfo %}selected{% endif %}>Select...</option>
                     <option value="Debit" {% if accountInfo and accountInfo.normal_side=='Debit' %}selected{% endif %}>
                         Debit</option>
@@ -49,45 +54,33 @@
             <div class="form-row">
                 <label for='account_category'>Account Category</label>
                 <input id='account_category' name='account_category'
-                    value='{{ accountInfo.category if accountInfo else "" }}'>
+                    value='{{ accountInfo.category if accountInfo else "" }}' {{ 'readonly' if not access else ''}}>
             </div>
 
             <div class="form-row">
                 <label for='account_subcat'>Account Subcategory</label>
                 <input id='account_subcat' name='account_subcat'
-                    value='{{ accountInfo.subcategory if accountInfo else "" }}'>
+                    value='{{ accountInfo.subcategory if accountInfo else "" }}' {{ 'readonly' if not access else ''}}>
             </div>
 
             <div class="form-row">
                 {% if not accountInfo %}
                 <label for='initial_balance'>Initial Balance</label>
-                <input id='initial_balance' name='initial_balance' value='0.00'>
+                <input id='initial_balance' name='initial_balance' value='0.00' {{ 'readonly' if not access else ''}}>
                 {% else %}
                 <label for='balance'>Balance</label>
-                <input id='balance' name='balance' value='{{ accountInfo.balance }}'>
+                <input id='balance' name='balance' value='{{ accountInfo.balance }}' {{ 'readonly' if not access else ''}}>
                 {% endif %}
             </div>
 
-            {% if accountInfo != None %}
-            <div class='form-row'>
-                <label for='debit'>Debit</label>
-                <input id='debit' name='debit' value='{{ accountInfo.debit }}'>
-            </div>
-            <div class='form-row'>
-                <label for='credit'>Credit</label>
-                <input id='credit' name='credit' value='{{ accountInfo.credit }}'>
-            </div>
-            {% endif %}
-
-
             <div class="form-row">
                 <label for='order'>Order </label>
-                <input id='order' name='order' value='{{ accountInfo.order if accountInfo else "" }}'>
+                <input id='order' name='order' value='{{ accountInfo.order if accountInfo else "" }}' {{ 'readonly' if not access else ''}}>
             </div>
 
             <div class="form-row">
                 <label for='statement'>Statement </label>
-                <select id='statement' name='statement'>
+                <select id='statement' name='statement' {{ 'readonly' if not access else ''}}>
                     <option value="" {% if not accountInfo %}selected{% endif %}>Select...</option>
                     {% for statement in statementTypes %}
                     <option value="{{ statement }}" {% if accountInfo and accountInfo.statement==statement %}selected{%
@@ -101,21 +94,23 @@
 
             <div class="form-row">
                 <label for='comment'>Comment </label>
-                <input id='comment' name='comment' value='{{ accountInfo.comment if accountInfo else "" }}'>
+                <input id='comment' name='comment' value='{{ accountInfo.comment if accountInfo else "" }}' {{ 'readonly' if not access else ''}}>
             </div>
         </div>
 
+        {% if access %}
         <div class="form-buttons">
             <button id="submit" type='submit'>Submit</button>
             <button id="cancel" type='button' onclick="window.location.href='{{ back }}'">Cancel Changes</button>
-            <button  id="insert" type='button' onclick="window.location.href=''">Insert Value</button>
-            <button id="delete" type='button' onclick="window.location.href=''">Delete Account</button>
+            <button id="insert" type='button' onclick="window.location.href=''">Insert Value</button>
+            <button id="delete" type='button' onclick="window.location.href='{{ url_for('chart.deactivate', number=accountInfo.number)}}'">Deactivate</button>
         </div>
+        {% endif %}
     </form>
 </div>
 
 <script type="module">
-    import { currencyInput, ensureSidesAreBalancedWithELs } from '../static/account.js';
+    import { currencyInput } from '../static/account.js';
     
     document.addEventListener('DOMContentLoaded', () => {
         let currencyElements = ['initial_balance',
@@ -123,12 +118,8 @@
         'debit',
         'credit'];
         for(let element of currencyElements){
-            try{
-                currencyInput(element);
-            }catch{} // only catches when element does not exist
+            try{ currencyInput(element); } catch {} // only catches when element does not exist
         }
-
-        ensureSidesAreBalancedWithELs('normal_side', 'balance', 'debit', 'credit');
     });
 </script>
 

@@ -14,13 +14,14 @@ import random
 auth = Blueprint('auth', __name__)
 
 
-def checkRoleClearance(user_role, role_required, templateIfClear=None):
+def checkRoleClearance(user_role, role_required, templateIfClear=None, role_only=False):
     class Role(Enum):
         USER=1
         MANAGER=2
-        ADMINISTRATOR=3    
-    
-    if Role[user_role.upper()].value < Role[role_required.upper()].value:
+        ADMINISTRATOR=3
+
+    if (role_only and user_role != role_required) or (not role_only and Role[
+        user_role.upper()].value < Role[role_required.upper()].value):
         flash('Your account does not have the right clearance for this page.')
         return redirect(url_for('views.home'))
     return templateIfClear

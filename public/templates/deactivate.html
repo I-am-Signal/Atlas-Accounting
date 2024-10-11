@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Delete User{% endblock %}
+{% block content %}
+
+<div class="userProfileContainer">
+    <div class="userProfile">
+        <!-- Profile Picture -->
+        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
+
+        <!-- Username and Sign Out Button -->
+        <div class="userInfo">
+            <p>{{ user.username }}</p>
+            <a href="./logout"><button id="signout" class="logout">Sign out</button></a>
+        </div>
+    </div>
+</div>
+
+<div class="page">
+    <div class='userDisplay'>
+        <a href='{{ back }}'>Back</a> <br />
+        <h2><strong>Account Details</strong></h2>
+        <table class="userDisplay">
+            <thead>
+                <tr></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Number:</strong></td>
+                    <td id="number">{{ account.number }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Name:</strong></td>
+                    <td id="name">{{ account.name }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Balance:</strong></td>
+                    <td id="balance">{{ account.balance}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Category:</strong></td>
+                    <td id="category">{{ account.category }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Subcategory:</strong></td>
+                    <td id="subcategory">{{ account.subcategory }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Description:</strong></td>
+                    <td id="description">{{ account.description }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Active:</strong></td>
+                    <td id="is_activated">{{ account.is_activated }}</td>
+                </tr>
+            </tbody>
+        </table>   
+        <form method='POST'>
+            <label for='deactivate'><strong>Deactivate this account:</strong></label>
+            <select id="deactivate" name="deactivate">
+                <option value="True">Yes</option>
+                <option value="False" selected>No</option>
+            </select><br>
+            <div class="form-buttons">
+                <button id="submit" type='submit'>Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="module">
+    import { formatCurrency } from '../static/account.js';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('balance').textContent = formatCurrency(document.getElementById('balance').textContent);
+    });
+</script>
+
+{% endblock %}
