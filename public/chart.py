@@ -209,7 +209,10 @@ def view_accounts():
         # Capture the account number and account name filter from the GET request parameters
         filter_number = request.args.get('filter_number', None)
         filter_name = request.args.get('filter_name', None)
-        
+        filter_category = request.args.get('filter_category', None)
+        filter_subcategory = request.args.get('filter_subcategory', None)
+
+
         table = f'''
             <a href='{url_for('views.home')}'>Back</a> <br />
             
@@ -220,7 +223,12 @@ def view_accounts():
                 <label for="filter_name"></label>
                 <input type="text" id="filter_name" name="filter_name" placeholder="Enter Account Name" value="{filter_name if filter_name else ''}" />
                 
+                <label for="filter_category"></label>
+                <input type="text" id="filter_category" name="filter_category" placeholder="Enter Category Name" value="{filter_category if filter_category else ''}" />   
                 <button type="submit">Filter</button>
+               <a href="{url_for('chart.view_accounts')}" style="margin-left: 10px;">
+                    <button type="button">Clear Filters</button>
+                </a>
             </form>
             
             <table class="userDisplay">
@@ -246,6 +254,10 @@ def view_accounts():
         
         if filter_name:
             query = query.filter(Account.name.like(f"%{filter_name}%"))
+            
+        if filter_category:
+            query = query.filter(Account.category.like(f"%{filter_category}%"))
+
 
         accounts = query.order_by(Account.is_activated.desc(), Account.number.asc()).all()
 
