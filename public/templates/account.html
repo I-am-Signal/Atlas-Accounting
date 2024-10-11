@@ -16,12 +16,13 @@
 </div>
 
 <div class="page">
+    {% if not access %}
+        Account is viewable but cannot be edited because your account does not have the access clearance of 'user'.
+    {% endif %}
     <form method='POST' class="user-form">
         <div class="form-grid">
             
-                {% if not access %}
-                    Account is viewable but cannot be edited because your account does not have the access clearance of 'user'.
-                {% endif %}
+                
             </p><br />
             <div class="form-row">
                 <label for='account_name'>Account Name</label>

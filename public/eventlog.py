@@ -33,7 +33,7 @@ def view_eventlogs():
             
             account = Account.query.filter_by(number=event.number).first()
             table += f'''
-                <tr onclick="window.location.href='{url_for('eventlog.view_event',number=event.id)}'" style="cursor: pointer;">
+                <tr id="eventView" onclick="window.location.href='{url_for('eventlog.view_event',number=event.id)}'" style="cursor: pointer;">
                     
                     <td>{event.id}</td>
                     <td>{event.number}</td>

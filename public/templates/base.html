@@ -129,6 +129,7 @@
           $('#insert').tooltip({title: "Insert a new record into the system", placement: "bottom"});
           $('#eventlog').tooltip({title: "View the log of events in the system", placement: "bottom"});
           $('#createAccount').tooltip({title: "Create a new Account in the System", placement: "bottom"});
+          $('#eventView').tooltip({title: "View before and after snapshot of account", placement: "bottom"});
           $('#showAccount').tooltip({title: "Display detailed information about the account", placement: "bottom"});
         });
       </script>
@@ -164,7 +165,6 @@
     <a href="{{ url_for('chart.journal_entry') }}">View Ledgers</a>
     <a href="{{ url_for('chart.view_accounts') }}">View Accounts</a>
     <a href="{{ url_for('eventlog.view_eventlogs') }}">View Event Logs</a>
-    
     {% else %}
     <a href='{{homeRoute}}'>Home</a>
     <a href="{{ url_for('auth.login') }}">Login</a>
