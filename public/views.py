@@ -39,7 +39,7 @@ def home():
         render_template(
             "home.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute="/",
             helpRoute="/help",
             viewUsersButton=view_users_link if view_users_link else "",
