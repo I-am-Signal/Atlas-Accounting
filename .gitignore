@@ -6,3 +6,4 @@ config.py
 
 # Database file, not important to store data just yet
 instance/AA.db
+.DS_Store

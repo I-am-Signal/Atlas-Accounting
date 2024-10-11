@@ -187,10 +187,12 @@ def deactivate():
     )
 
 
+from flask import request, url_for, render_template
+from flask_login import login_required
+
 @chart.route('/view_accounts', methods=['GET'])
 @login_required
 def view_accounts():
-    
     # Used for when you mess in creating accounts in development
     # accNumToDeleteDupes = 101
     # accounts = Account.query.filter_by(number=accNumToDeleteDupes).all()
@@ -203,10 +205,24 @@ def view_accounts():
     #     account.company_id = current_user.company_id
     #     account.is_activated = True
     #     db.session.commit()
-    
     def generateAccounts():
+        # Capture the account number and account name filter from the GET request parameters
+        filter_number = request.args.get('filter_number', None)
+        filter_name = request.args.get('filter_name', None)
+        
         table = f'''
             <a href='{url_for('views.home')}'>Back</a> <br />
+            
+            <form method="get" action="{url_for('chart.view_accounts')}">
+                <label for="filter_number"></label>
+                <input type="text" id="filter_number" name="filter_number" placeholder="Enter Account Number" value="{filter_number if filter_number else ''}" />
+                
+                <label for="filter_name"></label>
+                <input type="text" id="filter_name" name="filter_name" placeholder="Enter Account Name" value="{filter_name if filter_name else ''}" />
+                
+                <button type="submit">Filter</button>
+            </form>
+            
             <table class="userDisplay">
                 <thead>
                     <tr>
@@ -222,12 +238,18 @@ def view_accounts():
                 </thead>
                 <tbody>
         '''
-        for account in Account.query.filter(Account.id).filter_by( 
-                company_id=current_user.company_id
-            ).order_by(
-                Account.is_activated.desc(), 
-                Account.number.asc()
-            ).all():
+        
+        query = Account.query.filter_by(company_id=current_user.company_id)
+
+        if filter_number:
+            query = query.filter(Account.number.like(f"%{filter_number}%"))
+        
+        if filter_name:
+            query = query.filter(Account.name.like(f"%{filter_name}%"))
+
+        accounts = query.order_by(Account.is_activated.desc(), Account.number.asc()).all()
+
+        for account in accounts:
             table += f'''
                 <tr>
                     <td><a id="showLedger" href="{url_for('chart.ledger', number=account.number)}">Show Ledger</a></td>
@@ -247,14 +269,16 @@ def view_accounts():
                     <td>{account.is_activated}</td>
                 </tr>
             '''
-        
+
         table += f'''
                 </tbody>
             </table>
             <a id="createAccount" href='{url_for('chart.show_account')}'>Create new Account</a>
         '''
+        
         return table 
     
+    # Render the template with the generated table
     return checkRoleClearance(current_user.role, 'user', render_template
         (
             "view_accounts.html",
