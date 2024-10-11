@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="userProfileContainer">
+    <div class="userProfile">
+        <!-- Profile Picture -->
+        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
+
+        <!-- Username and Sign Out Button -->
+        <div class="userInfo">
+            <p>{{ user.username }}</p>
+            <a href="./logout"><button id="signout" class="logout">Sign out</button></a>
+        </div>
+    </div>
+</div>
+
+<div class="page">
+    <div class='userDisplay'>
+        
+        <a style="float:left;" href='{{back}}' >Back</a>
+        <div class="user-form" style="float: left;">
+                  
+            <h2>Before:</h2>
+            <div class="form-grid">
+            
+            {% if event %}
+            <div class="form-row">
+                <label for='account_name'>Account Name</label>
+                <input id='account_name' name='account_name' value='{{ event.name }}' readonly>
+            </div>
+
+            <div class="form-row">
+                <label for='account_number'>Account Number</label>
+                <input id='acount_number' name='account_number' value='{{ event.number }}' readonly>
+            </div>
+
+            <div class="form-row">
+                <label for='account_desc'>Account Description</label>
+                <input id='account_desc' name='account_desc'
+                    value='{{ event.description  }}' readonly>
+            </div>
+
+            <div class="form-row">
+                <label for='normal_side'>Normal Side</label>
+                <input id='normal_side' name='normal_side' value='{{ event.normal_side }}' readonly>
+            </div>
+
+
+            <div class="form-row">
+                <label for='account_category'>Account Category</label>
+                <input id='account_category' name='account_category'
+                    value='{{ event.category }}' readonly>
+            </div>
+
+            <div class="form-row">
+                <label for='account_subcat'>Account Subcategory</label>
+                <input id='account_subcat' name='account_subcat'
+                    value='{{ event.subcategory }}' readonly>
+            </div>
+
+            <div class="form-row">
+                
+                <label for='initial_balance'>Initial Balance</label>
+                <input id='initial_balance' name='initial_balance' value='{{ event.initial_balance }}' readonly>
+            
+                <label for='balance'>Balance</label>
+                <input id='balance' name='balance' value='{{ event.balance }}' readonly>
+                
+            </div>
+
+        
+            <div class='form-row'>
+                <label for='debit'>Debit</label>
+                <input id='debit' name='debit' value='{{ event.debit }}' readonly>
+            </div>
+            <div class='form-row'>
+                <label for='credit'>Credit</label>
+                <input id='credit' name='credit' value='{{ event.credit }}' readonly>
+            </div>
+        
+
+
+            <div class="form-row">
+                <label for='order'>Order </label>
+                <input id='order' name='order' value='{{ event.order  }}' readonly>
+            </div>
+
+            <div class="form-row">
+                <label for='statement'>Statement </label>
+                <input id='statement' name='statement' value='{{ event.statement  }}' readonly>
+            </div>
+
+
+            <div class="form-row">
+                <label for='comment'>Comment </label>
+                <input id='comment' name='comment' value='{{ event.comment }}' readonly>
+            </div>
+            {% endif %}
+            </div>
+        </div>
+
+        <div class="user-form" style="float: left;margin-left: 100px;">
+            <h2>After:</h2>
+            <div class="form-grid">
+                {% if account %}
+                <div class="form-row">
+                    <label for='account_name'>Account Name</label>
+                    <input id='account_name' name='account_name' value='{{ account.name if account else "" }}' readonly>
+                </div>
+
+                <div class="form-row">
+                    <label for='account_number'>Account Number</label>
+                    <input id='acount_number' name='account_number' value='{{ account.number if account else "" }}' readonly>
+                </div>
+
+                <div class="form-row">
+                    <label for='account_desc'>Account Description</label>
+                    <input id='account_desc' name='account_desc'
+                        value='{{ account.description if account else "" }}' readonly>
+                </div>
+
+                <div class="form-row">
+                    <label for='normal_side'>Normal Side</label>
+                    <input id='normal_side' name='normal_side'
+                    value='{{ account.normal_side if account else "" }}' readonly>
+                </div>
+
+
+                <div class="form-row">
+                    <label for='account_category'>Account Category</label>
+                    <input id='account_category' name='account_category'
+                        value='{{ account.category if account else "" }}' readonly>
+                </div>
+
+                <div class="form-row">
+                    <label for='account_subcat'>Account Subcategory</label>
+                    <input id='account_subcat' name='account_subcat'
+                        value='{{ account.subcategory if account else "" }}' readonly>
+                </div>
+
+                <div class="form-row">
+                    
+                    <label for='initial_balance'>Initial Balance</label>
+                    <input id='initial_balance' name='initial_balance' value='{{account.initial_balance}}' readonly>
+                    
+                    <label for='balance'>Balance</label>
+                    <input id='balance' name='balance' value='{{ account.balance }}' readonly>
+                    
+                </div>
+
+                {% if accountInfo != None %}
+                <div class='form-row'>
+                    <label for='debit'>Debit</label>
+                    <input id='debit' name='debit' value='{{ account.debit }}' readonly>
+                </div>
+                <div class='form-row'>
+                    <label for='credit'>Credit</label>
+                    <input id='credit' name='credit' value='{{ account.credit }}' readonly>
+                </div>
+                {% endif %}
+
+
+                <div class="form-row">
+                    <label for='order'>Order </label>
+                    <input id='order' name='order' value='{{ account.order if account else "" }}' readonly>
+                </div>
+
+                <div class="form-row">
+                    <label for='statement'>Statement </label>
+                    <input id='statement' name='statement' value='{{ account.statement if account else "" }}' readonly>
+                </div>
+
+
+                <div class="form-row">
+                    <label for='comment'>Comment </label>
+                    <input id='comment' name='comment' value='{{ account.comment if account else "" }}' readonly>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+    
+{% endblock %}

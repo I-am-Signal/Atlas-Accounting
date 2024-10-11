@@ -14,6 +14,8 @@ class CreatedByMixin():
     __abstract__ = True
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+
+
 class User(db.Model, UserMixin, BaseColumnMixin):
     __tablename__ = 'user'
     is_activated = db.Column(db.Boolean, default=False)
@@ -92,6 +94,23 @@ class Account(db.Model, BaseColumnMixin, CreatedByMixin):
     is_activated = db.Column(db.Boolean, default=True, nullable=False)
     
     db.relationship('User', backref='account_created_by', foreign_keys=[CreatedByMixin.created_by])
+    
+
+class Event(db.Model, BaseColumnMixin):
+    created_by = db.Column(db.Integer)
+    number = db.Column(db.Integer)
+    name = db.Column(db.String(150))
+    description = db.Column(db.String(500))
+    normal_side = db.Column(db.String(150))
+    category = db.Column(db.String(150))
+    subcategory = db.Column(db.String(150))
+    initial_balance = db.Column(db.Float, default = 0.0)
+    debit = db.Column(db.Float, default = 0.0)
+    credit = db.Column(db.Float, default = 0.0)
+    balance = db.Column(db.Float, default = 0.0)
+    order = db.Column(db.Integer, default = 0)
+    statement = db.Column(db.String(150))
+    comment = db.Column(db.String(150))
     
 class Journal_Entry(db.Model, BaseColumnMixin, CreatedByMixin):
     __tablename__ = 'journal_entry'

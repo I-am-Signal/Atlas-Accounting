@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from .models import User, Company, Credential, Account, Journal_Entry, Transaction
+from .models import User, Company, Credential, Account, Journal_Entry, Transaction,Event
 from . import db, formatMoney, unformatMoney
 from .auth import login_required_with_password_expiration, checkRoleClearance
 from .email import sendEmail, getEmailHTML
@@ -55,12 +55,38 @@ def show_account():
             flash('Invalid account number. Only digits are allowed.', category='error')
             return redirect(url_for('chart.view_accounts'))
 
-        curr_account = Account.query.filter_by(
-            number=int(account_number_original), 
-            name=account_name
-        ).first()
+        #finish implementing other check requirements 2-5
+        # account = Account.query.filter_by(account_number=account_number).first()
+        # if account:
+        #     flash(f'Account Number already exists', category='error')
+       
+        curr_account = Account.query.filter_by(number=account_number).first()
+        # log current account info 
+        new_event = Event(                 
+                number=curr_account.number,
+                name=curr_account.name,
+                description=curr_account.description,
+                normal_side=curr_account.normal_side, # check for valid normal side
+                category=curr_account.category,
+                subcategory=curr_account.subcategory,
+                initial_balance=curr_account.initial_balance,
+                balance=curr_account.balance,
+                debit =curr_account.debit,
+                credit=curr_account.credit,
+                order=curr_account.order, # check if > 0, is int, and is not the same for the cat/subcat
+                statement=curr_account.statement, # check if valid statement type
+                comment=curr_account.comment,
+                created_by=curr_account.created_by               
+            )
         
+        # else:
         if curr_account:
+            debit = request.form.get('debit')
+            credit = request.form.get('credit')
+            balance = request.form.get('balance')
+
+            
+            
             curr_account.name = account_name
             curr_account.description = account_desc
             curr_account.normal_side = normal_side # check for valid normal side
@@ -70,6 +96,9 @@ def show_account():
             curr_account.order = order # check if > 0, is int, and is not the same for the cat/subcat
             curr_account.statement = statement # check if valid statement type
             curr_account.comment = comment
+
+            
+            db.session.add(new_event) 
             flash(f'Account #{curr_account.number}\'s information has been successfully updated.', category='success')
             
         else:
@@ -102,6 +131,9 @@ def show_account():
                 created_by=current_user.id,
                 company_id=current_user.company_id
             )
+           
+            
+            
             db.session.add(new_account)             
             flash(f'New Account created as Account #{new_account.number}!', category='success')            
         db.session.commit()

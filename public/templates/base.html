@@ -25,7 +25,7 @@
 </head>
 
 <body>
-  <button class="openbtn" onclick="openNav()">&#8652;</button>
+  <button class="openbtn" onclick="openNav()"><i class="fa fa-bars"></i></button>
   <div class="pageContainer">
     <div class="header">
       <div class="logo">
@@ -121,11 +121,12 @@
   <div  id='mySidebar' class='sidebar'>
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
     {% if dashUser %}
-    <a href=''>Dashboard</a>
-    <a href=''>Profile</a>
-    <a href=''>Logout</a>
+    <a href='{{homeRoute}}'>Dashboard</a>
+    <a href="{{ url_for('views.view_users') }}">View Users</a>
+    <a href="{{ url_for('chart.view_accounts') }}">View Accounts</a>
+    <a href="{{ url_for('eventlog.view_eventlogs') }}">View Event Logs</a>
 {% else %}
-    <a href=''>Home</a>
+    <a href='{{homeRoute}}'>Home</a>
     <a href=''>Login</a>
     <a href=''>Sign-up</a>
     <a href=''>Contact-Us</a>

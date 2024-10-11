@@ -85,7 +85,7 @@
         <p>Company ID: {{ user.company_id }}</p>
         <div class="dashboxes">
             {{ viewUsersButton|safe }}
-            <a href="{{ eventLogsLink }}"><button id="eventlog" class="dashleft">Event Logs</button></a>
+            {{ viewEventsButton|safe }}
             <a href="{{ journalEntriesLink }}"><button id="journalentry" class="dashleft">Journal Entries</button></a>
             {{ viewAccountsButton|safe }}
         </div>
