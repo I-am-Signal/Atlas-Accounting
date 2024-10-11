@@ -225,10 +225,16 @@ def view_accounts():
                 
                 <label for="filter_category"></label>
                 <input type="text" id="filter_category" name="filter_category" placeholder="Enter Category Name" value="{filter_category if filter_category else ''}" />   
+                
+                <label for="filter_subcategory"></label>
+                <input type="text" id="filter_subcategory" name="filter_subcategory" placeholder="Enter Subcategory Name" value="{filter_subcategory if filter_subcategory else ''}" />   
+                
                 <button type="submit">Filter</button>
-               <a href="{url_for('chart.view_accounts')}" style="margin-left: 10px;">
+               
+                <a href="{url_for('chart.view_accounts')}" style="margin-left: 10px;">
                     <button type="button">Clear Filters</button>
                 </a>
+                
             </form>
             
             <table class="userDisplay">
@@ -257,6 +263,9 @@ def view_accounts():
             
         if filter_category:
             query = query.filter(Account.category.like(f"%{filter_category}%"))
+            
+        if filter_subcategory:
+            query = query.filter(Account.subcategory.like(f"%{filter_subcategory}%"))
 
 
         accounts = query.order_by(Account.is_activated.desc(), Account.number.asc()).all()
