@@ -1,4 +1,13 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file, send_from_directory
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    flash,
+    redirect,
+    url_for,
+    send_file,
+    send_from_directory,
+)
 from flask_login import login_required, current_user
 from .models import User, Company, Credential, Image
 from . import db
@@ -12,17 +21,16 @@ from werkzeug.utils import secure_filename
 views = Blueprint("views", __name__)
 
 
-@views.route('/', methods=['GET', 'POST'])
-@login_required_with_password_expiration 
+@views.route("/", methods=["GET", "POST"])
+@login_required_with_password_expiration
 def home():
-    view_users_link =None
-  
+    view_users_link = None
 
     if "administrator" == current_user.role:
         view_users_link = f'<a href="{url_for("views.view_users")}"><button id="users" class="dashleft" >View/Edit Users</button></a>'
-    
     view_coa_link = f'<a href="{url_for("chart.view_accounts")}"><button id="accounts" class="dashleft admin" >View/Edit Accounts</button></a>'
     view_evl_link = f'<a href="{url_for("eventlog.view_eventlogs")}"><button id="eventlog" class="dashleft admin" >View Event Logs</button></a>'
+
     journalEntriesLink = url_for("chart.ledger")
 
     return checkRoleClearance(
@@ -31,14 +39,13 @@ def home():
         render_template(
             "home.html",
             user=current_user,
-            dashUser=current_user.role,
+            dashUser=current_user,
             homeRoute="/",
             helpRoute="/help",
             viewUsersButton=view_users_link if view_users_link else "",
             viewAccountsButton=view_coa_link if view_coa_link else "",
             viewEventsButton=view_evl_link if view_evl_link else "",
             journalEntriesLink=journalEntriesLink,
-            
         ),
     )
 
@@ -54,10 +61,10 @@ def view_users():
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th id="viewuserinfo">Username</th>
+                        <th>Username</th>
                         <th>First Name</th>
                         <th>Last Name</th>
-                        <th id='sendemail'>Email</th>
+                        <th>Email</th>
                         <th>Activated</th>
                         <th>Role</th>
                     </tr>
@@ -72,10 +79,10 @@ def view_users():
             table += f"""
                 <tr>
                     <td>{user.id}</td>
-                    <td><a  href="{ url_for('views.user', id=user.id) }">{user.username}</a></td>
+                    <td><a id="viewuserinfo" href="{ url_for('views.user', id=user.id) }">{user.username}</a></td>
                     <td>{user.first_name}</td>
                     <td>{user.last_name}</td>
-                    <td>{f"<a  href='{url_for('email.send', id=user.id)}'>{user.email}</a>"}</td>
+                    <td>{f"<a id='sendemail' href='{url_for('email.send', id=user.id)}'>{user.email}</a>"}</td>
                     <td>{user.is_activated}</td>
                     <td>{user.role}</td>
                 </tr>
@@ -92,7 +99,11 @@ def view_users():
         current_user.role,
         "administrator",
         render_template(
-            "view_users.html", user=current_user, homeRoute="/", users=generateUsers(),dashUser=current_user.role,
+            "view_users.html",
+            user=current_user,
+            homeRoute="/",
+            users=generateUsers(),
+            dashUser=current_user,
         ),
     )
 
@@ -154,10 +165,10 @@ def user():
         elif len(email) < 4:
             flash("Email must be greater than 3 characters.", category="error")
         else:
-            if 'image' in request.files:
-                image = request.files['image']
-                if image.filename != '':
-                    
+            if "image" in request.files:
+                image = request.files["image"]
+                if image.filename != "":
+
                     # account for if an image exists already
                     curr_image = Image.query.filter_by(user_id=userInfo.id).first()
                     if curr_image:
@@ -167,13 +178,13 @@ def user():
                     else:
                         db.session.add(
                             Image(
-                                user_id = userInfo.id,
-                                file_name = secure_filename(image.filename),
-                                file_mime = image.content_type,
-                                file_data = image.read()
+                                user_id=userInfo.id,
+                                file_name=secure_filename(image.filename),
+                                file_mime=image.content_type,
+                                file_data=image.read(),
                             )
                         )
-            
+
             # prevents activation email if the activation state was left unchanged
             previous_is_activated = userInfo.is_activated
 
@@ -217,7 +228,7 @@ def user():
         render_template(
             "user.html",
             user=current_user,
-            dashUser=current_user.role,
+            dashUser=current_user,
             homeRoute="/",
             back=url_for("views.view_users"),
             userInfo=userInfo,
@@ -266,19 +277,20 @@ def delete():
         render_template(
             "delete.html",
             user=current_user,
-            dashUser=current_user.role,
+            dashUser=current_user,
             homeRoute="/",
             back=url_for("views.view_users"),
             userInfo=userInfo,
         ),
     )
 
-@views.route('/pfp', methods=['GET'])
+
+@views.route("/pfp", methods=["GET"])
 @login_required
 def pfp():
     """GET: Returns the profile picture\n"""
-    
-    if request.method == 'GET':
+
+    if request.method == "GET":
         # when user_id check method is implemented, call it here instead of this
         user_id = int(request.args.get("id"))
         image = Image.query.filter_by(user_id=user_id).first()
@@ -294,14 +306,25 @@ def pfp():
             as_attachment=False,
             download_name=image.file_name,
         )
-    
-@views.route('/help')
+
+
+@views.route("/help")
 @login_required
 def help():
     return render_template(
         "help.html",
         user=current_user,
-        dashUser=current_user.role,
-        homeRoute="/",            
-        )
+        dashUser=current_user,
+        homeRoute="/",
+    )
 
+
+@views.route("/contact", methods=["GET", "POST"])
+@login_required
+def contact():
+    return render_template(
+        "contact.html",
+        user=current_user,
+        dashUser=current_user,
+        homeRoute="/",
+    )
