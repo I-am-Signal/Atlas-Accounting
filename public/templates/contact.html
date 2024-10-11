@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us{% endblock %}
+
+{% block content %}
+<h1 class="contact-heading">Contact Us</h1>
+<div class="contact-container"> 
+
+    <!-- Contact Information -->
+    <div class="contact-info">
+        <h2>Our Office</h2>
+        <p><strong>Address:</strong> 123 Peachtree St NE, Atlanta, GA 30303</p>
+        <p><strong>Phone:</strong> (404) 555-1234</p>
+        <p><strong>Email:</strong> info@atlasaccounting.com</p>
+
+        <!-- Embed a map (using OpenStreetMap) -->
+        <div class="map-container">
+            <iframe 
+                width="100%" 
+                height="400px" 
+                frameborder="0" 
+                scrolling="no" 
+                marginheight="0" 
+                marginwidth="0" 
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-84.39208364486694%2C33.74748222209344%2C-84.38547563552858%2C33.75215480351927&amp;layer=mapnik&amp;marker=33.74981853926951%2C-84.38877964019775">
+            </iframe>
+            <br/><small><a href="https://www.openstreetmap.org/?mlat=33.7498&amp;mlon=-84.3888#map=17/33.7498/-84.3888">View Larger Map</a></small>
+        </div>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="team-contacts">
+        <h2>Our Team</h2>
+        <ul>
+            <li>
+                <strong>Garrett McGuire</strong>
+                <br/>
+                <a href="mailto:gmcguir2@students.kennesaw.edu">gmcguir2@students.kennesaw.edu</a>
+            </li>
+            <li>
+                <strong>Dylan Carder</strong>
+                <br/>
+                <a href="mailto:wcarder1@students.kennesaw.edu">wcarder1@students.kennesaw.edu</a>
+            </li>
+            <li>
+                <strong>Zeshan Khan</strong>
+                <br/>
+                <a href="mailto:zkhan25@students.kennesaw.edu">zkhan25@students.kennesaw.edu</a>
+            </li>
+            <li>
+                <strong>Andres Contreras</strong>
+                <br/>
+                <a href="mailto:acontr12@students.kennesaw.edu">acontr12@students.kennesaw.edu</a>
+            </li>
+            <li>
+                <strong>Jeremiah Wisdom</strong>
+                <br/>
+                <a href="mailto:jwisdom2@students.kennesaw.edu">jwisdom2@students.kennesaw.edu</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Add custom CSS -->
+<style>
+    .contact-heading {
+        text-align: center;  /* Center the heading */
+        font-size: 2.5rem;  /* Adjust the font size */
+        color: #E0E1DD;  /* Ensure it matches the page color scheme */
+        margin-bottom: 20px;  /* Add space between the heading and the container */
+    }
+
+    .contact-container {
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        background-color: #1B263B;
+        color: #E0E1DD;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .contact-info {
+        flex: 1;
+    }
+
+    .map-container {
+        margin-top: 20px;
+    }
+
+    .team-contacts {
+        flex: 1;
+        background-color: #1B263B;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .team-contacts h2 {
+        font-size: 1.8rem;
+        color: #E0E1DD;
+        margin-bottom: 15px;
+    }
+
+    .team-contacts ul {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .team-contacts li {
+        margin-bottom: 20px;
+    }
+
+    .team-contacts li strong {
+        font-size: 1.2rem;
+        color: #E0E1DD;
+    }
+
+    .team-contacts li a {
+        color: #87CEFA;  /* Light blue color for email links */
+        text-decoration: none;
+    }
+
+    .team-contacts li a:hover {
+        text-decoration: underline;
+    }
+   
+
+</style>
+
+{% endblock %}
