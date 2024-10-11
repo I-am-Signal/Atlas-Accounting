@@ -58,7 +58,7 @@ def view_eventlogs():
     
    
     
-    return checkRoleClearance(current_user.role, 'administrator', render_template
+    return checkRoleClearance(current_user.role, 'user', render_template
         (
             "view_eventlogs.html",
             user=current_user,

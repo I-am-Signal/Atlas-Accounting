@@ -16,13 +16,13 @@
 </div>
 
 <div class="page">
-    <div class='userDisplay'>
+    <div id="userDisplay" class='userDisplay'>
         
         <a style="float:left;" href='{{back}}' >Back</a>
-        <div class="user-form" style="float: left;">
+        <div class="user-form" style="float: left; margin-left: 0;">
                   
             <h2>Before:</h2>
-            <div class="form-grid">
+            <div class="form-grid" style="margin:20px 0px;max-width: fit-content;">
             
             {% if event %}
             <div class="form-row">
@@ -59,26 +59,12 @@
                     value='{{ event.subcategory }}' readonly>
             </div>
 
-            <div class="form-row">
-                
-                <label for='initial_balance'>Initial Balance</label>
-                <input id='initial_balance' name='initial_balance' value='{{ event.initial_balance }}' readonly>
+            <div class="form-row">         
             
                 <label for='balance'>Balance</label>
                 <input id='balance' name='balance' value='{{ event.balance }}' readonly>
                 
-            </div>
-
-        
-            <div class='form-row'>
-                <label for='debit'>Debit</label>
-                <input id='debit' name='debit' value='{{ event.debit }}' readonly>
-            </div>
-            <div class='form-row'>
-                <label for='credit'>Credit</label>
-                <input id='credit' name='credit' value='{{ event.credit }}' readonly>
-            </div>
-        
+            </div>       
 
 
             <div class="form-row">
@@ -100,7 +86,7 @@
             </div>
         </div>
 
-        <div class="user-form" style="float: left;margin-left: 100px;">
+        <div class="user-form" style="float: left;margin-left: 50px;">
             <h2>After:</h2>
             <div class="form-grid">
                 {% if account %}
@@ -140,27 +126,12 @@
                 </div>
 
                 <div class="form-row">
-                    
-                    <label for='initial_balance'>Initial Balance</label>
-                    <input id='initial_balance' name='initial_balance' value='{{account.initial_balance}}' readonly>
-                    
+                                       
                     <label for='balance'>Balance</label>
-                    <input id='balance' name='balance' value='{{ account.balance }}' readonly>
+                    <input id='balance1' name='balance' value='{{ account.balance }}' readonly>
                     
-                </div>
-
-                {% if accountInfo != None %}
-                <div class='form-row'>
-                    <label for='debit'>Debit</label>
-                    <input id='debit' name='debit' value='{{ account.debit }}' readonly>
-                </div>
-                <div class='form-row'>
-                    <label for='credit'>Credit</label>
-                    <input id='credit' name='credit' value='{{ account.credit }}' readonly>
-                </div>
-                {% endif %}
-
-
+                </div>          
+               
                 <div class="form-row">
                     <label for='order'>Order </label>
                     <input id='order' name='order' value='{{ account.order if account else "" }}' readonly>
@@ -181,5 +152,15 @@
         </div>
     </div>
 </div>
+<script type="module">
+    import { formatCurrency,currencyInput } from '../static/account.js';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        currencyInput('balance');
+        currencyInput('balance1');
+    });
+
+
+</script>
     
 {% endblock %}
