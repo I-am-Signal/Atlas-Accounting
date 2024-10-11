@@ -179,6 +179,7 @@ def view_accounts():
             <table class="userDisplay">
                 <thead>
                     <tr>
+                        <th>Ledger</th>
                         <th>Account Number</th>
                         <th>Account Name</th>
                         <th>Category</th>
@@ -198,6 +199,7 @@ def view_accounts():
             ).all():
             table += f'''
                 <tr>
+                    <td><a id="showLedger" href="{url_for('chart.ledger', number=account.number)}">Show Ledger</a></td>
                     <td>{account.number}</td>
                     <td><a id="showAccount" href="{url_for('chart.show_account', number=account.number)}">{account.name}</a></td>
                     <td>{account.category}</td>
@@ -250,6 +252,12 @@ def ledger():
     #     db.session.commit()
     
     if request.method == 'GET':
+        ref_id = request.args.get('number')
+        if ref_id:
+            if not ref_id.isdigit() or not db.session.query(Transaction).filter_by(account_number=int(ref_id)).all():
+                flash(f'Invalid account reference number of {ref_id}', category='error')
+                return redirect(url_for('views.home'))
+            
         def generateLedger():
             table = f'''
                 <a href='{url_for('views.home')}'>Back</a> <br />
@@ -268,22 +276,32 @@ def ledger():
             
             def getAccountsInJournalEntry(referenceNumber):
                 associatedAccounts = ''
-                for transaction, account in db.session.query(Transaction, Account).join(
-                    Account, Transaction.account_number == Account.number
+                for account in db.session.query(Account).join(
+                    Transaction, Transaction.account_number == Account.number
                 ).filter(
                     Transaction.journal_entry_id == referenceNumber
                 ).all():
                     associatedAccounts += f'{account.number} - {account.name}<br>'
                     
                 return associatedAccounts
-
-            for entry in db.session.query(Journal_Entry).join(
+            
+            # filter all journal entries for only those with an account with the ref_id if one is provided
+            entries = db.session.query(Journal_Entry).join(
                 Transaction, Journal_Entry.id == Transaction.journal_entry_id
             ).filter(
                 Journal_Entry.company_id == current_user.company_id
             ).order_by(
                 Journal_Entry.id.desc()
-            ).all():
+            ).all() if not ref_id else db.session.query(Journal_Entry).join(
+                Transaction, Journal_Entry.id == Transaction.journal_entry_id
+            ).filter(
+                Journal_Entry.company_id == current_user.company_id,
+                Transaction.account_number == ref_id
+            ).order_by(
+                Journal_Entry.id.desc()
+            ).all()
+                        
+            for entry in entries:
                 table += f'''
                     <tr>
                         <td><a href="{url_for('chart.journal_entry', id=entry.id)}">{entry.id}</a></td>
