@@ -2,7 +2,6 @@
 {% block title %}Home{% endblock %}
 {% block content%}
 
-<img src="https://cdn-icons-png.flaticon.com/512/591/591607.png" alt="White Calendar Icon" class="calendar-icon" onclick="openCalendar()">
 
 <h1>Welcome, {{ user.first_name }} {{ user.last_name }}!</h1>
 <div class="userProfileContainer">
@@ -17,46 +16,7 @@
         </div>
     </div>
 </div>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
 
-        .calendar-icon {
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-        }
-
-        #hiddenCalendarInput {
-            display: none; 
-        }
-    </style>
-
-
-
-
-
-    <!--Flatpickr -->
-    <input type="text" id="hiddenCalendarInput">
-
-    <!-- Flatpickr JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    
-    <script>
-        // Initialize Flatpickr on the hidden input
-        const calendarInput = flatpickr("#hiddenCalendarInput", {
-            inline: false, // Not always visible, only pops up on click
-            allowInput: false, // Only allow selection via the calendar, not manual typing
-        });
-
-        // Function to open the Flatpickr calendar when clicking the icon
-        function openCalendar() {
-            calendarInput.open(); // Open the calendar popup
-        }
-    </script>
 
 </body>
 </html>

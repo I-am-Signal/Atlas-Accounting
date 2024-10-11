@@ -31,10 +31,43 @@
       <div class="logo">
         <i class="fa-solid fa-globe"></i>
         <a href="{{ homeRoute }}" id="logo">Atlas Accounting</a>
+        <img src="https://cdn-icons-png.flaticon.com/512/591/591607.png" alt="White Calendar Icon" class="calendar-icon" onclick="openCalendar()">
+
       </div>
       </header>
     </div>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
 
+        
+    </style>
+
+
+
+
+
+    <!--Flatpickr -->
+    <input type="text" id="hiddenCalendarInput">
+
+    <!-- Flatpickr JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <script>
+        // Initialize Flatpickr on the hidden input
+        const calendarInput = flatpickr("#hiddenCalendarInput", {
+            inline: false, // Not always visible, only pops up on click
+            allowInput: false, // Only allow selection via the calendar, not manual typing
+        });
+
+        // Function to open the Flatpickr calendar when clicking the icon
+        function openCalendar() {
+            calendarInput.open(); // Open the calendar popup
+        }
+    </script>
 
     <div class="alert alter-dismissable fade show messagesContainer">
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
