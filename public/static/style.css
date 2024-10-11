@@ -479,6 +479,7 @@ top: 4%;
   margin: 20px auto;  /* Center the table */
 }
 
+
 .userDisplay table,.eventDisplay table {
   width: 100%;  /* Make sure the table takes up full width of container */
   border-collapse: collapse;  /* Remove gaps between table cells */
@@ -525,7 +526,7 @@ top: 4%;
     grid-template-columns: 1fr 1fr; /* Two columns */
     gap: 20px; /* Space between rows and columns */
     width: 100%;
-    max-width: 800px;
+    max-width: fit-content;
     margin: 20px auto;
     padding: 20px;
     background-color: #1B263B;

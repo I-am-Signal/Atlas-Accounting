@@ -15,10 +15,13 @@ views = Blueprint("views", __name__)
 @views.route('/', methods=['GET', 'POST'])
 @login_required_with_password_expiration 
 def home():
+    view_users_link =None
+  
+
     if "administrator" == current_user.role:
         view_users_link = f'<a href="{url_for("views.view_users")}"><button id="users" class="dashleft" >View/Edit Users</button></a>'
-        view_coa_link = f'<a href="{url_for("chart.view_accounts")}"><button id="accounts" class="dashleft admin" >View/Edit Accounts</button></a>'
-        view_evl_link = f'<a href="{url_for("eventlog.view_eventlogs")}"><button id="eventlog" class="dashleft admin" >View Event Logs</button></a>'
+    view_coa_link = f'<a href="{url_for("chart.view_accounts")}"><button id="accounts" class="dashleft admin" >View/Edit Accounts</button></a>'
+    view_evl_link = f'<a href="{url_for("eventlog.view_eventlogs")}"><button id="eventlog" class="dashleft admin" >View Event Logs</button></a>'
 
     
     journalEntriesLink = url_for("chart.ledger")

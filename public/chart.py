@@ -51,7 +51,7 @@ def show_account():
         statement = request.form.get('statement')
         comment = request.form.get('comment')
         
-        if not account_number.isdigit() or not account_number_original.isdigit():
+        if not account_number.isdigit() or (account_number_original and not account_number_original.isdigit()):
             flash('Invalid account number. Only digits are allowed.', category='error')
             return redirect(url_for('chart.view_accounts'))
 
@@ -62,7 +62,12 @@ def show_account():
        
         curr_account = Account.query.filter_by(number=account_number).first()
         # log current account info 
-        new_event = Event(                 
+                   
+            
+        
+        # else:
+        if curr_account:
+            new_event = Event(                 
                 number=curr_account.number,
                 name=curr_account.name,
                 description=curr_account.description,
@@ -76,14 +81,8 @@ def show_account():
                 order=curr_account.order, # check if > 0, is int, and is not the same for the cat/subcat
                 statement=curr_account.statement, # check if valid statement type
                 comment=curr_account.comment,
-                created_by=curr_account.created_by               
+                created_by=curr_account.created_by   
             )
-        
-        # else:
-        if curr_account:
-            debit = request.form.get('debit')
-            credit = request.form.get('credit')
-            balance = request.form.get('balance')
 
             
             
@@ -256,7 +255,7 @@ def view_accounts():
         '''
         return table 
     
-    return checkRoleClearance(current_user.role, 'administrator', render_template
+    return checkRoleClearance(current_user.role, 'user', render_template
         (
             "view_accounts.html",
             user=current_user,
@@ -572,6 +571,7 @@ def journal_entry():
         (
             "journal_entry.html",
             user=current_user,
+            dashUser=current_user,
             homeRoute='/',
             entry=generateJournalEntry(ref_id)
         )
