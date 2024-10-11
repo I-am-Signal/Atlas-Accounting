@@ -111,6 +111,7 @@ class Event(db.Model, BaseColumnMixin):
     order = db.Column(db.Integer, default = 0)
     statement = db.Column(db.String(150))
     comment = db.Column(db.String(150))
+    
 class Journal_Entry(db.Model, BaseColumnMixin, CreatedByMixin):
     __tablename__ = 'journal_entry'
     # 'Approved' 'Pending' 'Rejected'
