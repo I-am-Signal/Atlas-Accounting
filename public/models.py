@@ -96,8 +96,9 @@ class Account(db.Model, BaseColumnMixin, CreatedByMixin):
     db.relationship('User', backref='account_created_by', foreign_keys=[CreatedByMixin.created_by])
     
 
-class Event(db.Model, BaseColumnMixin):
-    created_by = db.Column(db.Integer)
+class Event(db.Model, BaseColumnMixin,CreatedByMixin):
+    __tablename__ = 'event'
+    
     number = db.Column(db.Integer)
     name = db.Column(db.String(150))
     description = db.Column(db.String(500))
