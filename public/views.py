@@ -104,7 +104,7 @@ def view_users():
             homeRoute="/",
             helpRoute="/help",
             users=generateUsers(),
-            dashUser=current_user,
+            dashUser=current_user.role,
         ),
     )
 
@@ -229,7 +229,7 @@ def user():
         render_template(
             "user.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute="/",
             helpRoute="/help",
             back=url_for("views.view_users"),
@@ -279,7 +279,7 @@ def delete():
         render_template(
             "delete.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute="/",
             helpRoute="/help",
             back=url_for("views.view_users"),
@@ -317,7 +317,7 @@ def help():
     return render_template(
         "help.html",
         user=current_user,
-        dashUser=current_user,
+        dashUser=current_user.role,
         homeRoute="/",
         helpRoute="/help",
     )
@@ -329,7 +329,7 @@ def contact():
     return render_template(
         "contact.html",
         user=current_user,
-        dashUser=current_user,
+        dashUser=current_user.role,
         homeRoute="/",
         helpRoute="/help",
     )
