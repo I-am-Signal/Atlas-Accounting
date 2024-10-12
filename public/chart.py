@@ -30,8 +30,9 @@ def show_account():
                 "account.html",
                 access=True if current_user.role == 'user' else False,
                 user=current_user,
-                dashUser=current_user,
+                dashUser=current_user.role,
                 homeRoute='/',
+                helpRoute="/help",
                 accountInfo=accountInfo if accountInfo else None,
                 statementTypes=statementTypes if statementTypes else None,
                 back=url_for('chart.view_accounts')
@@ -179,18 +180,21 @@ def deactivate():
         render_template(
             "deactivate.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute="/",
+            helpRoute="/help",
             back=url_for("views.view_users"),
             account=account,
         ),
     )
 
 
+from flask import request, url_for, render_template
+from flask_login import login_required
+
 @chart.route('/view_accounts', methods=['GET'])
 @login_required
 def view_accounts():
-    
     # Used for when you mess in creating accounts in development
     # accNumToDeleteDupes = 101
     # accounts = Account.query.filter_by(number=accNumToDeleteDupes).all()
@@ -203,16 +207,54 @@ def view_accounts():
     #     account.company_id = current_user.company_id
     #     account.is_activated = True
     #     db.session.commit()
-    
     def generateAccounts():
+        # Capture the account number and account name filter from the GET request parameters
+        filter_number = request.args.get('filter_number', None)
+        filter_name = request.args.get('filter_name', None)
+        filter_category = request.args.get('filter_category', None)
+        filter_subcategory = request.args.get('filter_subcategory', None)
+        filter_statement = request.args.get('filter_statement', None)
+        filter_true = request.args.get('filter_true', None)
+
+
+
+
         table = f'''
             <a href='{url_for('views.home')}'>Back</a> <br />
+            
+            <form method="get" action="{url_for('chart.view_accounts')}" style="margin-left:100px">
+                <label for="filter_number"></label>
+                <input type="text" id="filter_number" name="filter_number" placeholder="Enter Account Number" value="{filter_number if filter_number else ''}" />
+                
+                <label for="filter_name"></label>
+                <input type="text" id="filter_name" name="filter_name" placeholder="Enter Account Name" value="{filter_name if filter_name else ''}" />
+                
+                <label for="filter_category"></label>
+                <input type="text" id="filter_category" name="filter_category" placeholder="Enter Category Name" value="{filter_category if filter_category else ''}" />   
+                
+                <label for="filter_subcategory"></label>
+                <input type="text" id="filter_subcategory" name="filter_subcategory" placeholder="Enter Subcategory" value="{filter_subcategory if filter_subcategory else ''}" />  
+                
+                <label for="filter_statement"></label>
+                <input type="text" id="filter_statement" name="filter_statement" placeholder="Enter Statement Type" value="{filter_statement if filter_statement else ''}" />  
+                
+                <label for="filter_true"></label>
+                <input type="text" id="filter_true" name="filter_true" placeholder="Active" value="{filter_true if filter_true else ''}" />    
+                
+                    <button type="submit" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">Filter</button>
+               
+                <a href="{url_for('chart.view_accounts')}" style="background-color: #AF4C4C; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; font-weight:normal;>
+                    <button type="button">Clear Filters</button>
+                </a>
+                
+            </form>
+            
             <table class="userDisplay">
                 <thead>
                     <tr>
-                        <th>Ledger</th>
+                        <th id="showLedger" >Ledger</th>
                         <th>Account Number</th>
-                        <th>Account Name</th>
+                        <th id="showAccount">Account Name</th>
                         <th>Category</th>
                         <th>Subcategory</th>
                         <th>Statement</th>
@@ -222,17 +264,36 @@ def view_accounts():
                 </thead>
                 <tbody>
         '''
-        for account in Account.query.filter(Account.id).filter_by( 
-                company_id=current_user.company_id
-            ).order_by(
-                Account.is_activated.desc(), 
-                Account.number.asc()
-            ).all():
+        
+        query = Account.query.filter_by(company_id=current_user.company_id)
+
+        if filter_number:
+            query = query.filter(Account.number.like(f"%{filter_number}%"))
+        
+        if filter_name:
+            query = query.filter(Account.name.like(f"%{filter_name}%"))
+            
+        if filter_category:
+            query = query.filter(Account.category.like(f"%{filter_category}%"))
+            
+        if filter_subcategory:
+            query = query.filter(Account.subcategory.like(f"%{filter_subcategory}%"))
+            
+        if filter_statement:
+            query = query.filter(Account.statement.like(f"%{filter_statement}%"))
+            
+        if filter_true:
+            query = query.filter(Account.is_activated.like(f"%{filter_true}%"))
+
+
+        accounts = query.order_by(Account.is_activated.desc(), Account.number.asc()).all()
+
+        for account in accounts:
             table += f'''
                 <tr>
-                    <td><a id="showLedger" href="{url_for('chart.ledger', number=account.number)}">Show Ledger</a></td>
+                    <td><a href="{url_for('chart.ledger', number=account.number)}">Show Ledger</a></td>
                     <td>{account.number}</td>
-                    <td><a id="showAccount" href="{url_for('chart.show_account', number=account.number)}">{account.name}</a></td>
+                    <td><a  href="{url_for('chart.show_account', number=account.number)}">{account.name}</a></td>
                     <td>{account.category}</td>
                     <td>{account.subcategory}</td>
                     <td>{account.statement}</td>
@@ -247,20 +308,23 @@ def view_accounts():
                     <td>{account.is_activated}</td>
                 </tr>
             '''
-        
+
         table += f'''
                 </tbody>
             </table>
             <a id="createAccount" href='{url_for('chart.show_account')}'>Create new Account</a>
         '''
+        
         return table 
     
+    # Render the template with the generated table
     return checkRoleClearance(current_user.role, 'user', render_template
         (
             "view_accounts.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute='/',
+            helpRoute="/help",
             accounts=generateAccounts()
         )
     )
@@ -357,11 +421,13 @@ def ledger():
             '''
             return table 
     
-    return checkRoleClearance(current_user.role, 'administrator', render_template
+    return checkRoleClearance(current_user.role, 'user', render_template
         (
             "ledger.html",
             user=current_user,
+            dashUser=current_user.role,
             homeRoute='/',
+            helpRoute="/help",
             ledger=generateLedger()
         )
     )
@@ -571,8 +637,9 @@ def journal_entry():
         (
             "journal_entry.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute='/',
+            helpRoute="/help",
             entry=generateJournalEntry(ref_id)
         )
     )

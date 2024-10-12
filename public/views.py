@@ -39,7 +39,7 @@ def home():
         render_template(
             "home.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute="/",
             helpRoute="/help",
             viewUsersButton=view_users_link if view_users_link else "",
@@ -102,8 +102,9 @@ def view_users():
             "view_users.html",
             user=current_user,
             homeRoute="/",
+            helpRoute="/help",
             users=generateUsers(),
-            dashUser=current_user,
+            dashUser=current_user.role,
         ),
     )
 
@@ -228,8 +229,9 @@ def user():
         render_template(
             "user.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute="/",
+            helpRoute="/help",
             back=url_for("views.view_users"),
             userInfo=userInfo,
             testExpiration=(
@@ -277,8 +279,9 @@ def delete():
         render_template(
             "delete.html",
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute="/",
+            helpRoute="/help",
             back=url_for("views.view_users"),
             userInfo=userInfo,
         ),
@@ -342,4 +345,7 @@ def contact():
         user=current_user,
         dashUser=current_user,
         homeRoute="/",
+        dashUser=current_user.role,
+        homeRoute="/",
+        helpRoute="/help",
     )

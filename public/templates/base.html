@@ -117,19 +117,20 @@
           $('#users').tooltip({title:"View List of Users",placement:"bottom"});
           $('#accounts').tooltip({title:"View List of Accounts",placement:"bottom"});
           $('#signout').tooltip({title:"Logs You Out of Current Session",placement:"bottom"});
-          $('#journalentry').tooltip({title:"test",placement:"bottom"});
+          $('#journalentry').tooltip({title:"Create a new Journal Entry",placement:"bottom"});
           $('#viewuserinfo').tooltip({title:"Pulls user info to view or edit",placement:"bottom"});
           $('#sendemail').tooltip({title:"Craft Email to this User",placement:"bottom"});
           $('#createUser').tooltip({title:"Create a new User in the System",placement:"bottom"});
           $('#submit').tooltip({title:"Submits any changes made above",placement:"bottom"});
           $('#test').tooltip({title:"Submits any changes made above",placement:"bottom"});
-          $('#cancel').tooltip({title:"test",placement:"bottom"});
-          $('#delete').tooltip({title:"test",placement:"bottom"});
-          $('#viewsus').tooltip({title:"test",placement:"bottom"});
-          $('#insert').tooltip({title:"test",placement:"bottom"});
-          $('#eventlog').tooltip({title:"test",placement:"bottom"});
-          $('#createAccount').tooltip({title:"test",placement:"bottom"});
-          $('#showAccount').tooltip({title:"test",placement:"bottom"});
+          $('#cancel').tooltip({title: "Cancel the current action", placement: "bottom"});
+          $('#delete').tooltip({title: "Permanently delete this item", placement: "bottom"});
+          $('#viewsus').tooltip({title: "View the list of users with specific roles", placement: "bottom"});
+          $('#insert').tooltip({title: "Insert a new record into the system", placement: "bottom"});
+          $('#eventlog').tooltip({title: "View the log of events in the system", placement: "bottom"});
+          $('#createAccount').tooltip({title: "Create a new Account in the System", placement: "bottom"});
+          $('#eventView').tooltip({title: "View before and after snapshot of account", placement: "bottom"});
+          $('#showAccount').tooltip({title: "Display detailed information about the account", placement: "bottom"});
         });
       </script>
       			
@@ -153,8 +154,14 @@
   <script src="{{ url_for('static', filename='sidebar.js') }}"></script>
   <div  id='mySidebar' class='sidebar'>
     <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-    {% if dashUser %}
+    {% if dashUser == "user" %}
     <a href='{{homeRoute}}'>Dashboard</a>
+    <a href="{{ url_for('chart.journal_entry') }}">View Ledgers</a>
+    <a href="{{ url_for('chart.view_accounts') }}">View Accounts</a>
+    <a href="{{ url_for('eventlog.view_eventlogs') }}">View Event Logs</a>
+    {% elif dashUser == "administrator" %}
+    <a href='{{homeRoute}}'>Dashboard</a>
+    <a href="{{ url_for('views.view_users') }}">View Users</a>
     <a href="{{ url_for('chart.journal_entry') }}">View Ledgers</a>
     <a href="{{ url_for('chart.view_accounts') }}">View Accounts</a>
     <a href="{{ url_for('eventlog.view_eventlogs') }}">View Event Logs</a>

@@ -93,8 +93,9 @@ def send():
             "email.html",
             email=emailFromUserPage if emailFromUserPage else '',
             user=current_user,
-            dashUser=current_user,
+            dashUser=current_user.role,
             homeRoute='/',
+            helpRoute="/help",
             back = url_for('views.home')
         )
     
