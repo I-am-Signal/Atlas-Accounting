@@ -343,9 +343,6 @@ def contact():
     return render_template(
         "contact.html",
         user=current_user,
-        dashUser=current_user,
-        homeRoute="/",
-        dashUser=current_user.role,
         homeRoute="/",
         helpRoute="/help",
     )
