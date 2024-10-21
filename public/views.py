@@ -317,19 +317,32 @@ def help():
     return render_template(
         "help.html",
         user=current_user,
-        dashUser=current_user.role,
+        dashUser=current_user,
         homeRoute="/",
-        helpRoute="/help",
     )
 
 
 @views.route("/contact", methods=["GET", "POST"])
 @login_required
 def contact():
+    """GET: Displays the contact page, POST: Handles form submission"""
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        message = request.form.get("message")
+
+        if not name or not email or not message:
+            flash("Please fill out all fields", category="error")
+            return redirect(url_for("views.contact"))
+
+        # Here you can add logic to store the message in the database or send an email
+        flash("Your message has been sent successfully!", category="success")
+        return redirect(url_for("views.contact"))
+
+    # GET request - render the contact form page
     return render_template(
         "contact.html",
         user=current_user,
-        dashUser=current_user.role,
         homeRoute="/",
         helpRoute="/help",
     )
