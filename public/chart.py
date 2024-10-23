@@ -28,7 +28,7 @@ def show_account():
         
         return checkRoleClearance(current_user.role, 'user', render_template(
                 "account.html",
-                access=True if current_user.role == 'user' else False,
+                access=True if current_user.role == 'administrator' else False,
                 user=current_user,
                 dashUser=current_user.role,
                 homeRoute='/',
@@ -56,19 +56,12 @@ def show_account():
             flash('Invalid account number. Only digits are allowed.', category='error')
             return redirect(url_for('chart.view_accounts'))
 
-        #finish implementing other check requirements 2-5
-        # account = Account.query.filter_by(account_number=account_number).first()
-        # if account:
-        #     flash(f'Account Number already exists', category='error')
        
         curr_account = Account.query.filter_by(number=account_number).first()
-        # log current account info 
-                   
-            
-        
-        # else:
         if curr_account:
-            new_event = Event(                 
+            # log current account info 
+            new_event = Event(
+                is_new=False,
                 number=curr_account.number,
                 name=curr_account.name,
                 description=curr_account.description,
@@ -133,8 +126,26 @@ def show_account():
             )
            
             
+            new_event = Event(
+                is_new=True,
+                number=new_account.number,
+                name=new_account.name,
+                description=new_account.description,
+                normal_side=new_account.normal_side, # check for valid normal side
+                category=new_account.category,
+                subcategory=new_account.subcategory,
+                initial_balance=new_account.initial_balance,
+                balance=new_account.balance,
+                debit =new_account.debit,
+                credit=new_account.credit,
+                order=new_account.order, # check if > 0, is int, and is not the same for the cat/subcat
+                statement=new_account.statement, # check if valid statement type
+                comment=new_account.comment,
+                created_by=new_account.created_by
+            )
             
-            db.session.add(new_account)             
+            db.session.add(new_account)
+            db.session.add(new_event)
             flash(f'New Account created as Account #{new_account.number}!', category='success')            
         db.session.commit()
         return redirect(url_for('chart.view_accounts'))
@@ -183,7 +194,7 @@ def deactivate():
             dashUser=current_user.role,
             homeRoute="/",
             helpRoute="/help",
-            back=url_for("views.view_users"),
+            back=url_for("chart.show_account", number=ref_id),
             account=account,
         ),
     )
@@ -201,6 +212,9 @@ def view_accounts():
     # for account in accounts[1:]:
     #     db.session.delete(account)
     #     db.session.commit()
+    
+    # db.session.delete(Account.query.filter_by(number=110).first())
+    # db.session.commit()
     
     # Used for when messing with account company ids to reset them for display
     # for account in Account.query.all():
@@ -349,9 +363,11 @@ def ledger():
     if request.method == 'GET':
         ref_id = request.args.get('number')
         if ref_id:
-            if not ref_id.isdigit() or not db.session.query(Transaction).filter_by(account_number=int(ref_id)).all():
+            if not ref_id.isdigit():
                 flash(f'Invalid account reference number of {ref_id}', category='error')
                 return redirect(url_for('views.home'))
+            if not db.session.query(Transaction).filter_by(account_number=int(ref_id)).all():
+                flash(f'No journal entries for for account number {ref_id}!', category='Error')
             
         def generateLedger():
             table = f'''

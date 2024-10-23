@@ -66,9 +66,8 @@ def view_eventlogs():
             dashUser=current_user.role,
             homeRoute='/',
             helpRoute="/help",
-            events=generateLogs(),
-            
-        ),
+            events=generateLogs()   
+        )
     )
 @eventlog.route('/view_event')
 @login_required
@@ -84,7 +83,7 @@ def view_event():
         dashUser=current_user.role,
         homeRoute="/",  
         helpRoute="/help",
-        event = curr_event,
-        account =curr_acct,
+        event=curr_event,
+        account=curr_acct if curr_event.is_new == False else None,
         back=url_for("eventlog.view_eventlogs"),         
         )
