@@ -153,10 +153,7 @@ def user():
         elif len(addr_line_1) < 5:
             flash("Address Line 1 must be greater than 5 characters.", category="error")
         elif len(addr_line_2) < 5 and len(addr_line_2) > 0:
-            flash(
-                "Address Line 2 must be greater than 5 characters or empty.",
-                category="error",
-            )
+            flash("Address Line 2 must be greater than 5 characters or empty.", category="error")
         elif len(city) < 2:
             flash("City must be greater than 1 character.", category="error")
         elif len(county) < 2:
