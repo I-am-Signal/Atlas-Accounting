@@ -326,7 +326,8 @@ def view_accounts():
         table += f'''
                 </tbody>
             </table>
-            <a id="createAccount" href='{url_for('chart.show_account')}'>Create new Account</a>
+            <a id="createAccount" href='{url_for('chart.show_account')}'>Create new Account</a>&emsp;
+            <a id="createAccount" href='{url_for('email.send')}'>Send an Email</a>
         '''
         
         return table 

@@ -66,6 +66,7 @@ def getEmailHTML(user_id: int, pathToHTML):
 @login_required
 def send():
     """Loads the Admin Email page and handles its logic"""
+    emailFromUserPage = None
     try:
         emailFromUserPage = User.query.filter_by(
             id=int(request.args.get('id'))
@@ -76,6 +77,8 @@ def send():
     if request.method == 'POST' and current_user.role == 'administrator':
         
         toEmail = request.form.get('toEmail')
+        if toEmail == '':
+            flash('Please select an email.', category='error')
         subject = request.form.get('subject')
         body = request.form.get('body')
         
@@ -88,16 +91,18 @@ def send():
             flash(f'Failed to deliver message. Status code: {response.status_code}', category='error')
             return redirect(url_for('views.home'))
     
-    if 'administrator' == current_user.role:
-        return render_template(
-            "email.html",
-            email=emailFromUserPage if emailFromUserPage else '',
-            user=current_user,
-            dashUser=current_user.role,
-            homeRoute='/',
-            helpRoute="/help",
-            back = url_for('views.home')
-        )
+    def getOptions():
+        options = f'<option value="" {"selected" if not emailFromUserPage else ""}>Select an email</option>'
+        for userOfApp in User.query.filter(User.company_id == current_user.company_id).all():
+            options += f'\n<option value="{userOfApp.email}" {"selected" if emailFromUserPage == userOfApp.email else ""}>{userOfApp.username}: {userOfApp.email}</option>'
+        return options
     
-    flash('Your account does not have the right clearance for this page.')
-    return redirect(url_for('views.home'))
+    return render_template(
+        "email.html",
+        options=getOptions(),
+        user=current_user,
+        dashUser=current_user.role,
+        homeRoute='/',
+        helpRoute="/help",
+        back = url_for('views.home')
+    )

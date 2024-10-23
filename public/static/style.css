@@ -145,7 +145,7 @@ body {
   margin-bottom: 15px;
 }
 
-.login input {
+.login input, select {
   border-radius: 5px;
   border-width: 0px;
   opacity: revert;

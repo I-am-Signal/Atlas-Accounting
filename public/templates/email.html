@@ -20,7 +20,9 @@
         <div class='login'>
             <form method='POST'>
                 <label for='toEmail'>Send to email:</label>
-                <input id='toEmail' name='toEmail' value='{{ email }}'>
+                <select id="toEmail" name="toEmail">
+                    {{ options|safe }}    
+                </select>
 
                 <label for='subject'>Subject</label>
                 <input id='subject' name='subject'>
