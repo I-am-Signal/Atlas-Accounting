@@ -99,6 +99,7 @@ class Account(db.Model, BaseColumnMixin, CreatedByMixin):
 class Event(db.Model, BaseColumnMixin,CreatedByMixin):
     __tablename__ = 'event'
     
+    is_new = db.Column(db.Boolean)
     number = db.Column(db.Integer)
     name = db.Column(db.String(150))
     description = db.Column(db.String(500))
