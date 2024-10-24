@@ -680,7 +680,7 @@ def journal_entry():
                 """
                 for account in accounts:
                     select += f"""<option value="{account.number}" {
-                        'selected' if accounts_of_entry and accounts_of_entry[id -1].number == account.number else ''
+                        'selected' if accounts_of_entry and accounts_of_entry[id].number == account.number else ''
                     }>{account.number} - {account.name}: {account.normal_side}</option>"""
 
                 return select + "</select>"
