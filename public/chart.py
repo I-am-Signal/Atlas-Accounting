@@ -440,11 +440,11 @@ def ledger():
                 # Calculate total debit and credit for the entry
                 debit = sum(
                     t.amount_changing
-                    for t in entry.transactions.filter_by(side_for_transaction="debit")
+                    for t in entry.transactions.filter_by(side_for_transaction="Debit")
                 )
                 credit = sum(
                     t.amount_changing
-                    for t in entry.transactions.filter_by(side_for_transaction="credit")
+                    for t in entry.transactions.filter_by(side_for_transaction="Credit")
                 )
                 # Update the running balance
                 balance += debit - credit
@@ -522,6 +522,8 @@ def journal_entry():
             credits.append(unformatMoney(request.form.get(f"credit{accountNum}")))
             tos.append(request.form.get(f"to{accountNum}") == "True")
 
+        curr_journal_entry = Journal_Entry.query.filter_by(id=ref_id).first()
+
         # check total debits and total credits are equivalent
         # does not currently check against account normal side
         if sum(debits) != sum(credits):
@@ -529,9 +531,11 @@ def journal_entry():
                 "Total of debits was not equivalent to total of credits!",
                 category="error",
             )
-            redirect(url_for("chart.journal_entry"))
-
-        curr_journal_entry = Journal_Entry.query.filter_by(id=ref_id).first()
+            if curr_journal_entry:
+                return redirect(
+                    url_for("chart.journal_entry", id=curr_journal_entry.id)
+                )
+            return redirect(url_for("chart.journal_entry"))
 
         if curr_journal_entry:
             transactions = (
@@ -676,7 +680,7 @@ def journal_entry():
                 """
                 for account in accounts:
                     select += f"""<option value="{account.number}" {
-                        'selected' if accounts_of_entry and accounts_of_entry[id].number == account.number else ''
+                        'selected' if accounts_of_entry and accounts_of_entry[id -1].number == account.number else ''
                     }>{account.number} - {account.name}: {account.normal_side}</option>"""
 
                 return select + "</select>"
