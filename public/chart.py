@@ -487,14 +487,16 @@ def journal_entry():
             debits.append(unformatMoney(request.form.get(f'debit{accountNum}')))
             credits.append(unformatMoney(request.form.get(f'credit{accountNum}')))
             tos.append(request.form.get(f'to{accountNum}') == 'True')
+        
+        curr_journal_entry = Journal_Entry.query.filter_by(id=ref_id).first()
 
         # check total debits and total credits are equivalent
         # does not currently check against account normal side
         if sum(debits) != sum(credits):
             flash('Total of debits was not equivalent to total of credits!', category='error')
-            redirect(url_for('chart.journal_entry'))
-        
-        curr_journal_entry = Journal_Entry.query.filter_by(id=ref_id).first()
+            if curr_journal_entry:
+                return redirect(url_for('chart.journal_entry', id = curr_journal_entry.id))
+            return redirect(url_for('chart.journal_entry'))
         
         if curr_journal_entry:
             transactions = Transaction.query.order_by(
