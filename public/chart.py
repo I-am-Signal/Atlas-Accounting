@@ -371,6 +371,7 @@ def ledger():
         ref_id = request.args.get("number", None)
         filter_description = request.args.get("filter_description", None)
         filter_reference_number = request.args.get("filter_reference_number", None)
+        filter_balance = request.args.get("filter_balance", None)         
         filter_account = request.args.get("filter_account", None)
         filter_debit = request.args.get("filter_debit", None)
         filter_credit = request.args.get("filter_credit", None)
@@ -408,7 +409,8 @@ def ledger():
                     <input type="text" id="filter_debit" name="filter_debit" placeholder="Debit" value="{filter_debit if filter_debit else ''}" />
                                         
                     <input type="text" id="filter_credit" name="filter_credit" placeholder="Credit" value="{filter_credit if filter_credit else ''}" />
-                                                            
+                                  
+                    
                     <select id="filter_status" name="filter_status">
                         <option value="">-- Select Status (All) --</option>
                         <option value="Pending" {'selected' if filter_status == 'Pending' else ''}>Pending</option>
@@ -477,6 +479,9 @@ def ledger():
            
             if filter_status:
                 query = query.filter(Journal_Entry.status.like(f"%{filter_status}%")) 
+                
+            if filter_balance:
+                query = query.filter(db.func(Transaction.amount_changing).like(f"%{filter_balance}%"))
                 
             if filter_comment:
                 query = query.filter(Journal_Entry.comment.like(f"%{filter_comment}%"))   
