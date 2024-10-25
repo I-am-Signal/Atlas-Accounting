@@ -139,6 +139,8 @@ class Journal_Entry(db.Model, BaseColumnMixin, CreatedByMixin):
     description = db.Column(db.String(150), nullable=False)
     comment = db.Column(db.String(150), nullable=False)
     
+    transactions = db.relationship("Transaction", backref="journal_entry", lazy="dynamic")
+    
     
 class Transaction(db.Model, BaseColumnMixin, CreatedByMixin):
     __tablename__ = "transaction"
