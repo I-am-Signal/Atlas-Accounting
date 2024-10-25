@@ -201,7 +201,10 @@ def user():
                 response = sendEmail(
                     toEmails=userInfo.email,
                     subject="New User",
-                    body=getEmailHTML(userInfo.id, "email_templates/activated.html"),
+                    body=getEmailHTML(
+                        user_id=userInfo.id, 
+                        pathToHTML="email_templates/activated.html"
+                    ),
                 )
                 if not response.status_code == 202:
                     flash(

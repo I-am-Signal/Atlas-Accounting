@@ -1,7 +1,7 @@
 from flask import Blueprint, request, flash, redirect, url_for, render_template
 from flask_login import login_required, current_user
 from .config import EMAILAPIKEY, FROMEMAIL
-from .models import User
+from .models import User, Journal_Entry
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Content
 from premailer import Premailer
@@ -42,17 +42,21 @@ def sendEmailToAllUsersWithRole(company_id, role, subject, body):
     return sendEmail(toEmails=toEmails, subject=subject, body=body)
 
 
-def getEmailHTML(user_id: int, pathToHTML):
-    """Loads and returns HTML with inline CSS from external stylesheet"""
-    # if you have a good few hours of extra time, and you want to deal with CSS,
-    # you can work on getting the emails to look right with CSS
+def getEmailHTML(pathToHTML: str, user_id: int = None, entry_id: int = None):
+    """
+    Loads and returns HTML with inline CSS from external stylesheet\n
+    :pathToHTML: the path to the template used for the email
+    :user_id: the attribute to use if the template requires a user's information
+    :entry_id: the attribute to use if the template requires a journal entry id
+    """
     
-    # with open('public/static/style.css', 'r') as f:
-    #     css_content = f.read()
-        
+    userInfo = User.query.filter_by(id=user_id).first() if user_id != None else ''
+    entryInfo = Journal_Entry.query.filter_by(id=entry_id).first() if entry_id != None else ''
+    
     html_content = render_template(
         pathToHTML,
-        userInfo=User.query.filter_by(id=user_id).first(),
+        userInfo=userInfo,
+        entry=entryInfo,
         accountURL=url_for('views.user', id=user_id, _external=True)
     )
     

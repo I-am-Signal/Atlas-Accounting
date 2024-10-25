@@ -1,0 +1,16 @@
+{% extends "email_templates/base_email.html" %}
+{% block title %}New User{% endblock %}
+{% block content %}
+
+<div class="page">
+    <form class='login' method='POST'>
+        <label for='id'>Entry ID: {{ entry.id }}</label><br />
+        <label for='status'>Status: {{ entry.status }}</label><br />
+        <label for='type'>Type: {{ entry.entry_type }}</label><br />
+        <label for='description'>Description: {{ entry.description }}</label><br />
+        <p>There is a new pending journal entry.</p>
+        <a href='{{ accountURL }}'>View Account</a>
+    </form>
+</div>
+
+{% endblock %}
