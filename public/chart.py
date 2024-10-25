@@ -371,7 +371,11 @@ def ledger():
         ref_id = request.args.get("number", None)
         filter_description = request.args.get("filter_description", None)
         filter_reference_number = request.args.get("filter_reference_number", None)
-
+        filter_account = request.args.get("filter_account", None)
+        filter_debit = request.args.get("filter_debit", None)
+        filter_credit = request.args.get("filter_credit", None)
+        filter_status = request.args.get("filter_status", None)
+        
         if ref_id:
             if not ref_id.isdigit():
                 flash(f"Invalid account reference number of {ref_id}", category="error")
@@ -389,12 +393,22 @@ def ledger():
             table = f"""
                 <a href='{url_for('views.home')}'>Back</a> <br />
                 <form method="get" action="{url_for('chart.ledger')}">
-                    <input type="text" id="filter_reference_number" name="filter_reference_number" placeholder="Enter reference number" value="{filter_reference_number if filter_reference_number else ''}" />
+                    <input type="text" id="filter_reference_number" name="filter_reference_number" placeholder="Reference No." value="{filter_reference_number if filter_reference_number else ''}" />
                     
-                    <input type="text" id="filter_description" name="filter_description" placeholder="Enter description" value="{filter_description if filter_description else ''}" />
+                    
+                    <input type="text" id="filter_description" name="filter_description" placeholder="Description" value="{filter_description if filter_description else ''}" />
 
+                    <input type="text" id="filter_account" name="filter_account" placeholder="Account Number" value="{filter_account if filter_account else ''}" />
+
+                    <input type="text" id="filter_debit" name="filter_debit" placeholder="Debit" value="{filter_debit if filter_debit else ''}" />
+                                        
+                    <input type="text" id="filter_credit" name="filter_credit" placeholder="Credit" value="{filter_credit if filter_credit else ''}" />
+                    
+                    <input type="text" id="filter_status" name="filter_status" placeholder="Status" value="{filter_status if filter_status else ''}" />
                     <button type="submit" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; font-weight:normal;">Filter</button>
+                    
                     <a href="{url_for('chart.ledger')}" style="margin-left: 10px;">
+                        
                         <button type="button" style="background-color: #AF4C4C; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">Clear Filters</button>
                     </a>
                 </form>
@@ -437,6 +451,18 @@ def ledger():
 
             if filter_description:
                  query = query.filter(Journal_Entry.description.like(f"%{filter_description}%"))
+            
+            if filter_account:
+                query = query.filter(Transaction.account_number.like(f"%{filter_account}%"))
+
+            if filter_debit:
+                query = query.filter(Transaction.amount_changing.like(f"%{filter_debit}%"))
+                
+            if filter_credit:
+                query = query.filter(Transaction.amount_changing.like(f"%{filter_credit}%"))
+           
+            if filter_status:
+                query = query.filter(Journal_Entry.status.like(f"%{filter_status}%"))   
 
             entries = query.order_by(Journal_Entry.id.desc()).all()
             # Track the running balance
