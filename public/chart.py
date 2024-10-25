@@ -496,10 +496,24 @@ def journal_entry():
     #     db.session.delete(account)
     #     db.session.commit()
 
+    # Used for removing a journal entry
+    # idOfJEToDelete = 9
+    # for transaction in db.session.query(Transaction).filter_by(journal_entry_id=idOfJEToDelete).all():
+    #     db.session.delete(transaction)
+    # JEToDelete = Journal_Entry.query.filter_by(id=idOfJEToDelete).first()
+    # db.session.delete(JEToDelete)
+    # db.session.commit()
+
     # Used for when messing with account company ids to reset them for display
     # for account in Account.query.all():
     #     account.company_id = current_user.company_id
     #     db.session.commit()
+    
+    
+    # this sets how many accounts there is to select in a journal entry
+    numOfAccounts = Account.query.filter_by(
+        company_id=current_user.company_id
+    ).count()
 
     if request.method == "POST":
         # this is currently just the 'user' view of it
@@ -516,7 +530,7 @@ def journal_entry():
         debits = []
         credits = []
         tos = []
-        for accountNum in range(int(request.form.get("accountCount"))):
+        for accountNum in range(numOfAccounts):
             accounts.append(request.form.get(f"account{accountNum}"))
             debits.append(unformatMoney(request.form.get(f"debit{accountNum}")))
             credits.append(unformatMoney(request.form.get(f"credit{accountNum}")))
@@ -540,12 +554,19 @@ def journal_entry():
         error_return = False
         toCount = 0
         for i in range(len(accounts)):
-            acc_to_evalute = Account.query.filter_by(number=accounts[i]).first()
-            if acc_to_evalute.normal_side == 'Debit' and credits[i] != 0 or acc_to_evalute.normal_side == 'Credit' and debits[i] != 0:
-                flash(f'Invalid placement of credits and debits with respect to account #{i}!', category='error')
-                error_return = True
-            if tos[i] == True:
-                toCount += 1
+            if accounts[i] != '':
+                acc_to_evalute = Account.query.filter_by(number=accounts[i]).first()
+                if acc_to_evalute.normal_side == 'Debit' and credits[i] != 0 or acc_to_evalute.normal_side == 'Credit' and debits[i] != 0:
+                    flash(f'Invalid placement of credits and debits with respect to account #{i}!', category='error')
+                    error_return = True
+                if tos[i] == True:
+                    toCount += 1
+                    
+            # check each account appears only once
+            for j in range(len(accounts)-i):
+                if accounts[i] == accounts[j] and error_return == False:
+                    flash('Each account can only appear in a journal entry once!', category='error')
+                    error_return = True
         
         # check the to's are valid
         if tos[0] == True:
@@ -646,20 +667,21 @@ def journal_entry():
             newJournalEntry = False
             if None == ref_id:
                 newJournalEntry = True
-                try:
+                try: # set ref_id to the last JE added plus one
                     ref_id = (
                         Journal_Entry.query.order_by(Journal_Entry.id.desc()).first().id
                         + 1
                     )
-                except:
+                except: # if no JEs, ref_id is the first one
                     ref_id = 1
-            else:
+            else: # get existing JE if there is one
                 curr_journal_entry = Journal_Entry.query.filter_by(id=ref_id).first()
 
             # This renders the contents of above and the top of the table
             table = f"""
                 <input type='hidden' value='{ref_id}' name='ref_id' id='ref_id'>
                 <input type='hidden' value='{'New' if newJournalEntry else curr_journal_entry.status} name='status' id='status'>
+                <input type='hidden' value='{numOfAccounts}' name='numOfAccounts' id='numOfAccounts'>
                 <p>
                     <a href='{url_for('chart.ledger')}'>Back</a>&ensp;
                     Reference&nbsp;#:&ensp;<strong>{ref_id}</strong>&ensp;
@@ -709,34 +731,41 @@ def journal_entry():
                 accounts_of_entry.append(account)
                 transactions_of_entry.append(transaction)
 
-            def selectElementWithAccounts(id):
+            def selectElementWithAccounts(index):
                 accounts = Account.query.filter_by(
                     company_id=current_user.company_id
                 ).all()
                 select = f"""
-                <select id='account{id}' name='account{id}'>
+                <select id='account{index}' name='account{index}'>
                     <option value=''>-- Select and Account --</options>
                 """
                 for account in accounts:
+                    length = len(accounts_of_entry)
+                    curr_account_is_selected = False
+                    if length > index and length > 0:
+                        curr_account_is_selected = accounts_of_entry[index].number == account.number
                     select += f"""<option value="{account.number}" {
-                        'selected' if accounts_of_entry and accounts_of_entry[id].number == account.number else ''
+                        'selected' if curr_account_is_selected else ''
                     }>{account.number} - {account.name}: {account.normal_side}</option>"""
 
                 return select + "</select>"
-
-            for i in range(2):
+            
+            # take into account if this is displaying an existing JE or if displaying new
+            cycleCount = len(accounts_of_entry) if len(accounts_of_entry) > 0 else numOfAccounts
+                
+            for i in range(cycleCount):
                 table += f"""
                     <tr>
                         <td>{selectElementWithAccounts(i)}</td>
                         <td><select id='to{i}' name='to{i}'>
-                            <option value='True' {'selected' if transactions_of_entry and transactions_of_entry[i].to == True else ''}>True</option>
-                            <option value='False' {'selected' if transactions_of_entry and not (transactions_of_entry[i].to == True) else ''}>False</option>
+                            <option value='True' {'selected' if len(transactions_of_entry) > i and transactions_of_entry[i].to == True else ''}>True</option>
+                            <option value='False' {'selected' if len(transactions_of_entry) > i and not (transactions_of_entry[i].to == True) else ''}>False</option>
                         </select>
                         <td><input id='debit{i}' name='debit{i}' value='{
-                            transactions_of_entry[i].amount_changing if transactions_of_entry and transactions_of_entry[i].side_for_transaction == 'Debit' else 0
+                            transactions_of_entry[i].amount_changing if len(transactions_of_entry) > i and transactions_of_entry[i].side_for_transaction == 'Debit' else 0
                         }'></td>
                         <td><input id='credit{i}' name='credit{i}' value='{
-                            transactions_of_entry[i].amount_changing if transactions_of_entry and transactions_of_entry[i].side_for_transaction == 'Credit' else 0
+                            transactions_of_entry[i].amount_changing if len(transactions_of_entry) > i and transactions_of_entry[i].side_for_transaction == 'Credit' else 0
                         }'></td>
                     </tr>
                 """
@@ -753,6 +782,11 @@ def journal_entry():
             """
             return table
 
+    # verify that at least 2 account exist to create a journal entry
+    if numOfAccounts < 2:
+        flash('At least 2 accounts must exist to complete a journal entry!', category='errror')
+        return redirect(url_for('chart.ledger'))
+    
     return checkRoleClearance(
         current_user.role,
         "user",
@@ -765,12 +799,13 @@ def journal_entry():
             entry=generateJournalEntry(ref_id)
         )
     )
+
+
 @chart.route("/approve_reject",methods=["GET", "POST"])
 @login_required
 def approve_reject():
     
     # when user_id check method is implemented, call it here instead of this
-
     ref_id = request.args.get("id")
     if not ref_id.isdigit():
         flash("Error: invalid reference number.", category='error')
@@ -805,11 +840,11 @@ def approve_reject():
         db.session.commit()
         # Redirect to the ledger page after updating
         return redirect(url_for('chart.ledger'))
-     
+
 
     return checkRoleClearance(
         current_user.role,
-        "administrator",
+        "manager",
         render_template(
             "approve_reject.html",
             user=current_user,

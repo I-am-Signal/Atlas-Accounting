@@ -27,8 +27,9 @@
 
 <script type="module">
     import { currencyInput } from '../static/account.js';
-    let accountCount = 2
     document.addEventListener('DOMContentLoaded', () => {
+        let accountCount = document.getElementById('numOfAccounts').value
+        console.log(accountCount)
         let currencyElements = [];
         for (let i = 0; i < accountCount; i++){
             currencyElements.push('debit' + i);
