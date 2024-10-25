@@ -731,3 +731,11 @@ top: 4%;
   margin-right: 2rem;
   
 }
+
+.alert-danger {
+  color: #ff0000;
+}
+
+.alert-success {
+  color: #00ff00;
+}
