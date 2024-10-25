@@ -274,18 +274,28 @@ body {
 }
 
 .messagePopUp {
-  background-color: rgb(99, 99, 99, 0.9); 
+  background-color: #E0E1DD; 
   border-radius: 10px;
   width: 500px;
   height: 50px;
-  background-color: grey;
   z-index: 2;
   text-align: center;
   align-content: center;
 }
+
 .messagePopUp a{
   text-decoration: none;
   color: #0D1B2B;
+}
+
+.alert-danger {
+  color: #ff0000;
+  background-color: #E0E1DD;
+}
+
+.alert-success {
+  color: #00ff00;
+  background-color: #848484;
 }
 
 .messagesContainer {
@@ -294,6 +304,7 @@ body {
   align-items: center;
   text-align: center;
 }
+
 .forgot {
   background-color: rgb(99, 99, 99, 0.9);  
   color: white;
@@ -730,12 +741,4 @@ top: 4%;
   margin-left:2rem;
   margin-right: 2rem;
   
-}
-
-.alert-danger {
-  color: #ff0000;
-}
-
-.alert-success {
-  color: #00ff00;
 }

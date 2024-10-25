@@ -47,7 +47,6 @@ def show_account():
                 user=current_user,
                 dashUser=current_user.role,
                 homeRoute="/",
-                helpRoute="/help",
                 accountInfo=accountInfo if accountInfo else None,
                 statementTypes=statementTypes if statementTypes else None,
                 back=url_for("chart.view_accounts"),
@@ -214,9 +213,8 @@ def deactivate():
             user=current_user,
             dashUser=current_user.role,
             homeRoute="/",
-            helpRoute="/help",
             back=url_for("chart.show_account", number=ref_id),
-            account=account,
+            account=account
         ),
     )
 
@@ -361,8 +359,7 @@ def view_accounts():
             user=current_user,
             dashUser=current_user.role,
             homeRoute="/",
-            helpRoute="/help",
-            accounts=generateAccounts(),
+            accounts=generateAccounts()
         ),
     )
 
@@ -478,8 +475,7 @@ def ledger():
             user=current_user,
             dashUser=current_user.role,
             homeRoute="/",
-            helpRoute="/help",
-            ledger=generateLedger(),
+            ledger=generateLedger()
         ),
     )
 
@@ -525,7 +521,6 @@ def journal_entry():
         curr_journal_entry = Journal_Entry.query.filter_by(id=ref_id).first()
 
         # check total debits and total credits are equivalent
-        # does not currently check against account normal side
         if sum(debits) != sum(credits):
             flash(
                 "Total of debits was not equivalent to total of credits!",
@@ -536,7 +531,34 @@ def journal_entry():
                     url_for("chart.journal_entry", id=curr_journal_entry.id)
                 )
             return redirect(url_for("chart.journal_entry"))
-
+        
+        # check the normal side of the accounts corresponds with the entries
+        error_return = False
+        toCount = 0
+        for i in range(len(accounts)):
+            acc_to_evalute = Account.query.filter_by(number=accounts[i]).first()
+            if acc_to_evalute.normal_side == 'Debit' and credits[i] != 0 or acc_to_evalute.normal_side == 'Credit' and debits[i] != 0:
+                flash(f'Invalid placement of credits and debits with respect to account #{i}!', category='error')
+                error_return = True
+            if tos[i] == True:
+                toCount += 1
+        
+        # check the to's are valid
+        if tos[0] == True:
+            flash(f"First account must always be a 'FROM' account!", category='error')
+            error_return = True
+        if toCount == len(tos):
+            flash("Must have at least one 'FROM' account!", category='error')
+            error_return = True
+        
+        if error_return == True:
+            return redirect(
+                url_for("chart.journal_entry", id=curr_journal_entry.id)
+            ) if curr_journal_entry else redirect(
+                url_for('chart.journal_entry')
+            )
+            
+            
         if curr_journal_entry:
             transactions = (
                 Transaction.query.order_by(Transaction.id.asc())
@@ -593,6 +615,7 @@ def journal_entry():
             category="success",
         )
         return redirect(url_for("chart.ledger"))
+
 
     if request.method == "GET":
         ref_id = request.args.get("id")
@@ -721,7 +744,6 @@ def journal_entry():
             user=current_user,
             dashUser=current_user.role,
             homeRoute="/",
-            helpRoute="/help",
-            entry=generateJournalEntry(ref_id),
+            entry=generateJournalEntry(ref_id)
         ),
     )

@@ -41,7 +41,6 @@ def home():
             user=current_user,
             dashUser=current_user.role,
             homeRoute="/",
-            helpRoute="/help",
             viewUsersButton=view_users_link if view_users_link else "",
             viewAccountsButton=view_coa_link if view_coa_link else "",
             viewEventsButton=view_evl_link if view_evl_link else "",
@@ -102,7 +101,6 @@ def view_users():
             "view_users.html",
             user=current_user,
             homeRoute="/",
-            helpRoute="/help",
             users=generateUsers(),
             dashUser=current_user.role,
         ),
@@ -228,7 +226,6 @@ def user():
             user=current_user,
             dashUser=current_user.role,
             homeRoute="/",
-            helpRoute="/help",
             back=url_for("views.view_users"),
             userInfo=userInfo,
             testExpiration=(
@@ -278,7 +275,6 @@ def delete():
             user=current_user,
             dashUser=current_user.role,
             homeRoute="/",
-            helpRoute="/help",
             back=url_for("views.view_users"),
             userInfo=userInfo,
         ),
@@ -341,5 +337,4 @@ def contact():
         "contact.html",
         user=current_user,
         homeRoute="/",
-        helpRoute="/help",
     )

@@ -65,7 +65,6 @@ def view_eventlogs():
             user=current_user,
             dashUser=current_user.role,
             homeRoute='/',
-            helpRoute="/help",
             events=generateLogs()   
         )
     )
@@ -81,8 +80,7 @@ def view_event():
         "view_event.html",
         user=current_user,
         dashUser=current_user.role,
-        homeRoute="/",  
-        helpRoute="/help",
+        homeRoute="/",
         event=curr_event,
         account=curr_acct if curr_event.is_new == False else None,
         back=url_for("eventlog.view_eventlogs"),         
