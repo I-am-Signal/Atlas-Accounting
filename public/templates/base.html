@@ -92,10 +92,8 @@
     {% block content %} {% endblock %}
 
     <div id="footer" class="footer">
-      <a href="#" id="about">About</a> |
       <a href="{{  url_for('views.contact')  }}" id="contact">Contact</a> |
-      <a href="#" id="terms">Terms</a> |
-      <a href="{{ helpRoute }}" id="help">Help</a>
+      <a href="{{ url_for('views.help') }}" id="help">Help</a>
       <br />
       © 2024 Atlas Accounting
       
@@ -133,22 +131,6 @@
           $('#showAccount').tooltip({title: "Display detailed information about the account", placement: "bottom"});
         });
       </script>
-      			
-			
-
-    {% block javascript %}
-    <script type="text/javascript">
-      // old code from the tutorial, us as a reference for building new stuff
-      /*function deleteNote(noteId) {
-        fetch("/delete-note", {
-          method: "POST",
-          body: JSON.stringify({ noteId: noteId }),
-        }).then((_res) => {
-          window.location.href = "/";
-        });
-      }*/
-    </script>
-    {% endblock %}
   </div>
   <!-- Sidebar Script -->
   <script src="{{ url_for('static', filename='sidebar.js') }}"></script>

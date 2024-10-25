@@ -103,6 +103,5 @@ def send():
         user=current_user,
         dashUser=current_user.role,
         homeRoute='/',
-        helpRoute="/help",
         back = url_for('views.home')
     )
