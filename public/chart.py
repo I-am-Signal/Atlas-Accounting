@@ -399,6 +399,7 @@ def ledger():
                             <th>Credit</th>
                             <th>Balance</th>
                             <th>Status</th>
+                            <th>Reject Comment</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -460,6 +461,7 @@ def ledger():
                         <td>{credit:.2f}</td>
                         <td>{balance:.2f}</td>
                         <td>{entry.status}</td>
+                        <td>{entry.comment}</td>
                     </tr>
                 """
 
@@ -507,11 +509,13 @@ def journal_entry():
         # this is currently just the 'user' view of it
         # admins (and potentially managers) need the ability to change status as well as delete
 
-        ref_id = request.form.get("ref_id")
-        status = request.form.get("status")
-        entry_type = request.form.get("entry_type")
-        description = request.form.get("description")
-
+        
+        ref_id = request.form.get('ref_id')
+        status = request.form.get('status')
+        entry_type = request.form.get('entry_type')
+        description = request.form.get('description')
+        comment = request.form.get('comment')
+      
         accounts = []
         debits = []
         credits = []
@@ -561,12 +565,13 @@ def journal_entry():
         # new entry to save
         else:
             entry = Journal_Entry(
-                id=int(ref_id),
-                status=status,
-                company_id=current_user.company_id,
-                entry_type=entry_type,
-                description=description,
-                created_by=current_user.id,
+                id = int(ref_id),
+                status = status,
+                company_id = current_user.company_id,
+                entry_type = entry_type,
+                description = description,
+                created_by = current_user.id,
+                comment = comment
             )
             db.session.add(entry)
 
@@ -644,6 +649,7 @@ def journal_entry():
                     </select>
                     <label for='description'>Description&nbsp;of&nbsp;Transaction:</label>
                     <textarea name="description" id="description">{ curr_journal_entry.description if curr_journal_entry else '' }</textarea>
+                    
 
                 </p>
                 <table class="userDisplay">
@@ -706,8 +712,9 @@ def journal_entry():
                     </tbody>
                 </table>
                 <div class='form-buttons'>
-                <button type=submit>Submit for Approval</button>
-                    <button type='button' onclick="window.location.href='{ url_for('chart.ledger')}'">Cancel</button>
+                <button type=submit>Submit for Approval</button>             
+                <button type='button' onclick="window.location.href='{ url_for('chart.approve_reject',id=ref_id)}'">Approve</button>
+                <button type='button' onclick="window.location.href='{ url_for('chart.ledger')}'">Cancel</button>                
                 </div>
                 <input type='hidden' value='2' name='accountCount' id='accountCount'>
             """
@@ -722,6 +729,61 @@ def journal_entry():
             dashUser=current_user.role,
             homeRoute="/",
             helpRoute="/help",
-            entry=generateJournalEntry(ref_id),
+            entry=generateJournalEntry(ref_id)
+        )
+    )
+@chart.route("/approve_reject",methods=["GET", "POST"])
+@login_required
+def approve_reject():
+    
+    # when user_id check method is implemented, call it here instead of this
+
+    ref_id = request.args.get("id")
+    if not ref_id.isdigit():
+        flash("Error: invalid reference number.", category='error')
+        return redirect(url_for("chart.view_accounts"))
+    ref_id = int(ref_id)
+
+
+    
+    # Fetch the journal entry from the database
+    curr_journal = Journal_Entry.query.filter_by(id=ref_id).first()
+
+    if request.method == "POST":
+       
+        
+        arp = request.form.get("arp") 
+        comment = request.form.get("comment")
+       
+         # Update status based on approval/rejection
+        if arp == "approve":
+            curr_journal.status = 'Approved'
+            curr_journal.comment = ''
+              # Commit the changes to the database
+
+        elif arp == "reject":
+            curr_journal.comment = comment
+            if (curr_journal.comment == ''):
+                flash('Comment Cannot be Empty!', category='error')
+                return redirect(url_for('chart.approve_reject',id=ref_id))
+            
+            curr_journal.status = 'Rejected'
+        # Commit the changes to the database
+        db.session.commit()
+        # Redirect to the ledger page after updating
+        return redirect(url_for('chart.ledger'))
+     
+
+    return checkRoleClearance(
+        current_user.role,
+        "administrator",
+        render_template(
+            "approve_reject.html",
+            user=current_user,
+            dashUser=current_user.role,
+            homeRoute="/",
+            helpRoute="/help",
+            back=url_for("chart.journal_entry", id=ref_id), 
+            curr_journal=curr_journal           
         ),
     )
