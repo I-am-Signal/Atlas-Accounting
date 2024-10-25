@@ -375,6 +375,10 @@ def ledger():
         filter_debit = request.args.get("filter_debit", None)
         filter_credit = request.args.get("filter_credit", None)
         filter_status = request.args.get("filter_status", None)
+        filter_comment = request.args.get("filter_comment", None)
+        filter_date = request.args.get("filter_date", None)
+
+
         
         if ref_id:
             if not ref_id.isdigit():
@@ -393,8 +397,9 @@ def ledger():
             table = f"""
                 <a href='{url_for('views.home')}'>Back</a> <br />
                 <form method="get" action="{url_for('chart.ledger')}">
-                    <input type="text" id="filter_reference_number" name="filter_reference_number" placeholder="Reference No." value="{filter_reference_number if filter_reference_number else ''}" />
-                    
+                    <input type="date" id="filter_date" name="filter_date" value="{filter_date if filter_date else ''}" />
+
+                    <input type="text" id="filter_reference_number" name="filter_reference_number" placeholder="Reference No." value="{filter_reference_number if filter_reference_number else ''}" />   
                     
                     <input type="text" id="filter_description" name="filter_description" placeholder="Description" value="{filter_description if filter_description else ''}" />
 
@@ -403,8 +408,17 @@ def ledger():
                     <input type="text" id="filter_debit" name="filter_debit" placeholder="Debit" value="{filter_debit if filter_debit else ''}" />
                                         
                     <input type="text" id="filter_credit" name="filter_credit" placeholder="Credit" value="{filter_credit if filter_credit else ''}" />
+                                                            
+                    <select id="filter_status" name="filter_status">
+                        <option value="">-- Select Status (All) --</option>
+                        <option value="Pending" {'selected' if filter_status == 'Pending' else ''}>Pending</option>
+                        <option value="Approved" {'selected' if filter_status == 'Approved' else ''}>Approved</option>
+                        <option value="Rejected" {'selected' if filter_status == 'Rejected' else ''}>Rejected</option>
+
+                    </select>
                     
-                    <input type="text" id="filter_status" name="filter_status" placeholder="Status" value="{filter_status if filter_status else ''}" />
+                    <input type="text" id="filter_comment" name="filter_comment" placeholder="Comment" value="{filter_comment if filter_comment else ''}" />
+
                     <button type="submit" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; font-weight:normal;">Filter</button>
                     
                     <a href="{url_for('chart.ledger')}" style="margin-left: 10px;">
@@ -462,7 +476,13 @@ def ledger():
                 query = query.filter(Transaction.amount_changing.like(f"%{filter_credit}%"))
            
             if filter_status:
-                query = query.filter(Journal_Entry.status.like(f"%{filter_status}%"))   
+                query = query.filter(Journal_Entry.status.like(f"%{filter_status}%")) 
+                
+            if filter_comment:
+                query = query.filter(Journal_Entry.comment.like(f"%{filter_comment}%"))   
+  
+            if filter_date:
+                query = query.filter(db.func.date(Journal_Entry.create_date) == filter_date)
 
             entries = query.order_by(Journal_Entry.id.desc()).all()
             # Track the running balance
