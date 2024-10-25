@@ -368,7 +368,10 @@ def view_accounts():
 @login_required
 def ledger():
     if request.method == "GET":
-        ref_id = request.args.get("number")
+        ref_id = request.args.get("number", None)
+        filter_description = request.args.get("filter_description", None)
+        filter_reference_number = request.args.get("filter_reference_number", None)
+
         if ref_id:
             if not ref_id.isdigit():
                 flash(f"Invalid account reference number of {ref_id}", category="error")
@@ -385,6 +388,17 @@ def ledger():
         def generateLedger():
             table = f"""
                 <a href='{url_for('views.home')}'>Back</a> <br />
+                <form method="get" action="{url_for('chart.ledger')}">
+                    <input type="text" id="filter_reference_number" name="filter_reference_number" placeholder="Enter reference number" value="{filter_reference_number if filter_reference_number else ''}" />
+                    
+                    <input type="text" id="filter_description" name="filter_description" placeholder="Enter description" value="{filter_description if filter_description else ''}" />
+
+                    <button type="submit" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; font-weight:normal;">Filter</button>
+                    <a href="{url_for('chart.ledger')}" style="margin-left: 10px;">
+                        <button type="button" style="background-color: #AF4C4C; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">Clear Filters</button>
+                    </a>
+                </form>
+
                 <table class="userDisplay">
                     <thead>
                         <tr>
@@ -413,24 +427,18 @@ def ledger():
                     associatedAccounts += f"{account.number} - {account.name}<br>"
                 return associatedAccounts
 
-            # Filter journal entries based on ref_id if provided
-            entries = (
+            query = (
                 db.session.query(Journal_Entry)
                 .join(Transaction, Journal_Entry.id == Transaction.journal_entry_id)
-                .filter(Journal_Entry.company_id == current_user.company_id)
-                .order_by(Journal_Entry.id.desc())
-                .all()
-                if not ref_id
-                else db.session.query(Journal_Entry)
-                .join(Transaction, Journal_Entry.id == Transaction.journal_entry_id)
-                .filter(
-                    Journal_Entry.company_id == current_user.company_id,
-                    Transaction.account_number == ref_id,
-                )
-                .order_by(Journal_Entry.id.desc())
-                .all()
+                 .filter(Journal_Entry.company_id == current_user.company_id)
             )
+            if filter_reference_number:
+                query = query.filter(Journal_Entry.id.like(f"%{filter_reference_number}%"))
 
+            if filter_description:
+                 query = query.filter(Journal_Entry.description.like(f"%{filter_description}%"))
+
+            entries = query.order_by(Journal_Entry.id.desc()).all()
             # Track the running balance
             balance = 0.0
 
