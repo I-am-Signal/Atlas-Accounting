@@ -368,7 +368,18 @@ def view_accounts():
 @login_required
 def ledger():
     if request.method == "GET":
-        ref_id = request.args.get("number")
+        ref_id = request.args.get("number", None)
+        filter_description = request.args.get("filter_description", None)
+        filter_reference_number = request.args.get("filter_reference_number", None)
+        filter_account = request.args.get("filter_account", None)
+        filter_debit = request.args.get("filter_debit", None)
+        filter_credit = request.args.get("filter_credit", None)
+        filter_status = request.args.get("filter_status", None)
+        filter_comment = request.args.get("filter_comment", None)
+        filter_date = request.args.get("filter_date", None)
+
+
+        
         if ref_id:
             if not ref_id.isdigit():
                 flash(f"Invalid account reference number of {ref_id}", category="error")
@@ -385,6 +396,37 @@ def ledger():
         def generateLedger():
             table = f"""
                 <a href='{url_for('views.home')}'>Back</a> <br />
+                <form method="get" action="{url_for('chart.ledger')}">
+                    <input type="date" id="filter_date" name="filter_date" value="{filter_date if filter_date else ''}" />
+
+                    <input type="text" id="filter_reference_number" name="filter_reference_number" placeholder="Reference No." value="{filter_reference_number if filter_reference_number else ''}" />   
+                    
+                    <input type="text" id="filter_account" name="filter_account" placeholder="Account Number" value="{filter_account if filter_account else ''}" />
+                    
+                    <input type="text" id="filter_description" name="filter_description" placeholder="Description" value="{filter_description if filter_description else ''}" />
+
+                    <input type="text" id="filter_debit" name="filter_debit" placeholder="Debit" value="{filter_debit if filter_debit else ''}" />
+                                        
+                    <input type="text" id="filter_credit" name="filter_credit" placeholder="Credit" value="{filter_credit if filter_credit else ''}" />
+                                                      
+                    <select id="filter_status" name="filter_status">
+                        <option value="">-- Select Status (All) --</option>
+                        <option value="Pending" {'selected' if filter_status == 'Pending' else ''}>Pending</option>
+                        <option value="Approved" {'selected' if filter_status == 'Approved' else ''}>Approved</option>
+                        <option value="Rejected" {'selected' if filter_status == 'Rejected' else ''}>Rejected</option>
+
+                    </select>
+                    
+                    <input type="text" id="filter_comment" name="filter_comment" placeholder="Comment" value="{filter_comment if filter_comment else ''}" />
+
+                    <button type="submit" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; font-weight:normal;">Filter</button>
+                    
+                    <a href="{url_for('chart.ledger')}" style="margin-left: 10px;">
+                        
+                        <button type="button" style="background-color: #AF4C4C; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">Clear Filters</button>
+                    </a>
+                </form>
+
                 <table class="userDisplay">
                     <thead>
                         <tr>
@@ -413,24 +455,36 @@ def ledger():
                     associatedAccounts += f"{account.number} - {account.name}<br>"
                 return associatedAccounts
 
-            # Filter journal entries based on ref_id if provided
-            entries = (
+            query = (
                 db.session.query(Journal_Entry)
                 .join(Transaction, Journal_Entry.id == Transaction.journal_entry_id)
-                .filter(Journal_Entry.company_id == current_user.company_id)
-                .order_by(Journal_Entry.id.desc())
-                .all()
-                if not ref_id
-                else db.session.query(Journal_Entry)
-                .join(Transaction, Journal_Entry.id == Transaction.journal_entry_id)
-                .filter(
-                    Journal_Entry.company_id == current_user.company_id,
-                    Transaction.account_number == ref_id,
-                )
-                .order_by(Journal_Entry.id.desc())
-                .all()
+                 .filter(Journal_Entry.company_id == current_user.company_id)
             )
+            if filter_reference_number:
+                query = query.filter(Journal_Entry.id.like(f"%{filter_reference_number}%"))
 
+            if filter_description:
+                 query = query.filter(Journal_Entry.description.like(f"%{filter_description}%"))
+            
+            if filter_account:
+                query = query.filter(Transaction.account_number.like(f"%{filter_account}%"))
+
+            if filter_debit:
+                query = query.filter(Transaction.amount_changing.like(f"%{filter_debit}%"))
+                
+            if filter_credit:
+                query = query.filter(Transaction.amount_changing.like(f"%{filter_credit}%"))
+           
+            if filter_status:
+                query = query.filter(Journal_Entry.status.like(f"%{filter_status}%")) 
+                
+            if filter_comment:
+                query = query.filter(Journal_Entry.comment.like(f"%{filter_comment}%"))   
+  
+            if filter_date:
+                query = query.filter(db.func.date(Journal_Entry.create_date) == filter_date)
+
+            entries = query.order_by(Journal_Entry.id.desc()).all()
             # Track the running balance
             balance = 0.0
 
@@ -458,7 +512,7 @@ def ledger():
                         <td>{credit:.2f}</td>
                         <td>{balance:.2f}</td>
                         <td>{entry.status}</td>
-                        <td>{entry.comment}</td>
+                        <td>{entry.comment if entry.comment else ""}</td>
                     </tr>
                 """
 
