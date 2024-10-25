@@ -137,11 +137,9 @@ class Journal_Entry(db.Model, BaseColumnMixin, CreatedByMixin):
     company_id = db.Column(db.Integer, db.ForeignKey("company.id"), nullable=False)
     entry_type = db.Column(db.String(150), default="Transfer", nullable=False)
     description = db.Column(db.String(150), nullable=False)
-
-    # Define relationship to transactions
-    transactions = relationship("Transaction", backref="journal_entry", lazy="dynamic")
-
-
+    comment = db.Column(db.String(150), nullable=False)
+    
+    
 class Transaction(db.Model, BaseColumnMixin, CreatedByMixin):
     __tablename__ = "transaction"
 

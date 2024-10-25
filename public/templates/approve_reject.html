@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Delete User{% endblock %}
+{% block content %}
+
+<div class="userProfileContainer">
+    <div class="userProfile">
+        <!-- Profile Picture -->
+        <img src={{ url_for('views.pfp', id=current_user.id) }} alt="Profile Picture">
+
+        <!-- Username and Sign Out Button -->
+        <div class="userInfo">
+            <p>{{ user.username }}</p>
+            <a href="./logout"><button id="signout" class="logout">Sign out</button></a>
+        </div>
+    </div>
+</div>
+
+<div class="page">
+    <div class='userDisplay'>
+        <a href='{{ back }}'>Back</a> <br />
+        <h2><strong>Journal Details</strong></h2>
+        <table class="userDisplay">
+            <thead>
+                <tr></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Status:</strong></td>
+                    <td id="status">{{ curr_journal.status }}</td>
+                </tr>
+                <tr>
+                    <td><strong> Id:</strong></td>
+                    <td id="id">{{ curr_journal.id }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Entry Type:</strong></td>
+                    <td id="entry_type">{{ curr_journal.entry_type}}</td>
+                </tr>
+                <tr>
+                    <td><strong>Description:</strong></td>
+                    <td id="description">{{ curr_journal.description }}</td>
+                </tr>
+                
+            </tbody>
+        </table>   
+        <form method='POST'>
+            <label for='arp'><strong>Approve or Reject Journal Entry:</strong></label>
+            <select id="arp" name="arp">
+                <option value="approve">Approve</option>
+                <option value="reject">Rejected</option>
+                <option value="Pending" selected>Pending</option>
+            </select><br>
+            <label for='comment'>Comment&nbsp;:</label>
+            <textarea name="comment" id="comment" placeholder="Reason for Rejection"></textarea>
+            <div class="form-buttons">
+                <button id="submit" type='submit'>Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- <script type="module">
+    import { formatCurrency } from '../static/account.js';
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('balance').textContent = formatCurrency(document.getElementById('balance').textContent);
+    });
+</script> -->
+
+{% endblock %}
