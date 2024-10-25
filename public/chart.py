@@ -397,7 +397,7 @@ def ledger():
             table = f"""
                 <a href='{url_for('views.home')}'>Back</a> <br />
                 <form method="get" action="{url_for('chart.ledger')}">
-                    <input type="text" id="filter_date" name="filter_date" placeholder="Date" value="{filter_date if filter_date else ''}" />
+                    <input type="date" id="filter_date" name="filter_date" value="{filter_date if filter_date else ''}" />
 
                     <input type="text" id="filter_reference_number" name="filter_reference_number" placeholder="Reference No." value="{filter_reference_number if filter_reference_number else ''}" />   
                     
@@ -482,7 +482,7 @@ def ledger():
                 query = query.filter(Journal_Entry.comment.like(f"%{filter_comment}%"))   
   
             if filter_date:
-                query = query.filter(Journal_Entry.create_date.like(f"%{filter_date}%"))
+                query = query.filter(db.func.date(Journal_Entry.create_date) == filter_date)
 
             entries = query.order_by(Journal_Entry.id.desc()).all()
             # Track the running balance
