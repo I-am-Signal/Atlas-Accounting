@@ -247,7 +247,10 @@ def sign_up():
                     company_id=user.company_id,
                     role='administrator',
                     subject='New User',
-                    body=getEmailHTML(user.id, "email_templates/new_user.html")
+                    body=getEmailHTML(
+                        user_id=user.id, 
+                        pathToHTML="email_templates/new_user.html"
+                    )
                 )
                 if not response.status_code == 202:
                     flash(f'Failed to deliver message to admin. Status code: {response.status_code}', category='error')

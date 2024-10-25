@@ -11,7 +11,7 @@ from .models import (
 )
 from . import db, formatMoney, unformatMoney
 from .auth import login_required_with_password_expiration, checkRoleClearance
-from .email import sendEmail, getEmailHTML
+from .email import sendEmail, getEmailHTML, sendEmailToAllUsersWithRole
 from datetime import datetime, timedelta
 from sqlalchemy import desc, asc
 
@@ -613,6 +613,16 @@ def journal_entry():
                     created_by=current_user.id,
                 )
                 db.session.add(transaction)
+                
+            sendEmailToAllUsersWithRole(
+                current_user.company_id, 
+                "manager", 
+                "New Journal Entry",
+                getEmailHTML(
+                    entry_id=entry.id, 
+                    pathToHTML="email_templates/new_journal_entry.html"
+                )
+            )
 
         db.session.commit()
         flash(
