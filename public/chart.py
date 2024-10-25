@@ -692,13 +692,15 @@ def approve_reject():
          # Update status based on approval/rejection
         if arp == "approve":
             curr_journal.status = 'Approved'
+            curr_journal.comment = ''
               # Commit the changes to the database
 
         elif arp == "reject":
+            curr_journal.comment = comment
             if (curr_journal.comment == ''):
                 flash('Comment Cannot be Empty!', category='error')
                 return redirect(url_for('chart.approve_reject',id=ref_id))
-            curr_journal.comment = comment
+            
             curr_journal.status = 'Rejected'
         # Commit the changes to the database
         db.session.commit()
