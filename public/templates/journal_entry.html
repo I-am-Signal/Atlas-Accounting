@@ -17,15 +17,17 @@
 
 <div class="page">
     <div class='userDisplay'>
-        <form method="POST">
-        
-            {{ entry|safe }}
-
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('chart.journal_entry') }}"> 
+            {{ entry|safe }}  
         </form>
     </div>
 </div>
 
 <script type="module">
+     document.getElementById('attachment').addEventListener('change', function () {
+        const fileName = this.files[0] ? this.files[0].name : 'No file chosen';
+        document.getElementById('file-selected').textContent = fileName;
+    });
     import { currencyInput } from '../static/account.js';
     document.addEventListener('DOMContentLoaded', () => {
         let accountCount = document.getElementById('numOfAccounts').value
