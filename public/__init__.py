@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from os import path
 from flask_login import LoginManager
 from .config import SECRET_KEY, DB_NAME, DOMAIN_NAME, APPLICATION_ROOT, PREFERRED_URL_SCHEME
+import re
 
 db = SQLAlchemy()
 
@@ -156,5 +157,4 @@ def formatMoney(amount: float) -> str:
 
 def unformatMoney(formatted_amount: str) -> float:
     """Removes currency symbols, commas, and spaces, returning a plain numeric string."""
-    import re
     return float(re.sub(r'[^\d.-]', '', formatted_amount))

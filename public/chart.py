@@ -267,15 +267,24 @@ def view_accounts():
                 <input type="text" id="filter_subcategory" name="filter_subcategory" placeholder="Enter Subcategory" value="{filter_subcategory if filter_subcategory else ''}" />  
                 
                 <label for="filter_statement"></label>
-                <input type="text" id="filter_statement" name="filter_statement" placeholder="Enter Statement Type" value="{filter_statement if filter_statement else ''}" />  
+                <select id="filter_statement" name="filter_statement">
+                    <option value="">All Statements</option>
+                    <option value="Retained Earnings Statement" {'selected' if filter_statement == 'Retained Earnings Statement' else ''}>Retained Earnings Statement</option>
+                    <option value="Balance Sheet" {'selected' if filter_statement == 'Balance Sheet' else ''}>Balance Sheet</option>
+                    <option value="Income Statement" {'selected' if filter_statement == 'Income Statement' else ''}>Income Statement</option>
+                </select>  
                 
                 <label for="filter_true"></label>
-                <input type="text" id="filter_true" name="filter_true" placeholder="Active" value="{filter_true if filter_true else ''}" />    
+                <select id="filter_true" name="filter_true">
+                    <option value="">All Activations</option>
+                    <option value="True" {'selected' if filter_true == 'True' else ''}>True</option>
+                    <option value="False" {'selected' if filter_true == 'False' else ''}>False</option>
+                </select>  
                 
-                    <button type="submit" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">Filter</button>
+                <button type="submit" class="filterBy">Filter</button>
                
-                <a href="{url_for('chart.view_accounts')}" style="background-color: #AF4C4C; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; font-weight:normal;>
-                    <button type="button">Clear Filters</button>
+                <a href="{url_for('chart.view_accounts')}">
+                    <button type="button" class="clearFilters">Clear Filters</button>
                 </a>
                 
             </form>
@@ -310,11 +319,12 @@ def view_accounts():
         if filter_subcategory:
             query = query.filter(Account.subcategory.like(f"%{filter_subcategory}%"))
 
-        if filter_statement:
-            query = query.filter(Account.statement.like(f"%{filter_statement}%"))
+        if filter_statement and filter_statement != 'All':
+            query = query.filter(Account.statement == filter_statement)
 
         if filter_true:
-            query = query.filter(Account.is_activated.like(f"%{filter_true}%"))
+            active = True if filter_true == "True" else False
+            query = query.filter(Account.is_activated==active)
 
         accounts = query.order_by(
             Account.is_activated.desc(), Account.number.asc()
@@ -414,16 +424,14 @@ def ledger():
                         <option value="Pending" {'selected' if filter_status == 'Pending' else ''}>Pending</option>
                         <option value="Approved" {'selected' if filter_status == 'Approved' else ''}>Approved</option>
                         <option value="Rejected" {'selected' if filter_status == 'Rejected' else ''}>Rejected</option>
-
                     </select>
                     
                     <input type="text" id="filter_comment" name="filter_comment" placeholder="Comment" value="{filter_comment if filter_comment else ''}" />
 
-                    <button type="submit" style="background-color: #4CAF50; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; font-weight:normal;">Filter</button>
+                    <button type="submit" class="filterBy">Filter</button>
                     
-                    <a href="{url_for('chart.ledger')}" style="margin-left: 10px;">
-                        
-                        <button type="button" style="background-color: #AF4C4C; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer;">Clear Filters</button>
+                    <a href="{url_for('chart.ledger')}">
+                        <button type="button" class="clearFilters">Clear Filters</button>
                     </a>
                 </form>
 
@@ -551,7 +559,7 @@ def journal_entry():
     #     db.session.commit()
 
     # Used for removing a journal entry
-    # idOfJEToDelete = 9
+    # idOfJEToDelete = 10
     # for transaction in db.session.query(Transaction).filter_by(journal_entry_id=idOfJEToDelete).all():
     #     db.session.delete(transaction)
     # JEToDelete = Journal_Entry.query.filter_by(id=idOfJEToDelete).first()
@@ -579,12 +587,27 @@ def journal_entry():
         entry_type = request.form.get('entry_type')
         description = request.form.get('description')
         comment = request.form.get('comment')
-      
+
         accounts = []
         debits = []
         credits = []
         tos = []
-        for accountNum in range(numOfAccounts):
+        
+        accounts_of_entry = []
+        transactions_of_entry = []
+        for account, transaction in (
+            db.session.query(Account, Transaction)
+            .join(Transaction, Transaction.account_number == Account.number)
+            .filter(Transaction.journal_entry_id == ref_id)
+            .all()
+        ):
+            accounts_of_entry.append(account)
+            transactions_of_entry.append(transaction)
+        
+        
+        cycleCount = len(accounts_of_entry) if len(accounts_of_entry) > 0 else numOfAccounts
+        
+        for accountNum in range(cycleCount):
             accounts.append(request.form.get(f"account{accountNum}"))
             debits.append(unformatMoney(request.form.get(f"debit{accountNum}")))
             credits.append(unformatMoney(request.form.get(f"credit{accountNum}")))
@@ -617,8 +640,11 @@ def journal_entry():
                     toCount += 1
                     
             # check each account appears only once
-            for j in range(len(accounts)-i):
-                if accounts[i] == accounts[j] and error_return == False:
+            for j in range(1, len(accounts)):
+                j += i
+                if j >= len(accounts):
+                    break
+                if accounts[i] == accounts[j] and accounts[j] != '' and error_return == False:
                     flash('Each account can only appear in a journal entry once!', category='error')
                     error_return = True
         

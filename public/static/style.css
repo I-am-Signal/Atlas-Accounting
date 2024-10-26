@@ -492,6 +492,41 @@ top: 4%;
   max-width: 100%;
 }
 
+.userDisplay input, select{
+  border-radius: 5px;
+  border-width: 0px;
+  opacity: revert;
+  font-size: 1rem;
+  padding: 10px;
+  max-width: 100%; /* Ensures inputs don't take up full width */
+  box-sizing: border-box; /* Prevents padding from increasing the width */
+  margin-bottom: 15px;
+}
+
+.userDisplay button{
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  border-width: 0px;
+  cursor: pointer;
+  font-weight:normal;
+  font-size: 1rem;
+  padding: 10px;
+  /*
+  padding: 10px;
+  max-width: 100%;
+  box-sizing: border-box; 
+  margin-bottom: 15px; */
+}
+
+.clearFilters{
+  background-color: #4CAF50; 
+}
+
+.filterBy{
+  background-color: #AF4C4C;
+}
 
 .userDisplay table,.eventDisplay table {
   width: 100%;  /* Make sure the table takes up full width of container */
@@ -739,6 +774,5 @@ top: 4%;
 }
 .user-form{
   margin-left:2rem;
-  margin-right: 2rem;
-  
+  margin-right: 2rem; 
 }
