@@ -214,7 +214,7 @@ def deactivate():
             dashUser=current_user.role,
             homeRoute="/",
             back=url_for("chart.show_account", number=ref_id),
-            account=account
+            account=account,
         ),
     )
 
@@ -319,12 +319,12 @@ def view_accounts():
         if filter_subcategory:
             query = query.filter(Account.subcategory.like(f"%{filter_subcategory}%"))
 
-        if filter_statement and filter_statement != 'All':
+        if filter_statement and filter_statement != "All":
             query = query.filter(Account.statement == filter_statement)
 
         if filter_true:
             active = True if filter_true == "True" else False
-            query = query.filter(Account.is_activated==active)
+            query = query.filter(Account.is_activated == active)
 
         accounts = query.order_by(
             Account.is_activated.desc(), Account.number.asc()
@@ -369,7 +369,7 @@ def view_accounts():
             user=current_user,
             dashUser=current_user.role,
             homeRoute="/",
-            accounts=generateAccounts()
+            accounts=generateAccounts(),
         ),
     )
 
@@ -388,8 +388,6 @@ def ledger():
         filter_comment = request.args.get("filter_comment", None)
         filter_date = request.args.get("filter_date", None)
 
-
-        
         if ref_id:
             if not ref_id.isdigit():
                 flash(f"Invalid account reference number of {ref_id}", category="error")
@@ -466,31 +464,43 @@ def ledger():
             query = (
                 db.session.query(Journal_Entry)
                 .join(Transaction, Journal_Entry.id == Transaction.journal_entry_id)
-                 .filter(Journal_Entry.company_id == current_user.company_id)
+                .filter(Journal_Entry.company_id == current_user.company_id)
             )
             if filter_reference_number:
-                query = query.filter(Journal_Entry.id.like(f"%{filter_reference_number}%"))
+                query = query.filter(
+                    Journal_Entry.id.like(f"%{filter_reference_number}%")
+                )
 
             if filter_description:
-                 query = query.filter(Journal_Entry.description.like(f"%{filter_description}%"))
-            
+                query = query.filter(
+                    Journal_Entry.description.like(f"%{filter_description}%")
+                )
+
             if filter_account:
-                query = query.filter(Transaction.account_number.like(f"%{filter_account}%"))
+                query = query.filter(
+                    Transaction.account_number.like(f"%{filter_account}%")
+                )
 
             if filter_debit:
-                query = query.filter(Transaction.amount_changing.like(f"%{filter_debit}%"))
-                
+                query = query.filter(
+                    Transaction.amount_changing.like(f"%{filter_debit}%")
+                )
+
             if filter_credit:
-                query = query.filter(Transaction.amount_changing.like(f"%{filter_credit}%"))
-           
+                query = query.filter(
+                    Transaction.amount_changing.like(f"%{filter_credit}%")
+                )
+
             if filter_status:
-                query = query.filter(Journal_Entry.status.like(f"%{filter_status}%")) 
-                
+                query = query.filter(Journal_Entry.status.like(f"%{filter_status}%"))
+
             if filter_comment:
-                query = query.filter(Journal_Entry.comment.like(f"%{filter_comment}%"))   
-  
+                query = query.filter(Journal_Entry.comment.like(f"%{filter_comment}%"))
+
             if filter_date:
-                query = query.filter(db.func.date(Journal_Entry.create_date) == filter_date)
+                query = query.filter(
+                    db.func.date(Journal_Entry.create_date) == filter_date
+                )
 
             entries = query.order_by(Journal_Entry.id.desc()).all()
             # Track the running balance
@@ -539,9 +549,24 @@ def ledger():
             user=current_user,
             dashUser=current_user.role,
             homeRoute="/",
-            ledger=generateLedger()
+            ledger=generateLedger(),
         ),
     )
+
+
+# This will create a directory named "uploads" to store the files uplaoded, if it doesn't already exist it will create one
+import os
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = "uploads"
+ALLOWED_EXTENSIONS = {"pdf", "doc", "docx", "xls", "xlsx", "csv", "jpg", "jpeg", "png"}
+
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+
+def allowed_file(filename):
+    """Check if the uploaded file has an allowed extension."""
+    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @chart.route("/journal_entry", methods=["GET", "POST"])
@@ -570,29 +595,25 @@ def journal_entry():
     # for account in Account.query.all():
     #     account.company_id = current_user.company_id
     #     db.session.commit()
-    
-    
+
     # this sets how many accounts there is to select in a journal entry
-    numOfAccounts = Account.query.filter_by(
-        company_id=current_user.company_id
-    ).count()
+    numOfAccounts = Account.query.filter_by(company_id=current_user.company_id).count()
 
     if request.method == "POST":
         # this is currently just the 'user' view of it
         # admins (and potentially managers) need the ability to change status as well as delete
 
-        
-        ref_id = request.form.get('ref_id')
-        status = request.form.get('status')
-        entry_type = request.form.get('entry_type')
-        description = request.form.get('description')
-        comment = request.form.get('comment')
+        ref_id = request.form.get("ref_id")
+        status = request.form.get("status")
+        entry_type = request.form.get("entry_type")
+        description = request.form.get("description")
+        comment = request.form.get("comment")
 
         accounts = []
         debits = []
         credits = []
         tos = []
-        
+
         accounts_of_entry = []
         transactions_of_entry = []
         for account, transaction in (
@@ -603,15 +624,28 @@ def journal_entry():
         ):
             accounts_of_entry.append(account)
             transactions_of_entry.append(transaction)
-        
-        
-        cycleCount = len(accounts_of_entry) if len(accounts_of_entry) > 0 else numOfAccounts
-        
+
+        cycleCount = (
+            len(accounts_of_entry) if len(accounts_of_entry) > 0 else numOfAccounts
+        )
+
         for accountNum in range(cycleCount):
             accounts.append(request.form.get(f"account{accountNum}"))
             debits.append(unformatMoney(request.form.get(f"debit{accountNum}")))
             credits.append(unformatMoney(request.form.get(f"credit{accountNum}")))
             tos.append(request.form.get(f"to{accountNum}") == "True")
+
+        # Handle the file upload
+        file = request.files.get("attachment")
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(file_path)
+        else:
+            flash(
+                "Invalid or missing file. Please upload a valid file.", category="error"
+            )
+            return redirect(url_for("chart.journal_entry"))
 
         curr_journal_entry = Journal_Entry.query.filter_by(id=ref_id).first()
 
@@ -626,44 +660,58 @@ def journal_entry():
                     url_for("chart.journal_entry", id=curr_journal_entry.id)
                 )
             return redirect(url_for("chart.journal_entry"))
-        
+
         # check the normal side of the accounts corresponds with the entries
         error_return = False
         toCount = 0
         for i in range(len(accounts)):
-            if accounts[i] != '':
+            if accounts[i] != "":
                 acc_to_evalute = Account.query.filter_by(number=accounts[i]).first()
-                if acc_to_evalute.normal_side == 'Debit' and credits[i] != 0 or acc_to_evalute.normal_side == 'Credit' and debits[i] != 0:
-                    flash(f'Invalid placement of credits and debits with respect to account #{i}!', category='error')
+                if (
+                    acc_to_evalute.normal_side == "Debit"
+                    and credits[i] != 0
+                    or acc_to_evalute.normal_side == "Credit"
+                    and debits[i] != 0
+                ):
+                    flash(
+                        f"Invalid placement of credits and debits with respect to account #{i}!",
+                        category="error",
+                    )
                     error_return = True
                 if tos[i] == True:
                     toCount += 1
-                    
+
             # check each account appears only once
             for j in range(1, len(accounts)):
                 j += i
                 if j >= len(accounts):
                     break
-                if accounts[i] == accounts[j] and accounts[j] != '' and error_return == False:
-                    flash('Each account can only appear in a journal entry once!', category='error')
+                if (
+                    accounts[i] == accounts[j]
+                    and accounts[j] != ""
+                    and error_return == False
+                ):
+                    flash(
+                        "Each account can only appear in a journal entry once!",
+                        category="error",
+                    )
                     error_return = True
-        
+
         # check the to's are valid
         if tos[0] == True:
-            flash(f"First account must always be a 'FROM' account!", category='error')
+            flash(f"First account must always be a 'FROM' account!", category="error")
             error_return = True
         if toCount == len(tos):
-            flash("Must have at least one 'FROM' account!", category='error')
+            flash("Must have at least one 'FROM' account!", category="error")
             error_return = True
-        
+
         if error_return == True:
-            return redirect(
-                url_for("chart.journal_entry", id=curr_journal_entry.id)
-            ) if curr_journal_entry else redirect(
-                url_for('chart.journal_entry')
+            return (
+                redirect(url_for("chart.journal_entry", id=curr_journal_entry.id))
+                if curr_journal_entry
+                else redirect(url_for("chart.journal_entry"))
             )
-            
-            
+
         if curr_journal_entry:
             transactions = (
                 Transaction.query.order_by(Transaction.id.asc())
@@ -688,13 +736,13 @@ def journal_entry():
         # new entry to save
         else:
             entry = Journal_Entry(
-                id = int(ref_id),
-                status = status,
-                company_id = current_user.company_id,
-                entry_type = entry_type,
-                description = description,
-                created_by = current_user.id,
-                comment = comment
+                id=int(ref_id),
+                status=status,
+                company_id=current_user.company_id,
+                entry_type=entry_type,
+                description=description,
+                created_by=current_user.id,
+                comment=comment,
             )
             db.session.add(entry)
 
@@ -714,15 +762,15 @@ def journal_entry():
                     created_by=current_user.id,
                 )
                 db.session.add(transaction)
-                
+
             sendEmailToAllUsersWithRole(
-                current_user.company_id, 
-                "manager", 
+                current_user.company_id,
+                "manager",
                 "New Journal Entry",
                 getEmailHTML(
-                    entry_id=entry.id, 
-                    pathToHTML="email_templates/new_journal_entry.html"
-                )
+                    entry_id=entry.id,
+                    pathToHTML="email_templates/new_journal_entry.html",
+                ),
             )
 
         db.session.commit()
@@ -731,7 +779,6 @@ def journal_entry():
             category="success",
         )
         return redirect(url_for("chart.ledger"))
-
 
     if request.method == "GET":
         ref_id = request.args.get("id")
@@ -747,14 +794,14 @@ def journal_entry():
             newJournalEntry = False
             if None == ref_id:
                 newJournalEntry = True
-                try: # set ref_id to the last JE added plus one
+                try:  # set ref_id to the last JE added plus one
                     ref_id = (
                         Journal_Entry.query.order_by(Journal_Entry.id.desc()).first().id
                         + 1
                     )
-                except: # if no JEs, ref_id is the first one
+                except:  # if no JEs, ref_id is the first one
                     ref_id = 1
-            else: # get existing JE if there is one
+            else:  # get existing JE if there is one
                 curr_journal_entry = Journal_Entry.query.filter_by(id=ref_id).first()
 
             # This renders the contents of above and the top of the table
@@ -782,11 +829,17 @@ def journal_entry():
                         <option value="Compound" {'selected' if curr_journal_entry and curr_journal_entry.entry_type == 'Compound' else ''}>Compound</option>
                         <option value="Reversing" {'selected' if curr_journal_entry and curr_journal_entry.entry_type == 'Reversing' else ''}>Reversing</option>
                     </select>
-                    <label for='description'>Description&nbsp;of&nbsp;Transaction:</label>
-                    <textarea name="description" id="description">{ curr_journal_entry.description if curr_journal_entry else '' }</textarea>
+                    <label for='description' style="font-weight: bold">Description&nbsp;of&nbsp;Transaction:</label>
+                    <textarea name="description" id="description" class="description-textarea">{ curr_journal_entry.description if curr_journal_entry else '' }</textarea>
+
+                    <p>
+                <label for="attachment" style="font-weight: bold">Attach File:</label>
+                <input type="file" id="attachment" name="attachment" accept=".pdf,.doc,.docx,.xls,.xlsx,.csv,.jpg,.jpeg,.png" hidden>
+                <button type="button" class="custom-file-button" onclick="document.getElementById('attachment').click()">Choose File</button>
+                <span id="file-selected">No file chosen</span>
+                    </p>
                     
 
-                </p>
                 <table class="userDisplay">
                     <thead>
                         <tr>
@@ -823,16 +876,20 @@ def journal_entry():
                     length = len(accounts_of_entry)
                     curr_account_is_selected = False
                     if length > index and length > 0:
-                        curr_account_is_selected = accounts_of_entry[index].number == account.number
+                        curr_account_is_selected = (
+                            accounts_of_entry[index].number == account.number
+                        )
                     select += f"""<option value="{account.number}" {
                         'selected' if curr_account_is_selected else ''
                     }>{account.number} - {account.name}: {account.normal_side}</option>"""
 
                 return select + "</select>"
-            
+
             # take into account if this is displaying an existing JE or if displaying new
-            cycleCount = len(accounts_of_entry) if len(accounts_of_entry) > 0 else numOfAccounts
-                
+            cycleCount = (
+                len(accounts_of_entry) if len(accounts_of_entry) > 0 else numOfAccounts
+            )
+
             for i in range(cycleCount):
                 table += f"""
                     <tr>
@@ -864,9 +921,12 @@ def journal_entry():
 
     # verify that at least 2 account exist to create a journal entry
     if numOfAccounts < 2:
-        flash('At least 2 accounts must exist to complete a journal entry!', category='errror')
-        return redirect(url_for('chart.ledger'))
-    
+        flash(
+            "At least 2 accounts must exist to complete a journal entry!",
+            category="errror",
+        )
+        return redirect(url_for("chart.ledger"))
+
     return checkRoleClearance(
         current_user.role,
         "user",
@@ -876,51 +936,47 @@ def journal_entry():
             dashUser=current_user.role,
             homeRoute="/",
             helpRoute="/help",
-            entry=generateJournalEntry(ref_id)
-        )
+            entry=generateJournalEntry(ref_id),
+        ),
     )
 
 
-@chart.route("/approve_reject",methods=["GET", "POST"])
+@chart.route("/approve_reject", methods=["GET", "POST"])
 @login_required
 def approve_reject():
-    
+
     # when user_id check method is implemented, call it here instead of this
     ref_id = request.args.get("id")
     if not ref_id.isdigit():
-        flash("Error: invalid reference number.", category='error')
+        flash("Error: invalid reference number.", category="error")
         return redirect(url_for("chart.view_accounts"))
     ref_id = int(ref_id)
 
-
-    
     # Fetch the journal entry from the database
     curr_journal = Journal_Entry.query.filter_by(id=ref_id).first()
 
     if request.method == "POST":
-       
-        
-        arp = request.form.get("arp") 
+
+        arp = request.form.get("arp")
         comment = request.form.get("comment")
-       
-         # Update status based on approval/rejection
+
+        # Update status based on approval/rejection
         if arp == "approve":
-            curr_journal.status = 'Approved'
-            curr_journal.comment = ''
-              # Commit the changes to the database
+            curr_journal.status = "Approved"
+            curr_journal.comment = ""
+            # Commit the changes to the database
 
         elif arp == "reject":
             curr_journal.comment = comment
-            if (curr_journal.comment == ''):
-                flash('Comment Cannot be Empty!', category='error')
-                return redirect(url_for('chart.approve_reject',id=ref_id))
-            
-            curr_journal.status = 'Rejected'
+            if curr_journal.comment == "":
+                flash("Comment Cannot be Empty!", category="error")
+                return redirect(url_for("chart.approve_reject", id=ref_id))
+
+            curr_journal.status = "Rejected"
         # Commit the changes to the database
         db.session.commit()
         # Redirect to the ledger page after updating
-        return redirect(url_for('chart.ledger'))
-
+        return redirect(url_for("chart.ledger"))
 
     return checkRoleClearance(
         current_user.role,
@@ -931,7 +987,7 @@ def approve_reject():
             dashUser=current_user.role,
             homeRoute="/",
             helpRoute="/help",
-            back=url_for("chart.journal_entry", id=ref_id), 
-            curr_journal=curr_journal           
+            back=url_for("chart.journal_entry", id=ref_id),
+            curr_journal=curr_journal,
         ),
     )
