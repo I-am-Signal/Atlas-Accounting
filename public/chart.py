@@ -43,7 +43,7 @@ def show_account():
             "user",
             render_template(
                 "account.html",
-                access=True if current_user.role == "administrator" else False,
+                access=True if current_user.role == "administrator" or current_user.role == "user" else False,
                 user=current_user,
                 dashUser=current_user.role,
                 homeRoute="/",

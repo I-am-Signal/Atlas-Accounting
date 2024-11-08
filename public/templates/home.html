@@ -30,6 +30,9 @@
             {{ viewEventsButton|safe }}
             <a href="{{ journalEntriesLink }}"><button id="journalentry" class="dashleft">Journal Entries</button></a>
             {{ viewAccountsButton|safe }}
+            {% if dashUser == "manager" %}
+            <a href="{{trialBalanceLink}}"><button id="trialBalance" class="dashleft">Trial Balance</button></a>
+            {% endif %}
         </div>
         <div class="dashboxes">
             <div class="pending-ratio">
