@@ -9,7 +9,7 @@ from flask import (
     send_from_directory,
 )
 from flask_login import login_required, current_user
-from .models import User, Company, Credential, Image
+from .models import User, Company, Credential, Image,Account
 from . import db
 from .auth import login_required_with_password_expiration, checkRoleClearance
 from .email import sendEmail, getEmailHTML
@@ -32,6 +32,7 @@ def home():
     view_evl_link = f'<a href="{url_for("eventlog.view_eventlogs")}"><button id="eventlog" class="dashleft admin" >View Event Logs</button></a>'
 
     journalEntriesLink = url_for("chart.ledger")
+    trialBalanceLink = url_for("views.trialBalance")
 
     return checkRoleClearance(
         current_user.role,
@@ -45,6 +46,7 @@ def home():
             viewAccountsButton=view_coa_link if view_coa_link else "",
             viewEventsButton=view_evl_link if view_evl_link else "",
             journalEntriesLink=journalEntriesLink,
+            trialBalanceLink=trialBalanceLink,
         ),
     )
 
@@ -316,6 +318,56 @@ def help():
         dashUser=current_user,
         homeRoute="/",
     )
+
+@views.route("/trialBalance")
+@login_required
+def trialBalance():
+    def generateTrial():
+        table = f"""
+        <a href='{url_for("views.home")}'>Back</a> <br />
+                
+                
+                <h2>Trial Balance</h2>
+                <table class="userDisplay">
+                    <thead>
+                        <tr>
+                            
+                            <th>Account Number</th>
+                            <th id="showAccount">Account Name</th>                        
+                            <th>Debit</th>
+                            <th>Credit</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                """
+        accounts = Account.query.filter_by(company_id=current_user.company_id).all()
+        for account in accounts:
+            table += f"""
+                    <tr>
+                        
+                        <td>{account.number}</td>
+                        <td><a  href="{url_for('chart.show_account', number=account.number)}">{account.name}</a></td>
+                        <td>{account.debit}</td>
+                        <td>{account.credit}</td>
+                                                                   
+                    
+                    </tr>                     
+                """
+        table += f"""
+                </tbody>
+            </table>
+            """
+        return table
+
+    return render_template(
+    "trial_balance.html",
+    user=current_user,
+    dashUser=current_user,    
+    trial=generateTrial(),
+    homeRoute="/",
+    
+)
 
 
 @views.route("/contact", methods=["GET", "POST"])
