@@ -10,7 +10,7 @@ from flask import (
 )
 from flask_login import login_required, current_user
 from .models import User, Company, Credential, Image,Account
-from . import db
+from . import db, formatMoney
 from .auth import login_required_with_password_expiration, checkRoleClearance
 from .email import sendEmail, getEmailHTML
 from datetime import datetime
@@ -342,19 +342,26 @@ def trialBalance():
                     <tbody>
                 """
         accounts = Account.query.filter_by(company_id=current_user.company_id).all()
+        debits = 0
+        credits = 0
         for account in accounts:
+            debits += account.debit
+            credits += account.credit
             table += f"""
                     <tr>
-                        
                         <td>{account.number}</td>
                         <td><a  href="{url_for('chart.show_account', number=account.number)}">{account.name}</a></td>
-                        <td>{account.debit}</td>
-                        <td>{account.credit}</td>
-                                                                   
-                    
+                        <td>${formatMoney(account.debit)}</td>
+                        <td>${formatMoney(account.credit)}</td>
                     </tr>                     
                 """
         table += f"""
+                    <tr>                
+                        <td></td>
+                        <td><strong>Totals</strong></td>
+                        <td>${formatMoney(debits)}</td>
+                        <td>${formatMoney(credits)}</td>
+                    </tr>    
                 </tbody>
             </table>
             """
