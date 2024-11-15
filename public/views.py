@@ -33,6 +33,7 @@ def home():
 
     journalEntriesLink = url_for("chart.ledger")
     trialBalanceLink = url_for("views.trialBalance")
+    balanceSheetLink = url_for("views.balancesheet")
 
     return checkRoleClearance(
         current_user.role,
@@ -47,6 +48,7 @@ def home():
             viewEventsButton=view_evl_link if view_evl_link else "",
             journalEntriesLink=journalEntriesLink,
             trialBalanceLink=trialBalanceLink,
+            balanceSheetLink=balanceSheetLink
         ),
     )
 
@@ -372,6 +374,92 @@ def trialBalance():
     user=current_user,
     dashUser=current_user,    
     trial=generateTrial(),
+    homeRoute="/",
+    
+)
+
+@views.route("/balance_sheet")
+@login_required
+def balancesheet():
+    def generateBalanceSheet():
+        table = f"""
+        <a href='{url_for("views.home")}'>Back</a> <br />
+                
+                
+                <h2>Balance Sheet</h2>
+                <table class="userDisplay">
+                    <thead>
+                        <tr>      
+                            <th id="showAccount">Account Name</th>                        
+                            <th>Amount</th>                                                       
+                        </tr>
+                    </thead>
+                    <tbody>
+                """
+       
+        accountsc = Account.query.filter_by(company_id=current_user.company_id,normal_side='Credit').all()
+        accountsd = Account.query.filter_by(company_id=current_user.company_id,normal_side='Debit').all()
+
+        debits = 0
+        credits=0
+
+        table += f"""
+            <tr>
+            <td><strong>Assets:</td>
+            <td></td>
+            </tr>
+            """       
+
+
+        for account in accountsd:           
+            debits+= account.balance
+            table += f"""
+            
+                    <tr>
+                        <td>{account.name}</td>                            
+                        <td>${formatMoney(account.balance)}</td>
+                    </tr>                     
+                """
+                
+            
+
+                
+        table += f"""
+            <tr>
+                <td><strong>Total Assets:</td>
+                <td>${formatMoney(debits)}</td>
+            </tr>
+            <tr>
+                <td><strong>Liabilities:</td>
+                <td> </td>
+            </tr>
+            """
+        for account in accountsc:                        
+            credits += account.balance
+            table += f"""
+            
+                    <tr>
+                        <td>{account.name}</td>                            
+                        <td>${formatMoney(account.balance)}</td>
+                    </tr>                     
+                """   
+            
+
+        table += f"""
+                    <tr>                
+                        <td><strong>Total Liabilities</strong></td> 
+                        <td>${formatMoney(credits)}</td>                       
+                    </tr>    
+                </tbody>
+            </table>
+            """
+        return table
+
+    return render_template(
+    "balance_sheet.html",
+    user=current_user,
+    dashUser=current_user,    
+    balance=generateBalanceSheet(),
     homeRoute="/",
     
 )
