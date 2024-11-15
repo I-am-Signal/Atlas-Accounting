@@ -132,7 +132,7 @@ class Event(db.Model, BaseColumnMixin, CreatedByMixin):
 
 class Journal_Entry(db.Model, BaseColumnMixin, CreatedByMixin):
     __tablename__ = "journal_entry"
-
+    
     status = db.Column(db.String(150), default="Pending", nullable=False)
     company_id = db.Column(db.Integer, db.ForeignKey("company.id"), nullable=False)
     entry_type = db.Column(db.String(150), default="Transfer", nullable=False)

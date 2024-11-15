@@ -385,6 +385,7 @@ def ledger():
         filter_debit = request.args.get("filter_debit", None)
         filter_credit = request.args.get("filter_credit", None)
         filter_status = request.args.get("filter_status", None)
+        filter_type = request.args.get("filter_type", None)
         filter_comment = request.args.get("filter_comment", None)
         filter_date = request.args.get("filter_date", None)
 
@@ -416,7 +417,17 @@ def ledger():
                     <input type="text" id="filter_debit" name="filter_debit" placeholder="Debit" value="{filter_debit if filter_debit else ''}" />
                                         
                     <input type="text" id="filter_credit" name="filter_credit" placeholder="Credit" value="{filter_credit if filter_credit else ''}" />
-                                                      
+                    
+                    <select id="filter_type" name="filter_type">
+                        <option value="">-- Select Entry Type --</option>
+                        <option value="Opening" {'selected' if filter_status == 'Opening' else ''}>Opening</option>
+                        <option value="Transfer" {'selected' if filter_status == 'Transfer' else ''}>Transfer</option>
+                        <option value="Closing" {'selected' if filter_status == 'Closing' else ''}>Closing</option>
+                        <option value="Adjusting" {'selected' if filter_status == 'Adjusting' else ''}>Adjusting</option>
+                        <option value="Compound" {'selected' if filter_status == 'Compound' else ''}>Compound</option>
+                        <option value="Reversing" {'selected' if filter_status == 'Reversing' else ''}>Reversing</option>
+                    </select>
+
                     <select id="filter_status" name="filter_status">
                         <option value="">-- Select Status (All) --</option>
                         <option value="Pending" {'selected' if filter_status == 'Pending' else ''}>Pending</option>
@@ -439,7 +450,7 @@ def ledger():
                             <th>Date</th>
                             <th>Reference Number</th>
                             <th>Accounts</th>
-                            <th>Description</th>
+                            <th>Type</th>
                             <th>Debit</th>
                             <th>Credit</th>
                             <th>Balance</th>
@@ -494,6 +505,9 @@ def ledger():
             if filter_status:
                 query = query.filter(Journal_Entry.status.like(f"%{filter_status}%"))
 
+            if filter_type:
+                query = query.filter(Journal_Entry.entry_type.like(f"%{filter_type}%"))
+
             if filter_comment:
                 query = query.filter(Journal_Entry.comment.like(f"%{filter_comment}%"))
 
@@ -525,7 +539,7 @@ def ledger():
                         <td>{entry.create_date.strftime('%Y-%m-%d')}</td>
                         <td><a href="{url_for('chart.journal_entry', id=entry.id)}">{entry.id}</a></td>
                         <td>{getAccountsInJournalEntry(entry.id)}</td>
-                        <td>{entry.description or ''}</td>
+                        <td>{entry.entry_type}</td>
                         <td>{debit:.2f}</td>
                         <td>{credit:.2f}</td>
                         <td>{balance:.2f}</td>
