@@ -36,7 +36,9 @@ def show_account():
             "Income Statement",
             "Balance Sheet",
             "Retained Earnings Statement",
-        ]  # pull the actual statement types instead of these predetermined ones
+            "Statement of Cash Flows",
+            "Statement of Stockholder Equity",
+        ]
 
         return checkRoleClearance(
             current_user.role,
@@ -272,6 +274,8 @@ def view_accounts():
                     <option value="Retained Earnings Statement" {'selected' if filter_statement == 'Retained Earnings Statement' else ''}>Retained Earnings Statement</option>
                     <option value="Balance Sheet" {'selected' if filter_statement == 'Balance Sheet' else ''}>Balance Sheet</option>
                     <option value="Income Statement" {'selected' if filter_statement == 'Income Statement' else ''}>Income Statement</option>
+                    <option value="Statement of Cash Flows" {'selected' if filter_statement == 'Statement of Cash Flows' else ''}>Statement of Cash Flows</option>
+                    <option value="Statement of Stockholder Equity" {'selected' if filter_statement == 'Statement of Stockholder Equity' else ''}>Statement of Stockholder Equity</option>
                 </select>  
                 
                 <label for="filter_true"></label>
@@ -540,9 +544,9 @@ def ledger():
                         <td><a href="{url_for('chart.journal_entry', id=entry.id)}">{entry.id}</a></td>
                         <td>{getAccountsInJournalEntry(entry.id)}</td>
                         <td>{entry.entry_type}</td>
-                        <td>{debit:.2f}</td>
-                        <td>{credit:.2f}</td>
-                        <td>{balance:.2f}</td>
+                        <td>${formatMoney(debit)}</td>
+                        <td>${formatMoney(credit)}</td>
+                        <td>${formatMoney(balance)}</td>
                         <td>{entry.status}</td>
                         <td>{entry.comment if entry.comment else ""}</td>
                     </tr>
@@ -649,17 +653,12 @@ def journal_entry():
             credits.append(unformatMoney(request.form.get(f"credit{accountNum}")))
             tos.append(request.form.get(f"to{accountNum}") == "True")
 
-        # Handle the file upload
+        # Handle the file upload (do not require a file, but offer it as an option)
         file = request.files.get("attachment")
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file_path = os.path.join(UPLOAD_FOLDER, filename)
             file.save(file_path)
-        else:
-            flash(
-                "Invalid or missing file. Please upload a valid file.", category="error"
-            )
-            return redirect(url_for("chart.journal_entry"))
 
         curr_journal_entry = Journal_Entry.query.filter_by(id=ref_id).first()
 
@@ -895,7 +894,7 @@ def journal_entry():
                         )
                     select += f"""<option value="{account.number}" {
                         'selected' if curr_account_is_selected else ''
-                    }>{account.number} - {account.name}: {account.normal_side}</option>"""
+                    }>{account.number} - {account.name}: {account.category}</option>"""
 
                 return select + "</select>"
 
@@ -968,7 +967,7 @@ def approve_reject():
 
     # Fetch the journal entry from the database
     curr_journal = Journal_Entry.query.filter_by(id=ref_id).first()
-
+    
     if request.method == "POST":
 
         arp = request.form.get("arp")
@@ -978,8 +977,28 @@ def approve_reject():
         if arp == "approve":
             curr_journal.status = "Approved"
             curr_journal.comment = ""
-            # Commit the changes to the database
-
+            for transaction in Transaction.query.filter(Transaction.journal_entry_id == curr_journal.id).all():
+                account_to_change = Account.query.filter(Account.number == transaction.account_number).first()
+                if not account_to_change:
+                    continue
+                else:
+                    print("account found")
+                if transaction.to:
+                    account_to_change.balance += transaction.amount_changing
+                    if transaction.side_for_transaction == 'Debit':
+                        account_to_change.debit += transaction.amount_changing
+                    else:
+                        account_to_change.credit += transaction.amount_changing
+                    print("increased")
+                else:
+                    account_to_change.balance -= transaction.amount_changing
+                    if transaction.side_for_transaction == 'Debit':
+                        account_to_change.debit -= transaction.amount_changing
+                    else:
+                        account_to_change.credit -= transaction.amount_changing
+                    print("decreased")
+                    
+                    
         elif arp == "reject":
             curr_journal.comment = comment
             if curr_journal.comment == "":
@@ -987,9 +1006,9 @@ def approve_reject():
                 return redirect(url_for("chart.approve_reject", id=ref_id))
 
             curr_journal.status = "Rejected"
-        # Commit the changes to the database
+        
+        print("committing")
         db.session.commit()
-        # Redirect to the ledger page after updating
         return redirect(url_for("chart.ledger"))
 
     return checkRoleClearance(
