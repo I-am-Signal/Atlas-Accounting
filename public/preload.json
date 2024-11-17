@@ -1,0 +1,362 @@
+[
+    {
+        "number": 100,
+        "name": "Cash",
+        "normal_side": "Debit",
+        "category": "Assets",
+        "subcategory": "Current Assets",
+        "initial_balance": 0,
+        "order": 1,
+        "statement": "Statement of Cash Flows"
+    },
+    {
+        "number": 101,
+        "name": "Accounts Receivable",
+        "normal_side": "Debit",
+        "category": "Assets",
+        "subcategory": "Current Assets",
+        "initial_balance": 0,
+        "order": 2,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 102,
+        "name": "Allowance for Bad Debts",
+        "normal_side": "Debit",
+        "category": "Assets",
+        "subcategory": "Current Assets",
+        "initial_balance": 0,
+        "order": 3,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 103,
+        "name": "Inventory",
+        "normal_side": "Debit",
+        "category": "Assets",
+        "subcategory": "Current Assets",
+        "initial_balance": 0,
+        "order": 4,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 150,
+        "name": "Equipment",
+        "normal_side": "Debit",
+        "category": "Assets",
+        "subcategory": "Fixed Assets",
+        "initial_balance": 0,
+        "order": 5,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 151,
+        "name": "Accumulated Depreciation - Equipment",
+        "normal_side": "Debit",
+        "category": "Assets",
+        "subcategory": "Accumulated Depreciation",
+        "initial_balance": 0,
+        "order": 6,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 152,
+        "name": "Land",
+        "normal_side": "Debit",
+        "category": "Assets",
+        "subcategory": "Fixed Assets",
+        "initial_balance": 0,
+        "order": 7,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 153,
+        "name": "Building",
+        "normal_side": "Debit",
+        "category": "Assets",
+        "subcategory": "Fixed Assets",
+        "initial_balance": 0,
+        "order": 8,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 154,
+        "name": "Land Improvements",
+        "normal_side": "Debit",
+        "category": "Assets",
+        "subcategory": "Fixed Assets",
+        "initial_balance": 0,
+        "order": 9,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 200,
+        "name": "Accounts Payable",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Current Liabilities",
+        "initial_balance": 0,
+        "order": 1,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 201,
+        "name": "FICA Taxes Payable",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Current Liabilities",
+        "initial_balance": 0,
+        "order": 2,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 202,
+        "name": "State Income Taxes Withheld",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Current Liabilities",
+        "initial_balance": 0,
+        "order": 3,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 203,
+        "name": "State Unemployment Taxes Payable",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Current Liabilities",
+        "initial_balance": 0,
+        "order": 4,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 204,
+        "name": "Sales Taxes Payable",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Current Liabilities",
+        "initial_balance": 0,
+        "order": 5,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 205,
+        "name": "Federal Unemployment Taxes Payable",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Current Liabilities",
+        "initial_balance": 0,
+        "order": 6,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 206,
+        "name": "Federal Income Taxes Withheld",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Current Liabilities",
+        "initial_balance": 0,
+        "order": 7,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 207,
+        "name": "Notes Payable - Current",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Current Liabilities",
+        "initial_balance": 0,
+        "order": 8,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 208,
+        "name": "Capital Lease Payable - Current",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Current Liabilities",
+        "initial_balance": 0,
+        "order": 9,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 213,
+        "name": "Income Taxes Payable",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Current Liabilities",
+        "initial_balance": 0,
+        "order": 10,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 250,
+        "name": "Notes Payable",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Long-term Liabilities",
+        "initial_balance": 0,
+        "order": 11,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 251,
+        "name": "Capital Lease Payable",
+        "normal_side": "Credit",
+        "category": "Liabilities",
+        "subcategory": "Long-term Liabilities",
+        "initial_balance": 0,
+        "order": 12,
+        "statement": "Balance Sheet"
+    },
+    {
+        "number": 300,
+        "name": "Common Stock",
+        "normal_side": "Credit",
+        "category": "Equity",
+        "subcategory": "Common Stock",
+        "initial_balance": 0,
+        "order": 1,
+        "statement": "Statement of Stockholder Equity"
+    },
+    {
+        "number": 310,
+        "name": "Retained Earnings",
+        "normal_side": "Credit",
+        "category": "Equity",
+        "subcategory": "Retained Earnings Statement",
+        "initial_balance": 0,
+        "order": 2,
+        "statement": "Retained Earnings Statement"
+    },
+    {
+        "number": 311,
+        "name": "Dividends",
+        "normal_side": "Credit",
+        "category": "Equity",
+        "subcategory": "Dividends",
+        "initial_balance": 0,
+        "order": 3,
+        "statement": "Retained Earnings Statement"
+    },
+    {
+        "number": 400,
+        "name": "Sales Revenues",
+        "normal_side": "Credit",
+        "category": "Revenues",
+        "subcategory": "Income",
+        "initial_balance": 0,
+        "order": 1,
+        "statement": "Income Statement"
+    },
+    {
+        "number": 401,
+        "name": "Sales Returns",
+        "normal_side": "Credit",
+        "category": "Revenues",
+        "subcategory": "Discounts/Refunds Given",
+        "initial_balance": 0,
+        "order": 2,
+        "statement": "Income Statement"
+    },
+    {
+        "number": 402,
+        "name": "Sales Discount",
+        "normal_side": "Credit",
+        "category": "Revenues",
+        "subcategory": "Other Revenues",
+        "initial_balance": 0,
+        "order": 3,
+        "statement": "Income Statement"
+    },
+    {
+        "number": 470,
+        "name": "Gain on Disposal of Assets",
+        "normal_side": "Credit",
+        "category": "Revenues",
+        "subcategory": "Other Revenues",
+        "initial_balance": 0,
+        "order": 4,
+        "statement": "Income Statement"
+    },
+    {
+        "number": 500,
+        "name": "Cost of Goods Sold",
+        "normal_side": "Credit",
+        "category": "Expenses",
+        "subcategory": "Cost of Goods Sold",
+        "initial_balance": 0,
+        "order": 5,
+        "statement": "Income Statement"
+    },
+    {
+        "number": 501,
+        "name": "Payroll Tax Expense",
+        "normal_side": "Credit",
+        "category": "Expenses",
+        "subcategory": "Payroll Expenses",
+        "initial_balance": 0,
+        "order": 6,
+        "statement": "Income Statement"
+    },
+    {
+        "number": 502,
+        "name": "Rent Expense",
+        "normal_side": "Credit",
+        "category": "Expenses",
+        "subcategory": "Selling General and Administrative Expenses",
+        "initial_balance": 0,
+        "order": 7,
+        "statement": "Income Statement"
+    },
+    {
+        "number": 503,
+        "name": "Utilities Expense",
+        "normal_side": "Credit",
+        "category": "Expenses",
+        "subcategory": "Operating Expenses",
+        "initial_balance": 0,
+        "order": 8,
+        "statement": "Income Statement"
+    },
+    {
+        "number": 504,
+        "name": "Salaries Expense",
+        "normal_side": "Credit",
+        "category": "Expenses",
+        "subcategory": "Payroll Expenses",
+        "initial_balance": 0,
+        "order": 9,
+        "statement": "Income Statement"
+    },
+    {
+        "number": 505,
+        "name": "Depreciation Expense",
+        "normal_side": "Credit",
+        "category": "Expenses",
+        "subcategory": "Depreciation",
+        "initial_balance": 0,
+        "order": 10,
+        "statement": "Income Statement"
+    },
+    {
+        "number": 570,
+        "name": "Interest Expense",
+        "normal_side": "Credit",
+        "category": "Expenses",
+        "subcategory": "Interest Paid",
+        "initial_balance": 0,
+        "order": 11,
+        "statement": "Income Statement"
+    },
+    {
+        "number": 580,
+        "name": "Loss Due to Fire",
+        "normal_side": "Credit",
+        "category": "Expenses",
+        "subcategory": "Other Expenses",
+        "initial_balance": 0,
+        "order": 12,
+        "statement": "Income Statement"
+    }
+]

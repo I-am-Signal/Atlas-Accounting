@@ -158,3 +158,11 @@ def formatMoney(amount: float) -> str:
 def unformatMoney(formatted_amount: str) -> float:
     """Removes currency symbols, commas, and spaces, returning a plain numeric string."""
     return float(re.sub(r'[^\d.-]', '', formatted_amount))
+
+def parenthesesInsteadOfNegatives(amount):
+    amount = formatMoney(amount)
+    if amount[0] == '-':
+        amount = '($' + amount[1:] + ')'
+    else:
+        amount = '$' + amount
+    return amount

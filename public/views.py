@@ -10,11 +10,11 @@ from flask import (
 )
 from flask_login import login_required, current_user
 from .models import User, Company, Credential, Image,Account
-from . import db, formatMoney
+from . import db, formatMoney, parenthesesInsteadOfNegatives
 from .auth import login_required_with_password_expiration, checkRoleClearance
 from .email import sendEmail, getEmailHTML
 from datetime import datetime
-from sqlalchemy import desc
+from sqlalchemy import desc, asc
 from werkzeug.utils import secure_filename
 
 
@@ -34,6 +34,8 @@ def home():
     journalEntriesLink = url_for("chart.ledger")
     trialBalanceLink = url_for("views.trialBalance")
     balanceSheetLink = url_for("views.balancesheet")
+    incomeStatementLink = url_for("views.incomeStatement")
+    retainedEarningsLink = url_for("views.retainedEarningsStatement")
 
     return checkRoleClearance(
         current_user.role,
@@ -48,7 +50,9 @@ def home():
             viewEventsButton=view_evl_link if view_evl_link else "",
             journalEntriesLink=journalEntriesLink,
             trialBalanceLink=trialBalanceLink,
-            balanceSheetLink=balanceSheetLink
+            balanceSheetLink=balanceSheetLink,
+            incomeStatementLink=incomeStatementLink,
+            retainedEarningsLink=retainedEarningsLink
         ),
     )
 
@@ -324,9 +328,27 @@ def help():
 @views.route("/trialBalance")
 @login_required
 def trialBalance():
+    # Account.query.filter_by(name="Salaries Expense").first().credit = 950
     def generateTrial():
+        filter_date_start = request.args.get("filter_date_start", None)
+        filter_date_end = request.args.get("filter_date_end", None)
         table = f"""
-        <a href='{url_for("views.home")}'>Back</a> <br />
+        <a href='{url_for("views.home")}'>Back</a>&ensp;
+        <a onclick="window.print();">Print page</a> <br />
+        
+        <form method="get" action="{url_for('views.trialBalance')}">
+            <label for="filter_date_start">Start</label>
+            <input type="date" id="filter_date_start" name="filter_date_start" value="{filter_date_start if filter_date_start else ''}" />
+            <label for="filter_date_end">End</label>
+            <input type="date" id="filter_date_end" name="filter_date_end" value="{filter_date_end if filter_date_end else ''}" />
+
+            <button type="submit" class="filterBy">Filter</button>
+            
+            <a href="{url_for('views.trialBalance')}">
+                <button type="button" class="clearFilters">Clear Filters</button>
+            </a>
+        </form>
+            
                 
                 
                 <h2>Trial Balance</h2>
@@ -353,19 +375,20 @@ def trialBalance():
                     <tr>
                         <td>{account.number}</td>
                         <td><a  href="{url_for('chart.show_account', number=account.number)}">{account.name}</a></td>
-                        <td>${formatMoney(account.debit)}</td>
-                        <td>${formatMoney(account.credit)}</td>
-                    </tr>                     
+                        <td>{' ' if account.debit - account.credit <= 0 else parenthesesInsteadOfNegatives(account.debit - account.credit)}
+                        <td>{' ' if account.credit - account.debit <= 0 else parenthesesInsteadOfNegatives(account.credit - account.debit)}
+                    </tr>                 
                 """
         table += f"""
                     <tr>                
                         <td></td>
                         <td><strong>Totals</strong></td>
-                        <td>${formatMoney(debits)}</td>
-                        <td>${formatMoney(credits)}</td>
+                        <td>{parenthesesInsteadOfNegatives(debits)}</td>
+                        <td>{parenthesesInsteadOfNegatives(credits)}</td>
                     </tr>    
                 </tbody>
             </table>
+            <a id="createAccount" href='{url_for('email.send')}'>Send an Email</a>
             """
         return table
 
@@ -382,10 +405,25 @@ def trialBalance():
 @login_required
 def balancesheet():
     def generateBalanceSheet():
+        filter_date_start = request.args.get("filter_date_start", None)
+        filter_date_end = request.args.get("filter_date_end", None)
         table = f"""
-        <a href='{url_for("views.home")}'>Back</a> <br />
+            <a href='{url_for("views.home")}'>Back</a>&ensp;
+            <a onclick="window.print();">Print page</a> <br />
+            
+            <form method="get" action="{url_for('views.balancesheet')}">
+                <label for="filter_date_start">Start</label>
+                <input type="date" id="filter_date_start" name="filter_date_start" value="{filter_date_start if filter_date_start else ''}" />
+                <label for="filter_date_end">End</label>
+                <input type="date" id="filter_date_end" name="filter_date_end" value="{filter_date_end if filter_date_end else ''}" />
+
+                <button type="submit" class="filterBy">Filter</button>
                 
-                
+                <a href="{url_for('views.balancesheet')}">
+                    <button type="button" class="clearFilters">Clear Filters</button>
+                </a>
+            </form>
+            
                 <h2>Balance Sheet</h2>
                 <table class="userDisplay">
                     <thead>
@@ -397,61 +435,105 @@ def balancesheet():
                     <tbody>
                 """
        
-        accountsc = Account.query.filter_by(company_id=current_user.company_id,normal_side='Credit').all()
-        accountsd = Account.query.filter_by(company_id=current_user.company_id,normal_side='Debit').all()
-
-        debits = 0
-        credits=0
-
+        assets = Account.query.filter_by(
+            company_id=current_user.company_id, 
+            category='Assets').all()
+        liabilities = Account.query.filter_by(
+            company_id=current_user.company_id, 
+            category='Liabilities').all()
+        equities = Account.query.filter_by(
+            company_id=current_user.company_id, 
+            category='Equity').all()
+        
+        totals = {
+            "assets": 0.0,
+            "liabilities": 0.0,
+            "equities": 0.0
+        }
+        
         table += f"""
             <tr>
             <td><strong>Assets:</td>
             <td></td>
             </tr>
             """       
-
-
-        for account in accountsd:           
-            debits+= account.balance
+        
+        for account in assets:           
+            totals['assets'] += account.balance
+            
             table += f"""
             
                     <tr>
                         <td>{account.name}</td>                            
-                        <td>${formatMoney(account.balance)}</td>
+                        <td>{parenthesesInsteadOfNegatives(account.balance)}</td>
                     </tr>                     
-                """
-                
-            
-
+                """   
                 
         table += f"""
             <tr>
                 <td><strong>Total Assets:</td>
-                <td>${formatMoney(debits)}</td>
+                <td>{parenthesesInsteadOfNegatives(totals['assets'])}</td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td> </td>
             </tr>
             <tr>
                 <td><strong>Liabilities:</td>
                 <td> </td>
             </tr>
             """
-        for account in accountsc:                        
-            credits += account.balance
+        
+        for account in liabilities:                        
+            totals['liabilities'] += account.balance
+            
             table += f"""
             
                     <tr>
                         <td>{account.name}</td>                            
-                        <td>${formatMoney(account.balance)}</td>
+                        <td>{parenthesesInsteadOfNegatives(account.balance)}</td>
                     </tr>                     
                 """   
             
 
         table += f"""
+            <tr>
+                <td><strong>Total Liabilities:</td>
+                <td>{parenthesesInsteadOfNegatives(totals['liabilities'])}</td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td> </td>
+            </tr>
+            <tr>
+                <td><strong>Equities:</td>
+                <td> </td>
+            </tr>
+            """
+        
+        for account in equities:                        
+            totals['equities'] += account.balance
+            
+            table += f"""
+            
+                    <tr>
+                        <td>{account.name}</td>                            
+                        <td>{parenthesesInsteadOfNegatives(account.balance)}</td>
+                    </tr>                     
+                """   
+
+        table += f"""
                     <tr>                
-                        <td><strong>Total Liabilities</strong></td> 
-                        <td>${formatMoney(credits)}</td>                       
-                    </tr>    
+                        <td><strong>Total Equities</strong></td> 
+                        <td>{parenthesesInsteadOfNegatives(totals['equities'])}</td>                       
+                    </tr>
+                    <tr>
+                        <td><strong>Total Liabilities + Equities</strong></td> 
+                        <td>{parenthesesInsteadOfNegatives(totals['liabilities']+totals['equities'])}</td>
+                    </tr>   
                 </tbody>
             </table>
+            <a id="createAccount" href='{url_for('email.send')}'>Send an Email</a>
             """
         return table
 
@@ -461,7 +543,231 @@ def balancesheet():
     dashUser=current_user,    
     balance=generateBalanceSheet(),
     homeRoute="/",
+)
     
+
+@views.route("/incomeStatement")
+@login_required
+def incomeStatement():
+    
+    # uncomment this to show how this works
+    # revenues = Account.query.filter_by(
+    #         company_id=current_user.company_id,
+    #         category="Revenues").order_by(
+    #             asc(Account.order)
+    #         ).all()
+    # revenues[0].debit = 1000
+    
+    # expenses = Account.query.filter_by(
+    #         company_id=current_user.company_id,
+    #         category="Expenses").order_by(
+    #             asc(Account.order)
+    #         ).all()
+    # expenses[2].credit=300
+    # db.session.commit()
+    
+    def generateIncome():
+        filter_date_start = request.args.get("filter_date_start", None)
+        filter_date_end = request.args.get("filter_date_end", None)
+        table = f"""
+        <a href='{url_for("views.home")}'>Back</a>&ensp;
+        <a onclick="window.print();">Print page</a> <br />
+        
+        <form method="get" action="{url_for('views.incomeStatement')}">
+            <label for="filter_date_start">Start</label>
+            <input type="date" id="filter_date_start" name="filter_date_start" value="{filter_date_start if filter_date_start else ''}" />
+            <label for="filter_date_end">End</label>
+            <input type="date" id="filter_date_end" name="filter_date_end" value="{filter_date_end if filter_date_end else ''}" />
+
+            <button type="submit" class="filterBy">Filter</button>
+            
+            <a href="{url_for('views.incomeStatement')}">
+                <button type="button" class="clearFilters">Clear Filters</button>
+            </a>
+        </form>
+            
+                
+                
+                <h2>Income Statement</h2>
+                <table class="userDisplay">
+                    <thead>
+                        <tr>
+                            <th>Account Name</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                """
+        revenues = Account.query.filter_by(
+            company_id=current_user.company_id,
+            category="Revenues").order_by(
+                asc(Account.order)
+            ).all()
+        
+        revenue_total = 0
+        
+        table += """
+            <tr>
+                <td><strong>Revenues</strong></td>
+                <td> </td>
+            </tr>
+        """
+        
+        for account in revenues:
+            revenue_total += account.debit - account.credit
+            table += f"""
+                    <tr>
+                        <td>{account.name}</td>
+                        <td>{parenthesesInsteadOfNegatives(account.debit-account.credit)}</td>
+                    </tr>
+                """
+        
+        expenses = Account.query.filter_by(
+            company_id=current_user.company_id,
+            category="Expenses").order_by(
+                asc(Account.order)
+            ).all()
+
+        revenue_total += expenses[0].debit - expenses[0].credit
+        
+        table += f"""
+            <tr>
+                <td>{expenses[0].name}</td>
+                <td>{parenthesesInsteadOfNegatives(expenses[0].debit-expenses[0].credit)}</td>
+            </tr>
+            <tr>
+                <td><strong>Gross Profit</strong></td>
+                <td>{parenthesesInsteadOfNegatives(revenue_total)}</td>
+            </tr>
+            <tr>
+                <td> </td>
+                <td> </td>
+            </tr>
+            <tr>
+                <td><strong>Expenses</strong></td>
+                <td> </td>
+            </tr>
+        """
+        
+        expense_total = 0
+        
+        for account in expenses[1:]:
+            expense_total += account.credit - account.debit
+            table += f"""
+                    <tr>
+                        <td>{account.name}</td>
+                        <td>{parenthesesInsteadOfNegatives(account.debit-account.credit)}</td>
+                    </tr>                 
+                """
+        
+        table += f"""
+                    <tr>              
+                        <td><strong>Total Expenses</strong></td>
+                        <td>{parenthesesInsteadOfNegatives(expense_total)}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Net Income</strong></td>
+                        <td>{parenthesesInsteadOfNegatives(revenue_total-expense_total)}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <a id="createAccount" href='{url_for('email.send')}'>Send an Email</a>
+            """
+        return table
+
+    return render_template(
+    "income_statement.html",
+    user=current_user,
+    dashUser=current_user,    
+    income=generateIncome(),
+    homeRoute="/",
+)
+    
+
+@views.route("/retainedEarningsStatement")
+@login_required
+def retainedEarningsStatement():
+    # uncomment this to show how this works
+    # retained = Account.query.filter_by(
+    #         company_id=current_user.company_id,
+    #         statement="Retained Earnings Statement").order_by(
+    #             asc(Account.order)
+    #         ).all()
+    # retained[0].debit = 150
+    # retained[1].debit = 600    
+    # db.session.commit()
+    
+    def generateRetained():
+        filter_date_start = request.args.get("filter_date_start", None)
+        filter_date_end = request.args.get("filter_date_end", None)
+        
+        retainedEarnings = 0
+        for account in Account.query.filter_by(
+            company_id=current_user.company_id,
+            statement="Retained Earnings Statement").all():
+            retainedEarnings += account.debit - account.credit
+            
+        netIncome = 0
+        for account in Account.query.filter_by(
+            company_id=current_user.company_id,
+            category="Revenues").order_by(
+                asc(Account.order)
+            ).all():
+            netIncome += account.debit - account.credit
+        
+        for account in Account.query.filter_by(
+            company_id=current_user.company_id,
+            category="Expenses").order_by(
+                asc(Account.order)
+            ).all():
+            netIncome += account.debit - account.credit
+        
+        
+        table = f"""
+        <a href='{url_for("views.home")}'>Back</a>&ensp;
+        <a onclick="window.print();">Print page</a> <br />
+        
+        <form method="get" action="{url_for('views.retainedEarningsStatement')}">
+            <label for="filter_date_start">Start</label>
+            <input type="date" id="filter_date_start" name="filter_date_start" value="{filter_date_start if filter_date_start else ''}" />
+            <label for="filter_date_end">End</label>
+            <input type="date" id="filter_date_end" name="filter_date_end" value="{filter_date_end if filter_date_end else ''}" />
+
+            <button type="submit" class="filterBy">Filter</button>
+            
+            <a href="{url_for('views.retainedEarningsStatement')}">
+                <button type="button" class="clearFilters">Clear Filters</button>
+            </a>
+        </form>
+        
+                <h2>Retained Earnings Statement</h2>
+                <table class="userDisplay">
+                    <thead></thead>
+                    <tbody>
+                    <tr>
+                        <td>Retained Earnings</td>
+                        <td>{parenthesesInsteadOfNegatives(retainedEarnings)}</td>
+                    </tr>
+                    <tr>
+                        <td>Plus: Net Income</td>
+                        <td>{parenthesesInsteadOfNegatives(netIncome)}</td>
+                    </tr>
+                    <tr>                
+                        <td><strong>Net Retained Earnings</strong></td>
+                        <td>{parenthesesInsteadOfNegatives(retainedEarnings + netIncome)}</td>
+                    </tr>    
+                </tbody>
+            </table>
+            <a id="createAccount" href='{url_for('email.send')}'>Send an Email</a>
+            """
+        return table
+
+    return render_template(
+    "retained_earnings_statement.html",
+    user=current_user,
+    dashUser=current_user,    
+    retained=generateRetained(),
+    homeRoute="/"
 )
 
 
