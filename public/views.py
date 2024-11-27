@@ -9,7 +9,14 @@ from flask import (
     send_from_directory,
 )
 from flask_login import login_required, current_user
-from .models import User, Company, Credential, Image,Account
+from .models import (
+    User,
+    Company,
+    Credential,
+    Image,
+    Account,
+    Journal_Entry
+)
 from . import db, formatMoney, parenthesesInsteadOfNegatives
 from .auth import login_required_with_password_expiration, checkRoleClearance
 from .email import sendEmail, getEmailHTML
@@ -37,6 +44,31 @@ def home():
     incomeStatementLink = url_for("views.incomeStatement")
     retainedEarningsLink = url_for("views.retainedEarningsStatement")
 
+    curr_assets = sum([account.balance for account in (
+        db.session.query(Account)
+        .filter_by(
+            company_id=current_user.company_id,
+            category="Assets"
+        )
+        .all()
+    )])
+    curr_liabilities = sum([account.balance for account in (
+        db.session.query(Account)
+        .filter_by(
+            company_id=current_user.company_id,
+            category="Liabilities"
+        ).all()
+    )])
+    
+    
+    ratio = curr_assets / curr_liabilities
+
+    ratioReputation = 'bad'
+    if ratio >= 1 and ratio < 1.5 or ratio >= 3:
+        ratioReputation = 'warn'
+    elif ratio >= 1.5 and ratio < 3:
+        ratioReputation = 'good'
+    
     return checkRoleClearance(
         current_user.role,
         "user",
@@ -52,7 +84,13 @@ def home():
             trialBalanceLink=trialBalanceLink,
             balanceSheetLink=balanceSheetLink,
             incomeStatementLink=incomeStatementLink,
-            retainedEarningsLink=retainedEarningsLink
+            retainedEarningsLink=retainedEarningsLink,
+            pending=db.session.query(Journal_Entry).filter_by(
+                company_id=current_user.company_id,
+                status="Pending"
+            ).count(),
+            ratioReputation=ratioReputation,
+            ratio=formatMoney(ratio)
         ),
     )
 

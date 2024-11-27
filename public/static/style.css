@@ -428,13 +428,11 @@ body {
 
 .dashboard{
   text-align: center; 
-  padding: 10px;
-  width: 90%;
-  margin: 0px 5%;  
+  width: 100%; 
   height: auto;
   top: 15%;
   display: block;
-  
+  flex: column;
 }
 
 .dashboxes{  
@@ -445,8 +443,7 @@ body {
   margin: 10px;
   position: relative;
   float: left;
-  left: 10px;
-  width: 47%;  
+  width: 45%;  
 }
 
 .dashleft{
@@ -479,6 +476,17 @@ left: 10%;
 top: 4%;
 }
 
+.good{
+  color: #00ff00;
+}
+
+.warn{
+  color: #ffcc00;
+}
+
+.bad{
+  color: #ff0000;
+}
 
 .userDisplay {
   background-color: #1B263B;  /* Dark grey background */
@@ -733,43 +741,41 @@ top: 4%;
     flex-direction: column;
   }
 
-  /* Adjust layout for smaller screens */
 @media (max-width: 768px) {
   .userProfileContainer {
-    width: 100%;  /* Make it take full width on smaller screens */
-    position: relative;  /* Change position to flow within the document */
+    width: 100%;  
+    position: relative; 
     right: 0;
     top: 0;
     margin-top: 20px;
-    flex-direction: column;  /* Stack the profile picture and info vertically */
+    flex-direction: column; 
     align-items: center;
   }
 
   .userProfile img {
     width: 50px;
     height: 50px;
-    margin-right: 0;  /* Remove extra margin on smaller screens */
+    margin-right: 0; 
   }
 
   .page {
-    flex-direction: column;  /* Stack items vertically */
+    flex-direction: column; 
     padding: 10px;
   }
 
   .userDisplay {
-    width: 100%;  /* Make the user display take up full width */
+    width: 100%; 
     padding: 10px;
   }
 
   .form-grid {
-    grid-template-columns: 1fr;  /* Make form rows stack vertically on small screens */
-  }
+    grid-template-columns: 1fr;  
+ }
   
-  /* Adjust dashboard boxes */
   .dashboxes {
-    width: 100%;  /* Full width on smaller screens */
-    float: none;  /* Remove float */
-    margin: 10px 0;
+    max-width: 50%;
+    min-width: 25%;
+    float: none; 
   }
 }
 .user-form{
