@@ -60,8 +60,10 @@ def home():
         ).all()
     )])
     
-    
-    ratio = curr_assets / curr_liabilities
+    if curr_liabilities > 0:
+         ratio = curr_assets / curr_liabilities
+    elif curr_liabilities == 0:
+        ratio = 0 
 
     ratioReputation = 'bad'
     if ratio >= 1 and ratio < 1.5 or ratio >= 3:
