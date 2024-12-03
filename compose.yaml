@@ -1,0 +1,9 @@
+services:
+  flask:
+    build: .
+    container_name: flask
+    ports:
+      - 5000:5000
+    volumes:
+      - ./instance:/app/instance
+      - ./alembic:/app/alembic

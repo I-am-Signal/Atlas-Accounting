@@ -1,5 +1,28 @@
 # Atlas Accounting Web App
 
+## Running Atlas Accounting Locally
+Please navigate (`cd [name of repo root]`) to the root directory of the repository before following the below instructions.
+### With Containerization
+Ensure that you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and open
+```bash
+docker compose up -d --build
+```
+* Builds and run the application inside the container. 
+* Access the app via [**http://localhost:5000**](http://localhost:5000) 
+
+### Without Containerization
+Ensure that you have a recent version of Python installed (we tested with 3.12.7)
+```bash
+pip install -r requirements.txt
+```
+* Installs all dependencies required to run the application
+
+```bash
+python main.py
+```
+* Starts the application from the main.py file (which contains the main method)
+* Access the app via [**http://localhost:5000**](http://localhost:5000)
+
 ## Using a Python Venv (for Alembic and Package management)
 ```bash
 pip install virtualenv
@@ -41,21 +64,6 @@ deactivate
 ```
 * Deactivates the virtual environment
 * Use when you are done working on the system.
-
-## Installation and Running
-```bash
-pip install -r requirements.txt
-```
-* Installs all dependencies required to run the application
-
-```bash
-python main.py
-```
-* Starts the application from the main.py file (which contains the main method)
-
-## Viewing The App
-
-Go to `http://127.0.0.1:5000`
 
 ## Working with Alembic
 
