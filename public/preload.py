@@ -9,11 +9,14 @@ def load_accounts():
     then remove it once it has
     """
         
-    from . import db
     with open("public/preload.json", 'r') as json_file:
         accounts = load(json_file)
     
-    for account in accounts:
+    if accounts['load_on_account_view']:
+        return
+    
+    from . import db
+    for account in accounts['accounts']:
         if not db.session.query(Account).filter(Account.number == account["number"]).first():
             new_account = Account(
                 number=account["number"],

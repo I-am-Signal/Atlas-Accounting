@@ -158,7 +158,6 @@ def view_users():
 @views.route("/user", methods=["GET", "POST"])
 @login_required
 def user():
-    # when user_id check method is implemented, call it here instead of this
     user_id = request.args.get("id")
     try:
         user_id = int(user_id)
@@ -293,7 +292,6 @@ def user():
 @views.route("/delete", methods=["GET", "POST"])
 @login_required
 def delete():
-    # when user_id check method is implemented, call it here instead of this
     user_id = request.args.get("id")
     try:
         user_id = int(user_id)
@@ -365,10 +363,10 @@ def help():
         homeRoute="/",
     )
 
+
 @views.route("/trialBalance")
 @login_required
 def trialBalance():
-    # Account.query.filter_by(name="Salaries Expense").first().credit = 950
     def generateTrial():
         filter_date_start = request.args.get("filter_date_start", None)
         filter_date_end = request.args.get("filter_date_end", None)
@@ -433,13 +431,13 @@ def trialBalance():
         return table
 
     return render_template(
-    "trial_balance.html",
-    user=current_user,
-    dashUser=current_user,    
-    trial=generateTrial(),
-    homeRoute="/",
-    
-)
+        "trial_balance.html",
+        user=current_user,
+        dashUser=current_user,    
+        trial=generateTrial(),
+        homeRoute="/",
+    )
+
 
 @views.route("/balance_sheet")
 @login_required
@@ -578,33 +576,17 @@ def balancesheet():
         return table
 
     return render_template(
-    "balance_sheet.html",
-    user=current_user,
-    dashUser=current_user,    
-    balance=generateBalanceSheet(),
-    homeRoute="/",
-)
+        "balance_sheet.html",
+        user=current_user,
+        dashUser=current_user,    
+        balance=generateBalanceSheet(),
+        homeRoute="/",
+    )
     
 
 @views.route("/incomeStatement")
 @login_required
 def incomeStatement():
-    
-    # uncomment this to show how this works
-    # revenues = Account.query.filter_by(
-    #         company_id=current_user.company_id,
-    #         category="Revenues").order_by(
-    #             asc(Account.order)
-    #         ).all()
-    # revenues[0].debit = 1000
-    
-    # expenses = Account.query.filter_by(
-    #         company_id=current_user.company_id,
-    #         category="Expenses").order_by(
-    #             asc(Account.order)
-    #         ).all()
-    # expenses[2].credit=300
-    # db.session.commit()
     
     def generateIncome():
         filter_date_start = request.args.get("filter_date_start", None)
@@ -716,26 +698,17 @@ def incomeStatement():
         return table
 
     return render_template(
-    "income_statement.html",
-    user=current_user,
-    dashUser=current_user,    
-    income=generateIncome(),
-    homeRoute="/",
-)
+        "income_statement.html",
+        user=current_user,
+        dashUser=current_user,    
+        income=generateIncome(),
+        homeRoute="/",
+    )
     
 
 @views.route("/retainedEarningsStatement")
 @login_required
 def retainedEarningsStatement():
-    # uncomment this to show how this works
-    # retained = Account.query.filter_by(
-    #         company_id=current_user.company_id,
-    #         statement="Retained Earnings Statement").order_by(
-    #             asc(Account.order)
-    #         ).all()
-    # retained[0].debit = 150
-    # retained[1].debit = 600    
-    # db.session.commit()
     
     def generateRetained():
         filter_date_start = request.args.get("filter_date_start", None)
@@ -803,12 +776,12 @@ def retainedEarningsStatement():
         return table
 
     return render_template(
-    "retained_earnings_statement.html",
-    user=current_user,
-    dashUser=current_user,    
-    retained=generateRetained(),
-    homeRoute="/"
-)
+        "retained_earnings_statement.html",
+        user=current_user,
+        dashUser=current_user,    
+        retained=generateRetained(),
+        homeRoute="/"
+    )
 
 
 @views.route("/contact", methods=["GET", "POST"])

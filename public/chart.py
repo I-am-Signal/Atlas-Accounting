@@ -1,19 +1,16 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from .models import (
-    User,
-    Company,
-    Credential,
     Account,
     Journal_Entry,
     Transaction,
     Event,
 )
 from . import db, formatMoney, unformatMoney
-from .auth import login_required_with_password_expiration, checkRoleClearance
-from .email import sendEmail, getEmailHTML, sendEmailToAllUsersWithRole
+from .auth import checkRoleClearance
+from .email import getEmailHTML, sendEmailToAllUsersWithRole
 from datetime import datetime, timedelta
-from sqlalchemy import desc, asc
+from .preload import load_accounts
 
 chart = Blueprint("chart", __name__)
 
@@ -24,11 +21,13 @@ def show_account():
 
     """Loads the show_account page and handles its logic"""
     if request.method == "GET":
-        # once verify number method is made, replace this
         if account_number:
             account_number = int(account_number)
         accountInfo = (
-            Account.query.filter_by(number=account_number).first()
+            Account.query.filter_by(
+                number=account_number,
+                company_id=current_user.company_id,
+            ).first()
             if account_number
             else None
         )
@@ -176,7 +175,6 @@ def show_account():
 @chart.route("/deactivate", methods=["GET", "POST"])
 @login_required
 def deactivate():
-    # when user_id check method is implemented, call it here instead of this
     ref_id = request.args.get("number")
     if not ref_id.isdigit():
         flash("Error: invalid reference number.", category="error")
@@ -228,21 +226,8 @@ from flask_login import login_required
 @chart.route("/view_accounts", methods=["GET"])
 @login_required
 def view_accounts():
-    # Used for when you mess in creating accounts in development
-    # accNumToDeleteDupes = 101
-    # accounts = Account.query.filter_by(number=accNumToDeleteDupes).all()
-    # for account in accounts[1:]:
-    #     db.session.delete(account)
-    #     db.session.commit()
-
-    # db.session.delete(Account.query.filter_by(number=110).first())
-    # db.session.commit()
-
-    # Used for when messing with account company ids to reset them for display
-    # for account in Account.query.all():
-    #     account.company_id = current_user.company_id
-    #     account.is_activated = True
-    #     db.session.commit()
+    # change the var in the preload file to True to load the accounts
+    load_accounts() 
     def generateAccounts():
         # Capture the account number and account name filter from the GET request parameters
         filter_number = request.args.get("filter_number", None)
@@ -594,26 +579,6 @@ def journal_entry():
     GET: Provides the Journal Entry screen\n
     POST: Retrieves data from the screen, checks its safe, then saves it
     """
-    # Used for when you mess in creating accounts in development
-    # accNumToDeleteDupes = 101
-    # accounts = Account.query.filter_by(number=accNumToDeleteDupes).all()
-    # for account in accounts[1:]:
-    #     db.session.delete(account)
-    #     db.session.commit()
-
-    # Used for removing a journal entry
-    # idOfJEToDelete = 10
-    # for transaction in db.session.query(Transaction).filter_by(journal_entry_id=idOfJEToDelete).all():
-    #     db.session.delete(transaction)
-    # JEToDelete = Journal_Entry.query.filter_by(id=idOfJEToDelete).first()
-    # db.session.delete(JEToDelete)
-    # db.session.commit()
-
-    # Used for when messing with account company ids to reset them for display
-    # for account in Account.query.all():
-    #     account.company_id = current_user.company_id
-    #     db.session.commit()
-
     # this sets how many accounts there is to select in a journal entry
     numOfAccounts = Account.query.filter_by(company_id=current_user.company_id).count()
 
