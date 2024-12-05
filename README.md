@@ -23,6 +23,8 @@ python main.py
 * Starts the application from the main.py file (which contains the main method)
 * Access the app via [**http://localhost:5000**](http://localhost:5000)
 
+### Below this point is all related to development work on Atlas Accounting
+
 ## Using a Python Venv (for Alembic and Package management)
 ```bash
 pip install virtualenv
@@ -68,11 +70,11 @@ deactivate
 ## Working with Alembic
 
 ```bash
-alembic revision -m "[Insert Name for Revision]"
+alembic revision [--autogenerate] -m "[Insert Name for Revision]"
 ```
-* This will create a manual revision in which you can migrate the database for what is required.
-* `--autogenerate` does not currently function as the metadata object does reflect the database, but not in the expected way by Alembic.
-* Once the revision file is created, edit the revision for what you need added, removed, or revised.
+* This will create a revision in which you can migrate the database for what is required.
+* To use `--autogenerate`, simply add the keyword to the command (removing the brackets) and it will autogenerate the changes that were made to the metadata into an alembic revision. 
+* Once the revision file is created, edit the revision for what you need added, removed, or revised, if necessary.
 
 ```bash
 alembic upgrade x
