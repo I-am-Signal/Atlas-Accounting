@@ -2,8 +2,6 @@
 website/__pycache__
 website/database.db
 __pycache__
-config.py
-
-# Database file, not important to store data just yet
+.env
 instance/AA.db
 .DS_Store

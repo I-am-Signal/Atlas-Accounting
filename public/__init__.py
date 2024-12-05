@@ -1,9 +1,16 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
-from os import path
+from os import path, getenv
 from flask_login import LoginManager
-from .config import SECRET_KEY, DB_NAME, DOMAIN_NAME, APPLICATION_ROOT, PREFERRED_URL_SCHEME
 import re
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
+SECRET_KEY = getenv('SECRET_KEY')
+DB_NAME = getenv('DB_NAME')
+DOMAIN_NAME = getenv('DOMAIN_NAME')
+APPLICATION_ROOT = getenv('APPLICATION_ROOT')
+PREFERRED_URL_SCHEME = getenv('PREFERRED_URL_SCHEME')
 
 db = SQLAlchemy()
 

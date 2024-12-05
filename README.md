@@ -1,7 +1,10 @@
 # Atlas Accounting Web App
 
 ## Running Atlas Accounting Locally
+**NOTE!** Ensure you have the provided `.env` (or customized the template with the required information) placed in the root directory for the application to function!
+
 Please navigate (`cd [name of repo root]`) to the root directory of the repository before following the below instructions.
+
 ### With Containerization
 Ensure that you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and open
 ```bash

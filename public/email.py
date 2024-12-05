@@ -1,11 +1,16 @@
 from flask import Blueprint, request, flash, redirect, url_for, render_template
 from flask_login import login_required, current_user
-from .config import EMAILAPIKEY, FROMEMAIL
 from .models import User, Journal_Entry
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Content
 from premailer import Premailer
+from os import getenv
+
+EMAILAPIKEY = getenv('EMAILAPIKEY')
+FROMEMAIL = getenv('FROMEMAIL')
+
 email = Blueprint('email', __name__)
+
 
 def sendEmail(toEmails: list[str], subject:str, body:str):
     """
