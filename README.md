@@ -1,5 +1,11 @@
 # Atlas Accounting Web App
 
+## Hosted Site
+[**Atlas Accounting Hosted Site**](http://atlas-accounting.eastus.azurecontainer.io:5000/login)
+* Create a new account then login with those credentials or use the following credentials to gain access to the system
+    * Username: DShowcase1224
+    * Password: testAdmin1#
+
 ## Running Atlas Accounting Locally
 **NOTE!** Ensure you have the provided `.env` (or customized the template with the required information) placed in the root directory for the application to function!
 
